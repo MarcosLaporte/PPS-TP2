@@ -1,0 +1,7 @@
+{
+  "name": "PPS-SP-La-Comanda",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
