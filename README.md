@@ -1,6 +1,6 @@
 # Equipo Los Yourdonistas
 
-![1717855428834](image/README/1717855428834.png)
+![1717856122324](image/README/1717856122324.png)
 
 # ¿Qué es?
 
