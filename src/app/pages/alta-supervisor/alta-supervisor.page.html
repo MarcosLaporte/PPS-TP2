@@ -1,0 +1,48 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>alta supervisor</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <!-- <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">altaSupervisor</ion-title>
+    </ion-toolbar>
+  </ion-header> -->
+
+  <!-- 
+  A- Alta de dueño / supervisor
+● Se cargarán: nombre, apellido, DNI, CUIL, foto y perfil (dueño o supervisor).
+● La foto se tomará del celular.
+● Brindar la posibilidad de contar con un lector de código QR para el DNI, que cargará la información
+disponible (sólo aplicable a aquellos documentos que lo posean).
+● Esta acción la podrá realizar el supervisor o el dueño.
+  -->
+  <ion-item>
+    <ion-input label="Nombre" placeholder="Carlos"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-input label="Apellido" placeholder="Seveindio"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-input label="DNI" placeholder="XX-XXX-XXX"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-input label="CUIL" placeholder="XX-XX-XXX-XXX-X"></ion-input>
+  </ion-item>
+
+  <ion-item>
+    <ion-radio-group value="supervisor">
+      <ion-radio value="supervisor">supervisor</ion-radio>
+      <ion-radio value="dueño">dueño</ion-radio>
+    </ion-radio-group>
+  </ion-item>
+
+  <ion-button shape="round" expand="full" (click) = "takePic()">Foto</ion-button>
+
+  <ion-button shape="round" expand="full">Cargar usuario</ion-button>
+</ion-content>
