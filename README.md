@@ -1,6 +1,6 @@
 # Equipo Los Yourdonistas
 
-![1717856122324](image/README/1717856122324.png)
+![yourdonistas-logo](images/README/yourdonistas-logo.png)
 
 # ¿Qué es?
 
@@ -15,3 +15,17 @@ Una aplicación móvil que permite gestionar y administrar tanto los pedidos as�
 - Marcos Laporte [Alfa]
 - Jaco Tomás Luna Pierini [Beta]
 - Yober Marlow Vasquez Panduro [Gama]
+
+# Tareas
+
+| # | Tarea                  | Responsable | Estado     |
+| - | ---------------------- | ----------- | ---------- |
+| - | Generacion de proyecto | Equipo      | Terminado  |
+| - | Iconos + Splash        | Marcos      | En trabajo |
+| - | Login                  | Marcos      | Pendiente  |
+| - | Registro               | Marcos      | Pendiente  |
+| A | Alta dueño/supervisor | Jaco        | Pendiente  |
+| B | Alta empleados         | Marcos      | Pendiente  |
+| C | Alta cliente           | Yober       | Pendiente  |
+| D | Alta mesa              | Jaco        | Pendiente  |
+| E | Alta producto          | Yober       | Pendiente  |
