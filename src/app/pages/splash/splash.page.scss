@@ -32,6 +32,7 @@
   .img-container {
     img {
       width: 75%;
+      max-width: 50vh;
       -webkit-animation: slit-out-vertical 1s ease-out 3s 1 normal forwards;
       animation: slit-out-vertical 1s ease-out 3s 1 normal forwards;
     }
