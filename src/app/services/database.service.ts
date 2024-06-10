@@ -8,7 +8,6 @@ export enum Colecciones {
   Mesas = 'mesas',
   Productos = 'productos',
   Encuestas = 'encuestas',
-
 }
 @Injectable({
   providedIn: 'root'
