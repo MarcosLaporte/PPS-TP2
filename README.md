@@ -1,6 +1,6 @@
 # Equipo Los Yourdonistas
 
-![1717856122324](image/README/1717856122324.png)
+![yourdonistas-logo](images/README/yourdonistas-logo.png)
 
 # ¿Qué es?
 
