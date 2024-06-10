@@ -35,3 +35,14 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+@import './theme/variables.scss';
+
+.container {
+  height: 100%;
+  width: 100%;
+  margin-top: 56px; // Toolbar
+}
+
+.background {
+  background-color: $slate-gray;
+}
