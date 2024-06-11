@@ -7,6 +7,7 @@ import { StorageService } from 'src/app/services/storage.service';
 import { MySwal } from 'src/app/utils/alerts';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { Producto } from 'src/app/utils/clases/producto';
+import { QrCodeModule } from 'ng-qrcode';
 
 @Component({
   selector: 'app-alta-producto',
@@ -14,11 +15,13 @@ import { Producto } from 'src/app/utils/clases/producto';
   styleUrls: ['./alta-producto.page.scss'],
   standalone: true,
   imports: [IonButton, IonLabel, IonItem, IonContent,
-    IonHeader, IonTitle, IonToolbar,CommonModule,IonInput,ReactiveFormsModule]
+    IonHeader, IonTitle, IonToolbar,CommonModule,IonInput,ReactiveFormsModule,QrCodeModule]
 })
-export class AltaProductoPage {
+export class AltaProductoPage implements OnInit {
   frmProducto: FormGroup;
-  pictures: File[] = []; // Array to hold the three photos
+  pictures: File[] = [];
+  pictureUrls: string[] = []; // URLs to display the pictures
+  qrData: string = '';
 
   constructor(
     private storageService: StorageService,
@@ -34,11 +37,14 @@ export class AltaProductoPage {
     });
   }
 
+  ngOnInit() {}
+
   readonly supportedImageFormats = ['jpg', 'jpeg', 'png'];
 
   async takePics() {
     try {
       const images = [];
+      const urls = [];
       for (let i = 0; i < 3; i++) {
         const image = await Camera.getPhoto({
           quality: 90,
@@ -50,7 +56,7 @@ export class AltaProductoPage {
         }
         const imgFile = await this.getFileFromUri(image.webPath!, image.format);
         images.push(imgFile);
-        // Display prompt for each image
+        urls.push(image.webPath!);
         await MySwal.fire({
           text: `¿Desea subir la foto ${i + 1}?`,
           imageUrl: image.webPath,
@@ -73,6 +79,7 @@ export class AltaProductoPage {
         });
       }
       this.pictures = images;
+      this.pictureUrls = urls;
     } catch (er: any) {
       if (er.message.includes('cancelled')) {
         // ToastInfo.fire('Operación cancelada.');
@@ -93,7 +100,7 @@ export class AltaProductoPage {
     const nombreFotoBase = `${this.frmProducto.value.nombre}`;
     const urls = [];
     for (let i = 0; i < images.length; i++) {
-      const url = await this.storageService.subirArchivo(images[i], `${Colecciones.Productos}/producto-${nombreFotoBase}-${i + 1}`);
+      const url = await this.storageService.subirArchivo(images[i], `${Colecciones.Productos}/'producto'-${nombreFotoBase}-${i + 1}`);
       urls.push(url);
     }
     return urls;
@@ -103,9 +110,7 @@ export class AltaProductoPage {
     try {
       const fotosUrls = await this.uploadPictures(this.pictures);
       if (fotosUrls.length > 0) {
-        // Combine minutes and seconds into a single time value in seconds
         const tiempo = (this.frmProducto.value.minutos * 60) + this.frmProducto.value.segundos;
-
         const producto = new Producto(
           '',
           this.frmProducto.value.nombre,
@@ -116,10 +121,24 @@ export class AltaProductoPage {
           ''
         );
         await this.data.subirDoc(Colecciones.Productos, producto);
+
+        // Generate QR Code after uploading pictures
+        this.generateQRData(fotosUrls);
+
         MySwal.fire('Producto agregado con éxito');
       }
     } catch (error) {
       console.log("error", error);
     }
+  }
+
+  private generateQRData(imageUrls: string[]) {
+    // Concatenate the product information along with the photo URLs
+    const productoInfo = `Nombre: ${this.frmProducto.value.nombre}\n` +
+                         `Descripción: ${this.frmProducto.value.descripcion}\n` +
+                         `Tiempo: ${this.frmProducto.value.minutos}:${this.frmProducto.value.segundos}\n` +
+                         `Precio: ${this.frmProducto.value.precio}\n` +
+                         `Fotos: ${imageUrls.join(', ')}`;
+    this.qrData = productoInfo;
   }
 }
