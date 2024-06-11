@@ -19,30 +19,48 @@
 disponible (sólo aplicable a aquellos documentos que lo posean).
 ● Esta acción la podrá realizar el supervisor o el dueño.
   -->
-  <ion-item>
-    <ion-input label="Nombre" placeholder="Carlos"></ion-input>
-  </ion-item>
+  <form [formGroup]="frmSupervisor">
+    <ion-item>
+      <ion-input label="Nombre" placeholder="Carlos" formControlName="nombre"></ion-input>
+    </ion-item>
 
-  <ion-item>
-    <ion-input label="Apellido" placeholder="Seveindio"></ion-input>
-  </ion-item>
+    <ion-item>
+      <ion-input label="Apellido" placeholder="Seveindio" formControlName="apellido"></ion-input>
+    </ion-item>
 
-  <ion-item>
-    <ion-input label="DNI" placeholder="XX-XXX-XXX"></ion-input>
-  </ion-item>
+    <ion-item>
+      <ion-input type="email" label="correo" placeholder="Carlos@gmail.com" formControlName = 'email'></ion-input>
+    </ion-item>
 
-  <ion-item>
-    <ion-input label="CUIL" placeholder="XX-XX-XXX-XXX-X"></ion-input>
-  </ion-item>
+    <ion-item>
+      <ion-input type="number" label="DNI" placeholder="XX-XXX-XXX" formControlName = 'DNI'></ion-input>
+    </ion-item>
 
-  <ion-item>
-    <ion-radio-group value="supervisor">
-      <ion-radio value="supervisor">supervisor</ion-radio>
-      <ion-radio value="dueño">dueño</ion-radio>
-    </ion-radio-group>
-  </ion-item>
+    <ion-item>
+      <ion-input
+        type="number"
+        label="CUIL"
+        placeholder="XX-XX-XXX-XXX-X"
+        formControlName = 'CUIL'
+      ></ion-input>
+    </ion-item>
 
-  <ion-button shape="round" expand="full" (click) = "takePic()">Foto</ion-button>
+    <ion-item>
+      <ion-radio-group [value]="supervisorDueno.valueOf">
+        <ion-radio value="supervisor">supervisor</ion-radio>
+        <ion-radio value="dueño">dueño</ion-radio>
+      </ion-radio-group>
+    </ion-item>
 
-  <ion-button shape="round" expand="full">Cargar usuario</ion-button>
+    <ion-button shape="round" expand="full" (click)="takePic()"
+      >Foto</ion-button
+    >
+
+    <ion-button shape="round" expand="full" (click)="subirSupervisor()"
+      >Cargar usuario</ion-button
+    >
+    <ion-button shape="round" expand="full" (click)="fillFields()"
+      >llenar campos</ion-button
+    >
+  </form>
 </ion-content>
