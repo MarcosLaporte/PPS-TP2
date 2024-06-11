@@ -5,7 +5,7 @@ import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, 
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonFab, IonIcon, IonFabButton, IonFabList, IonGrid, IonRow, IonCol, IonLabel, IonItem, IonButton, IonImg, IonRadioGroup, IonRadio } from '@ionic/angular/standalone';
 import { Cliente } from 'src/app/utils/clases/usuarios/cliente';
 import { AuthService } from 'src/app/services/auth.service';
-import { Colecciones, DatabaseService } from 'src/app/services/database.service';
+import { Colecciones } from 'src/app/services/database.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { ScannerService } from 'src/app/services/scanner.service';
 import { Camera, CameraResultType } from '@capacitor/camera';
