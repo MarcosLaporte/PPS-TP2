@@ -23,8 +23,6 @@ const datePipe = new DatePipe('en-US', '-0300');
     IonIcon, IonFab, IonInput, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule,ReactiveFormsModule]
 })
 export class AltaClientePage implements OnInit {
-  @Input() newPicPrefix!: string;
-
   frmCliente: FormGroup;
   tipoCliente: TipoCliente = 'registrado';
   picture!: File;
@@ -88,9 +86,9 @@ export class AltaClientePage implements OnInit {
       });
     } catch (er: any) {
       if (er.message === 'User cancelled photos app') {
-        // ToastInfo.fire('Operación cancelada.');
+        //  ToastInfo.fire('Operación cancelada.');
       } else {
-        // await MySwal.fire('Algo salió mal.', er.message, 'error');
+         await MySwal.fire('Algo salió mal.', er.message, 'error');
         throw er;
       }
     }
@@ -146,8 +144,7 @@ export class AltaClientePage implements OnInit {
   }
 
   private async uploadPicture(image: File): Promise<string> {
-    const dateStr = new Date().toISOString().replace(/[:.]/g, '-');
-    const nombreFoto = `${this.frmCliente.value.nombre}-${this.frmCliente.value.apellido}-${dateStr}`;
-    return this.storageService.subirArchivo(image, `${Colecciones.Usuarios}/${this.newPicPrefix}-${nombreFoto}`);
+    const nombreFoto = `${this.frmCliente.value.DNI}`;
+    return this.storageService.subirArchivo(image, `${Colecciones.Usuarios}/${nombreFoto}`);
   }
 }
