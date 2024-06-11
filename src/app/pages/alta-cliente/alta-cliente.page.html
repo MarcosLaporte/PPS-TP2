@@ -1,0 +1,33 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Alta Cliente</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <form [formGroup]="frmCliente">
+    <ion-item>
+      <ion-input label="Nombre" placeholder="Nombre" formControlName="nombre"></ion-input>
+    </ion-item>
+
+    <ion-item *ngIf="tipoCliente === 'registrado'">
+      <ion-input label="Apellido" placeholder="Apellido" formControlName="apellido"></ion-input>
+    </ion-item>
+
+    <ion-item *ngIf="tipoCliente === 'registrado'">
+      <ion-input type="email" label="Correo" placeholder="email@example.com" formControlName="email"></ion-input>
+    </ion-item>
+
+    <ion-item *ngIf="tipoCliente === 'registrado'">
+      <ion-input type="number" label="DNI" placeholder="12345678" formControlName="DNI"></ion-input>
+    </ion-item>
+
+    <ion-item>
+
+    </ion-item>
+
+    <ion-button shape="round" expand="full" (click)="takePic()">Tomar Foto</ion-button>
+    <ion-button shape="round" expand="full" (click)="subirCliente()">Cargar Cliente</ion-button>
+    <ion-button shape="round" expand="full" (click)="fillFields()">Llenar Campos</ion-button>
+  </form>
+</ion-content>
