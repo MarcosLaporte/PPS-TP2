@@ -1,6 +1,17 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import {
+  IonContent,
+  IonHeader,
+  IonTitle,
+  IonToolbar,
+  IonItem,
+  IonRadioGroup,
+  IonButton,
+  IonSelectOption,
+  IonInput
+} from '@ionic/angular/standalone';
+import {
   FormBuilder,
   FormControl,
   FormGroup,
@@ -8,122 +19,70 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import {
-  IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-  IonInput,
-  IonButton,
-  IonItem,
-  IonRadioGroup,
-  IonRadio,
-} from '@ionic/angular/standalone';
-import { Camera, CameraResultType } from '@capacitor/camera';
-import { MySwal, ToastError, ToastSuccess } from 'src/app/utils/alerts';
-import { Timestamp } from 'firebase/firestore';
 import { AuthService } from 'src/app/services/auth.service';
 import {
   Colecciones,
   DatabaseService,
 } from 'src/app/services/database.service';
 import { StorageService } from 'src/app/services/storage.service';
-import { Jefe, TipoJefe } from 'src/app/utils/clases/usuarios/jefe';
+import { Camera, CameraResultType } from '@capacitor/camera';
+import { MySwal, ToastError, ToastSuccess } from 'src/app/utils/alerts';
 import { Foto } from 'src/app/interfaces/foto';
 import { Prefijos } from 'src/app/enums/prefijos';
+import { Mesa, TipoMesa } from 'src/app/utils/clases/mesa';
 
 const datePipe = new DatePipe('en-US', '-0300');
 
 @Component({
-  selector: 'app-alta-supervisor',
-  templateUrl: './alta-supervisor.page.html',
-  styleUrls: ['./alta-supervisor.page.scss'],
+  selector: 'app-alta-mesa',
+  templateUrl: './alta-mesa.page.html',
+  styleUrls: ['./alta-mesa.page.scss'],
   standalone: true,
   imports: [
-    IonRadio,
+    IonButton,
     IonRadioGroup,
     IonItem,
-    IonButton,
-    IonInput,
     IonContent,
     IonHeader,
     IonTitle,
     IonToolbar,
+    IonSelectOption,
+    IonInput,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
   ],
 })
-export class AltaSupervisorPage implements OnInit {
-  // private modalCtrl: ModalController,
-  // private spinner: NgxSpinnerService,
-  // public navCtrl: NavController
+export class AltaMesaPage implements OnInit {
+
+  frmMesa: FormGroup;
+  numero = new FormControl('', [Validators.required]);
+  cantComensales = new FormControl('', [Validators.required]);
+  tipoMesaControl = new FormControl('', [Validators.required]);
+  fotoUrl = new FormControl('', [Validators.required]);
 
   picture!: File;
-  supervisorDueno: TipoJefe = 'supervisor';
+  QRs: string[] = [];
 
-  frmSupervisor: FormGroup;
-  nombre = new FormControl('', [Validators.required]);
-  apellido = new FormControl('', [Validators.required]);
-  DNI = new FormControl('',[Validators.required]);
-  CUIL = new FormControl('', [Validators.required]);
-  email = new FormControl('', [Validators.required, Validators.email]);
-
-  nombreErrorMessage: string = '';
-  apellidoErrorMessage: string = '';
-  DNIErrorMessage: string = '';
-  emailErrorMessage: string = '';
-  CUILErrorMessage: string = '';
-
+  tipoMesa: TipoMesa[] = ['VIP', 'discapacitados', 'estandar'];
+  
   constructor(
     private db: DatabaseService,
     private storage: StorageService,
     private auth: AuthService,
     private formBuilder: FormBuilder
   ) {
-    this.frmSupervisor = this.formBuilder.group({
-      nombre: this.nombre,
-      apellido: this.apellido,
-      DNI: this.DNI,
-      CUIL: this.CUIL,
-      email: this.email,
+    this.frmMesa = this.formBuilder.group({
+      numero: this.numero,
+      cantComensales: this.cantComensales,
+      tipoMesaControl: this.tipoMesaControl,
+      fotoUrl: this.fotoUrl,
     });
   }
 
   readonly supportedImageFormats = ['jpg', 'jpeg', 'png'];
 
-  // private readonly timestampParse = async (pic: FotoDePerfil) => {
-  //   // pic.date = pic.date instanceof Timestamp ? pic.date.toDate() : pic.date;
-  //   return pic;
-  // };
-
   ngOnInit() {}
-
-  fillFields() {
-    this.nombre.setValue('nombre');
-    this.apellido.setValue('apellido');
-    this.DNI.setValue('12345678');
-    this.CUIL.setValue('12123456781');
-    this.email.setValue('email@gmail.com');
-  }
-
-  updateErrorMessage(frmControl: FormControl) {
-    if (frmControl.hasError('required')) {
-      if (frmControl == this.nombre) {
-        this.nombreErrorMessage = 'este campo es obligatorio';
-      } else if (frmControl == this.apellido) {
-        this.apellidoErrorMessage = 'este campo es obligatorio';
-      } else if (frmControl == this.DNI) {
-        this.DNIErrorMessage = 'este campo es obligatorio';
-      } else if (frmControl == this.CUIL) {
-        this.CUILErrorMessage = 'este campo es obligatorio';
-      } else if (frmControl == this.email) {
-        this.emailErrorMessage = 'este campo es obligatorio';
-      }
-    } else if (frmControl.hasError('email')) {
-      this.emailErrorMessage = 'el formato es incorrecto';
-    }
-  }
 
   async takePic() {
     try {
@@ -188,21 +147,21 @@ export class AltaSupervisorPage implements OnInit {
     //   this.auth.UsuarioEnSesion!.apellido
     // }-${dateStr}`;
 
-    const nombreFoto: string = `${this.nombre.value}-${this.apellido.value}-${dateStr}`;
+    const nombreFoto: string = `Mesa-${this.numero.value}-${dateStr}`;
 
     try {
       const url = await this.storage.subirArchivo(
         image,
-        `${Colecciones.Usuarios}/${Prefijos.supervisor}-${nombreFoto}`
+        `${Colecciones.Mesas}/${Prefijos.mesa}-${nombreFoto}`
       );
-      const fotoDePerfil : Foto= {
+      const fotoDeMesa: Foto = {
         id: '',
         name: nombreFoto,
         date: datetime,
         url: url,
       };
-      console.log(fotoDePerfil);
-      await this.db.subirDoc(Colecciones.Usuarios, fotoDePerfil, true);
+      console.log(fotoDeMesa);
+      await this.db.subirDoc(Colecciones.Mesas, fotoDeMesa, true);
       return url;
       // this.spinner.hide();
       // ToastSuccess.fire('Imagen subida con éxito!');
@@ -213,28 +172,29 @@ export class AltaSupervisorPage implements OnInit {
     }
   }
 
-  subirSupervisor() {
+  subirMesa() {
     let foto;
     this.uploadPicture(this.picture).then((url) => {
       foto = url;
     });
     if (foto) {
-      let supervisorDueno = new Jefe(
-        '',
-        this.nombre.value!,
-        this.apellido.value!,
-        Number(this.DNI.value)!,
-        Number(this.CUIL.value)!,
-        this.email.value!,
+      let supervisorDueno = new Mesa(
+        Number(this.numero.value),
+        Number(this.cantComensales.value),
+        <TipoMesa>this.tipoMesaControl.value!,
         foto,
-        this.supervisorDueno
+        this.QRs
       );
 
-      this.db
-        .subirDoc(Colecciones.Usuarios, supervisorDueno, true)
-        .then((r) => {
-          console.log('id' + r);
-        });
+      this.db.subirDoc(Colecciones.Mesas, supervisorDueno, true).then((r) => {
+        console.log('id' + r);
+      });
     }
+  }
+
+  fillFields() {
+    this.numero.setValue('1');
+    this.cantComensales.setValue('1');
+    this.tipoMesaControl.setValue('VIP');
   }
 }

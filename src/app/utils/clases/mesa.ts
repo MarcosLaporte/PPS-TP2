@@ -3,9 +3,9 @@ export class Mesa {
   cantComensales: number;
   tipo: TipoMesa;
   fotoUrl: string | undefined;
-  codigoQr: string;
+  codigoQr: string[];
 
-  constructor(nroMesa: number, cantComensales: number, tipo: TipoMesa, fotoUrl: string | undefined, codigoQr: string) {
+  constructor(nroMesa: number, cantComensales: number, tipo: TipoMesa, fotoUrl: string | undefined, codigoQr: string[]) {
     this.nroMesa = nroMesa;
     this.cantComensales = cantComensales;
     this.tipo = tipo;

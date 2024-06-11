@@ -13,5 +13,9 @@ export const routes: Routes = [
     path: 'alta-supervisor',
     loadComponent: () => import('./pages/alta-supervisor/alta-supervisor.page').then( m => m.AltaSupervisorPage)
   },
+  {
+    path: 'alta-mesa',
+    loadComponent: () => import('./pages/alta-mesa/alta-mesa.page').then( m => m.AltaMesaPage)
+  },
 
 ];
