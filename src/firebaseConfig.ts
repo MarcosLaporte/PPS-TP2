@@ -4,4 +4,5 @@ export const firebaseConfig = {
   projectId: "pps-sp-comanda",
   storageBucket: "pps-sp-comanda.appspot.com",
   messagingSenderId: "505023307587",
-  appId: "1:505023307587:web:9eae4d53468ed1ea7359f6"}
+  appId: "1:505023307587:web:9eae4d53468ed1ea7359f6"
+}
