@@ -17,7 +17,7 @@ import { QrCodeModule } from 'ng-qrcode';
   imports: [IonButton, IonLabel, IonItem, IonContent,
     IonHeader, IonTitle, IonToolbar,CommonModule,IonInput,ReactiveFormsModule,QrCodeModule]
 })
-export class AltaProductoPage implements OnInit {
+export class AltaProductoPage {
   frmProducto: FormGroup;
   pictures: File[] = [];
   pictureUrls: string[] = []; // URLs to display the pictures
@@ -36,8 +36,6 @@ export class AltaProductoPage implements OnInit {
       precio: [0, [Validators.required, Validators.min(0.01)]], // Ensure price is positive
     });
   }
-
-  ngOnInit() {}
 
   readonly supportedImageFormats = ['jpg', 'jpeg', 'png'];
 

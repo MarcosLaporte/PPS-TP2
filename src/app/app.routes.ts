@@ -27,6 +27,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/alta-mesa/alta-mesa.page').then( m => m.AltaMesaPage)
   },
   {
+    path: 'alta-empleado',
+    loadComponent: () => import('./pages/alta-empleado/alta-empleado.page').then( m => m.AltaEmpleadoPage)
+  },
+  {
     path: 'home',
     loadComponent: () => import('./pages/home/home.page').then( m => m.HomePage)
   },
