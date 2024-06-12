@@ -1,7 +1,7 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonFab, IonFabButton, IonFabList, IonIcon, IonCard, IonCardContent, IonButton, IonItem } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonFab, IonInput, IonInputPasswordToggle, IonFabButton, IonFabList, IonIcon, IonCard, IonCardContent, IonButton, IonItem, IonText } from '@ionic/angular/standalone';
 import { NavController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
 import { ToastError, ToastInfo, ToastQuestion, ToastSuccess, ToastWarning } from 'src/app/utils/alerts';
@@ -12,8 +12,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   standalone: true,
-  imports: [IonItem, IonButton, IonCardContent, IonCard, IonIcon, IonFabList, IonFabButton, IonFab, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, ReactiveFormsModule],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [IonText, IonItem, IonButton, IonInput, IonInputPasswordToggle, IonCardContent, IonCard, IonIcon, IonFabList, IonFabButton, IonFab, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, ReactiveFormsModule],
 })
 export class LoginPage implements OnInit {
   form: FormGroup;
