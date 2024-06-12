@@ -28,9 +28,9 @@ import {
   DatabaseService,
 } from 'src/app/services/database.service';
 import { StorageService } from 'src/app/services/storage.service';
-import { Jefe, TipoJefe } from 'src/app/utils/clases/usuarios/jefe';
-import { Foto } from 'src/app/interfaces/foto';
-import { Prefijos } from 'src/app/enums/prefijos';
+import { Jefe, TipoJefe } from 'src/app/utils/classes/usuarios/jefe';
+import { Foto } from 'src/app/utils/interfaces/foto';
+import { Prefijos } from 'src/app/utils/enums/prefijos';
 
 const datePipe = new DatePipe('en-US', '-0300');
 

@@ -7,9 +7,9 @@ import { Colecciones, DatabaseService, } from 'src/app/services/database.service
 import { StorageService } from 'src/app/services/storage.service';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { MySwal, ToastError, ToastSuccess } from 'src/app/utils/alerts';
-import { Foto } from 'src/app/interfaces/foto';
-import { Prefijos } from 'src/app/enums/prefijos';
-import { Mesa, TipoMesa } from 'src/app/utils/clases/mesa';
+import { Foto } from 'src/app/utils/interfaces/foto';
+import { Prefijos } from 'src/app/utils/enums/prefijos';
+import { Mesa, TipoMesa } from 'src/app/utils/classes/mesa';
 
 const datePipe = new DatePipe('en-US', '-0300');
 
