@@ -5,7 +5,7 @@ export class Empleado extends Persona {
   cuil: number;
 
   constructor(id: string, nombre: string, apellido: string, dni: number, cuil: number, correo: string, fotoUrl: string, tipo: TipoEmpleado) {
-    super(id, 'empleado', nombre, apellido, dni, correo, fotoUrl);
+    super(id, 'empleado', nombre, apellido, dni, fotoUrl, correo);
     this.tipo = tipo;
     this.cuil = cuil;
   }

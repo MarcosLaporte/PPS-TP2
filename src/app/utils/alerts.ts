@@ -11,7 +11,6 @@ export const Toast = Swal.mixin({
   showConfirmButton: false,
   timer: 2500,
   timerProgressBar: true,
-
 });
 
 export const ToastSuccess = Toast.mixin({

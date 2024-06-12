@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from '@angular/fire/auth';
 import { BehaviorSubject } from 'rxjs';
 import { Colecciones, DatabaseService } from './database.service';
-import { Persona } from '../utils/clases/usuarios/persona';
-import { ErrorCodes, Exception } from '../utils/clases/exception';
+import { Persona } from '../utils/classes/usuarios/persona';
+import { ErrorCodes, Exception } from '../utils/classes/exception';
 
 @Injectable({
   providedIn: 'root'
