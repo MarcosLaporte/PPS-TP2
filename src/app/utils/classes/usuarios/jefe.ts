@@ -1,4 +1,4 @@
-import { Persona } from "./persona";
+import { Persona } from './persona';
 
 export class Jefe extends Persona {
   perfil: TipoJefe;
@@ -9,6 +9,5 @@ export class Jefe extends Persona {
     this.perfil = perfil;
     this.cuil = cuil;
   }
-
 }
 export type TipoJefe = 'dueño' | 'supervisor';

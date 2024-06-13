@@ -1,0 +1,42 @@
+<div class="container background-pri">
+  <ion-card class="ion-padding background-sec">
+    <ion-card-content class="ion-no-padding">
+      <form [formGroup]="form" (ngSubmit)="ingresar()">
+        <div class="img" style="display: flex; justify-content: center;">
+          <img src="../../../assets/login.png" width="60%">
+        </div>
+        <div class="inputs">
+          <div class="correo">
+            <ion-input label="Correo electrónico" [clearInput]="true" label-placement="stacked"
+              placeholder="tucorreo@ejemplo.com" type="email" errorText="Correo inválido" formControlName="correo"
+              name="email" required ngDefaultControl></ion-input>
+            <div class="errores" *ngIf="form.controls['correo'].dirty && form.controls['correo'].errors">
+              <small *ngIf="form.controls['correo'].errors['required']">Debe rellenar este campo.</small>
+              <small *ngIf="form.controls['correo'].errors['pattern']">No es un correo electrónico.</small>
+            </div>
+          </div>
+          <div class="contra">
+            <ion-input label="Contraseña" [clearOnEdit]="false" label-placement="stacked" placeholder="Los-Yourdonistas"
+              helperText="Entre 6 y 20 caracteres." type="password" formControlName="contra" name="password" required
+              ngDefaultControl>
+              <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+            </ion-input>
+            <div class="errores" *ngIf="form.controls['contra'].dirty && form.controls['contra'].errors">
+              <small *ngIf="form.controls['contra'].errors['required']">Debe rellenar este campo.</small>
+            </div>
+          </div>
+        </div>
+
+        <ion-button expand="block" [disabled]="form.invalid" color="primary" (click)="ingresar()">
+          Ingresar
+        </ion-button>
+      </form>
+
+      <div class="ion-margin-top">
+        <ion-text>No está registrado? 
+          <a (click)="navCtrl.navigateRoot('registro')">Crear cuenta</a>
+        </ion-text>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</div>

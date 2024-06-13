@@ -1,0 +1,22 @@
+* {
+  font-size: 1.15rem;
+  color: #1f1f1f;
+
+  a {
+    color: #0054e9;
+    text-decoration: underline;
+  }
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  ion-card {
+    .inputs .errores {
+      color: red;
+    }
+  }
+}
