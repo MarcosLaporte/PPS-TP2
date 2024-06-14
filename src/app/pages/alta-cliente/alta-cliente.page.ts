@@ -1,9 +1,9 @@
-import { TipoCliente } from './../../utils/clases/usuarios/cliente';
+import { TipoCliente } from './../../utils/classes/usuarios/cliente';
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonFab, IonIcon, IonFabButton, IonFabList, IonGrid, IonRow, IonCol, IonLabel, IonItem, IonButton, IonImg, IonRadioGroup, IonRadio } from '@ionic/angular/standalone';
-import { Cliente } from 'src/app/utils/clases/usuarios/cliente';
+import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
 import { AuthService } from 'src/app/services/auth.service';
 import { Colecciones } from 'src/app/services/database.service';
 import { StorageService } from 'src/app/services/storage.service';

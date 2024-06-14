@@ -6,11 +6,11 @@ import { AuthService } from 'src/app/services/auth.service';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonFab, IonFabButton, IonFabList, IonIcon, IonCard, IonCardContent, IonButton, IonItem, IonInputPasswordToggle, IonCardHeader, IonCardTitle, IonRadioGroup, IonRadio } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { DatabaseService } from 'src/app/services/database.service';
-import { ErrorCodes, Exception } from 'src/app/utils/clases/exception';
+import { ErrorCodes, Exception } from 'src/app/utils/classes/exception';
 import { ToastError, ToastSuccess } from 'src/app/utils/alerts';
 import { addIcons } from 'ionicons';
 import { search } from 'ionicons/icons';
-import { Empleado, TipoEmpleado } from 'src/app/utils/clases/usuarios/empleado';
+import { Empleado, TipoEmpleado } from 'src/app/utils/classes/usuarios/empleado';
 
 @Component({
   selector: 'app-alta-empleado',

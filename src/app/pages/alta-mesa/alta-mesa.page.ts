@@ -3,13 +3,13 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonRadioGroup, IonButton, IonSelectOption, IonInput } from '@ionic/angular/standalone';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators, } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
-import { Colecciones, DatabaseService, } from 'src/app/services/database.service';
+import { Colecciones, Prefijos, DatabaseService, } from 'src/app/services/database.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { MySwal, ToastError, ToastSuccess } from 'src/app/utils/alerts';
-import { Foto } from 'src/app/interfaces/foto';
-import { Prefijos } from 'src/app/enums/prefijos';
-import { Mesa, TipoMesa } from 'src/app/utils/clases/mesa';
+import { Foto } from 'src/app/utils/interfaces/foto';
+import { Mesa, TipoMesa } from 'src/app/utils/classes/mesa';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 const datePipe = new DatePipe('en-US', '-0300');
 
@@ -37,7 +37,8 @@ export class AltaMesaPage {
     private db: DatabaseService,
     private storage: StorageService,
     private auth: AuthService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private spinner: NgxSpinnerService
   ) {
     this.frmMesa = this.formBuilder.group({
       numero: this.numero,
@@ -117,7 +118,7 @@ export class AltaMesaPage {
     try {
       const url = await this.storage.subirArchivo(
         image,
-        `${Colecciones.Mesas}/${Prefijos.mesa}-${nombreFoto}`
+        `${Colecciones.Mesas}/${Prefijos.Mesa}-${nombreFoto}`
       );
       const fotoDeMesa: Foto = {
         id: '',
@@ -128,11 +129,11 @@ export class AltaMesaPage {
       console.log(fotoDeMesa);
       await this.db.subirDoc(Colecciones.Mesas, fotoDeMesa, true);
       return url;
-      // this.spinner.hide();
-      // ToastSuccess.fire('Imagen subida con éxito!');
+      this.spinner.hide();
+      ToastSuccess.fire('Imagen subida con éxito!');
     } catch (error: any) {
-      // this.spinner.hide();
-      // ToastError.fire('Hubo un problema al subir la imagen.');
+      this.spinner.hide();
+      ToastError.fire('Hubo un problema al subir la imagen.');
       return null;
     }
   }

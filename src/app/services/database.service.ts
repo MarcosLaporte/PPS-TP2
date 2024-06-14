@@ -1,13 +1,22 @@
 import { Injectable } from '@angular/core';
 import { Firestore, collection, doc, getDocs, setDoc, deleteDoc, updateDoc, onSnapshot, query, QuerySnapshot, orderBy, Query, limit, DocumentSnapshot, getDoc, FieldPath } from '@angular/fire/firestore';
-import { Persona } from '../utils/clases/usuarios/persona';
-import { ErrorCodes, Exception } from '../utils/clases/exception';
+import { Persona } from '../utils/classes/usuarios/persona';
+import { ErrorCodes, Exception } from '../utils/classes/exception';
 
 export enum Colecciones {
   Usuarios = 'users',
   Mesas = 'mesas',
   Productos = 'productos',
   Encuestas = 'encuestas',
+}
+//ahora si marcos, gil
+export enum Prefijos {
+  Usuario = 'usuario',
+  Mesa = 'mesa',
+  Producto = 'producto',
+  Encuesta = 'encuesta',
+  Supervisor = 'supervisor',
+  duenio = 'dueño'
 }
 @Injectable({
   providedIn: 'root'

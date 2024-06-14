@@ -17,7 +17,7 @@ export class SplashPage implements OnInit {
 
   ngOnInit() {
     setTimeout(() => {
-      this.router.navigateByUrl('alta-mesa');
+      this.router.navigateByUrl('alta-supervisor');
     }, 5500);
   }
 
