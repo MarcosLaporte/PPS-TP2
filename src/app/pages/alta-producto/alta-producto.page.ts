@@ -6,7 +6,7 @@ import { Colecciones, DatabaseService } from 'src/app/services/database.service'
 import { StorageService } from 'src/app/services/storage.service';
 import { MySwal } from 'src/app/utils/alerts';
 import { Camera, CameraResultType } from '@capacitor/camera';
-import { Producto } from 'src/app/utils/clases/producto';
+import { Producto } from 'src/app/utils/classes/producto';
 import { QrCodeModule } from 'ng-qrcode';
 
 @Component({
