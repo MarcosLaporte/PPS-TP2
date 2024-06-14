@@ -1,62 +1,141 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>alta mesa</ion-title>
-  </ion-toolbar>
-</ion-header>
+<div class="container background-pri">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Alta de Mesa</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <form [formGroup]="frmMesa" (ngSubmit)="subirMesa()">
+        <div class="inputs">
+          <div id="nroMesa" class="nroMesa">
+            <ion-input
+              id="input-nroMesa"
+              label="Nro de mesa"
+              label-placement="fixed"
+              type="number"
+              formControlName="nroMesa"
+              name="nroMesa"
+              required
+              ngDefaultControl
+            >
+              <ion-button
+                id="btn-nroMesa"
+                fill="clear"
+                slot="end"
+                (click)="manejarNroMesa();"
+                aria-label="Buscar/Cambiar"
+                [disabled]="frmMesa.controls['nroMesa'].errors"
+              >
+                <ion-icon
+                  slot="icon-only"
+                  name="search"
+                  aria-hidden="true"
+                ></ion-icon>
+              </ion-button>
+            </ion-input>
 
-<ion-content [fullscreen]="true">
-  <form [formGroup]="frmMesa">
-    <ion-item>
-      <ion-input
-        type="number"
-        label="Numero"
-        placeholder="10"
-        formControlName="numero"
-      ></ion-input>
-    </ion-item>
+            @if (frmMesa.controls['nroMesa'].dirty &&
+            frmMesa.controls['nroMesa'].errors) {
+            <div class="errores">
+              @if (frmMesa.controls['nroMesa'].errors['required']) {
+              <small>Debe rellenar este campo.</small>
+              }
+            </div>
+            }
+          </div>
+          <div id="cantComensales" class="deshabilitado">
+            <ion-input
+              id="input-cantComensales"
+              label="Comensales"
+              label-placement="fixed"
+              type="number"
+              formControlName="cantComensales"
+              name="cantComensales"
+              required
+              ngDefaultControl
+            >
+            </ion-input>
 
-    <ion-item>
-      <ion-input
-        type="number"
-        label="Cantidad de comensales"
-        placeholder="4"
-        formControlName="cantComensales"
-      ></ion-input>
-    </ion-item>
+            @if (frmMesa.controls['cantComensales'].dirty &&
+            frmMesa.controls['cantComensales'].errors) {
+            <div class="errores">
+              @if (frmMesa.controls['cantComensales'].errors['required']) {
+              <small>Debe rellenar este campo.</small>
+              }
+            </div>
+            }
+          </div>
 
-    <ion-item>
-      <ion-input
-        label="Tipo de mesa"
-        placeholder=""
-        formControlName="tipoMesaControl"
-      ></ion-input>
-    </ion-item>
+          <div id="tipoMesa" class="deshabilitado">
+            <ion-radio-group
+              class="rdb-tipoMesa"
+              (ionChange)="selecTipo($event)"
+              name="tipo"
+              required
+            >
+              <ion-item>
+                <ion-radio alignment="center" value="estandar">
+                  <div>
+                    <label>Estándar</label>
+                    <img src="../../../assets/mesas/madre.png" width="auto" />
+                  </div>
+                </ion-radio>
+              </ion-item>
+              <ion-item>
+                <ion-radio alignment="center" value="discapacitado">
+                  <div>
+                    <label>Discapacitados</label>
+                    <img
+                      src="../../../assets/mesas/discapacitado.png"
+                      width="auto"
+                    />
+                  </div>
+                </ion-radio>
+              </ion-item>
+              <ion-item>
+                <ion-radio alignment="center" value="vip">
+                  <div>
+                    <label>V.I.P</label>
+                    <img
+                      src="../../../assets/mesas/persona-vip.png"
+                      width="auto"
+                    />
+                  </div>
+                </ion-radio>
+              </ion-item>
+            </ion-radio-group>
+          </div>
+        </div>
+        <ion-button
+          id="btn-tomarFoto"
+          expand="block"
+          color="tertiary"
+          (click)="takePic()"
+          class="deshabilitado"
+        >
+          Foto de la mesa<img id="tomarFotoImg"
+            src="../../../assets/fotografo.png"
+            width="auto"
+          />
+        </ion-button>
 
-    @for (tipo of tipoMesa; track $index) {
-    <ion-select-option [value]="tipo">{{tipo}}</ion-select-option>
-    }
+        <!-- @if(tempImg != ""){
+        <div id="tempImg">
+          <img [src]="tempImg" />
+        </div>
+        } -->
+        <div *ngIf="QRs.length > 0">
+          <qr-code [value]="QRs[0]" size="300" errorCorrectionLevel="M"></qr-code>
+        </div>
 
-    <ion-item>
-      <!-- <ion-input
-        type="file"
-        label="Foto"
-        placeholder=""
-        formControlName="fotoUrl"
-      ></ion-input> -->
-      <ion-button
-        shape="round"
-        expand="full"
-        (click)="takePic()"
-        >Cargar mesa</ion-button
-      >
-    </ion-item>
-
-    <ion-button shape="round" expand="full" (click)="subirMesa()"
-      >Cargar mesa</ion-button
-    >
-
-    <ion-button shape="round" expand="full" (click)="fillFields()"
-      >llenar campos</ion-button
-    >
-  </form>
-</ion-content>
+        <ion-button
+          type="submit"
+          expand="block"
+          color="tertiary"
+          [disabled]="frmMesa.invalid"
+        >
+          Agregar Mesa
+        </ion-button>
+      </form>
+    </ion-card-content>
+  </ion-card>
+</div>

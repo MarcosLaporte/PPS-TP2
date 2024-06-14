@@ -1,37 +1,47 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonRadioGroup, IonButton, IonSelectOption, IonInput } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonRadioGroup, IonButton, IonSelectOption, IonInput, IonCardHeader, IonCard, IonCardTitle, IonCardContent, IonIcon, IonRadio } from '@ionic/angular/standalone';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators, } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
 import { Colecciones, Prefijos, DatabaseService, } from 'src/app/services/database.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { Camera, CameraResultType } from '@capacitor/camera';
-import { MySwal, ToastError, ToastSuccess } from 'src/app/utils/alerts';
+import { MySwal, ToastError, ToastSuccess, ToastInfo } from 'src/app/utils/alerts';
 import { Foto } from 'src/app/utils/interfaces/foto';
 import { Mesa, TipoMesa } from 'src/app/utils/classes/mesa';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { addIcons } from 'ionicons';
+import { search } from 'ionicons/icons';
+import { QrCodeModule } from 'ng-qrcode';
 
-const datePipe = new DatePipe('en-US', '-0300');
+/*
+QR de la mesa
+● Para poder verificar la disponibilidad de una mesa.
+● Para relacionar al cliente con una mesa.
+● Para que el cliente pueda 'consultar' al mozo.
+● Para que el cliente pueda acceder al menú.
+● Para poder ver el estado del pedido.
+● Para acceder a la encuesta de satisfacción.
+● Para acceder a los juegos.
+*/
 
 @Component({
   selector: 'app-alta-mesa',
   templateUrl: './alta-mesa.page.html',
   styleUrls: ['./alta-mesa.page.scss'],
   standalone: true,
-  imports: [ IonButton, IonRadioGroup, IonItem, IonContent, IonHeader, IonTitle, IonToolbar, IonSelectOption, IonInput, CommonModule, FormsModule, ReactiveFormsModule, ],
+  imports: [IonRadio, IonIcon, IonCardContent, IonCardTitle, IonCard, IonCardHeader,  IonButton, IonRadioGroup, IonItem, IonContent, IonHeader, IonTitle, IonToolbar, IonSelectOption, IonInput, CommonModule, FormsModule, ReactiveFormsModule, QrCodeModule],
 })
 export class AltaMesaPage {
 
   frmMesa: FormGroup;
-  numero = new FormControl('', [Validators.required]);
   cantComensales = new FormControl('', [Validators.required]);
   tipoMesaControl = new FormControl('', [Validators.required]);
-  fotoUrl = new FormControl('', [Validators.required]);
+  foto = new FormControl('', [Validators.required]);
 
   picture!: File;
+  tempImg: string = "";
   QRs: string[] = [];
-
-  tipoMesa: TipoMesa[] = ['VIP', 'discapacitados', 'estandar'];
   
   constructor(
     private db: DatabaseService,
@@ -41,19 +51,23 @@ export class AltaMesaPage {
     private spinner: NgxSpinnerService
   ) {
     this.frmMesa = this.formBuilder.group({
-      numero: this.numero,
+      nroMesa: new FormControl('', [Validators.required]),
       cantComensales: this.cantComensales,
       tipoMesaControl: this.tipoMesaControl,
-      fotoUrl: this.fotoUrl,
+      foto: this.foto,
     });
+
+    addIcons({ search });
   }
 
   readonly supportedImageFormats = ['jpg', 'jpeg', 'png'];
 
-  async takePic() {
-    try {
-      let proceed: boolean = false;
 
+  async takePic() {
+    let picTaken = false;
+    let picCancel = false;
+    try {
+      do{
       const image = await Camera.getPhoto({
         quality: 90,
         allowEditing: false,
@@ -62,31 +76,41 @@ export class AltaMesaPage {
       if (!this.supportedImageFormats.includes(image.format))
         throw new Error('El archivo debe ser de formato .JPG, .JPEG ó .PNG');
 
-      // this.spinner.show();
-      await MySwal.fire({
-        text: 'esta foto desea subir?',
-        imageUrl: image.webPath,
-        imageWidth: '75vw',
-        allowOutsideClick: false,
-        allowEscapeKey: false,
-        showConfirmButton: true,
-        confirmButtonText: 'Sí',
-        confirmButtonColor: '#a5dc86',
-        showDenyButton: true,
-        denyButtonText: 'No',
-        denyButtonColor: '#f27474',
-        showCancelButton: true,
-        cancelButtonText: 'Volver a tomar esta foto',
-        cancelButtonColor: '#f0ec0d',
-      }).then(async (res) => {
-        proceed = !res.isDenied;
-        const imgFile = await this.getFileFromUri(image.webPath!, image.format);
-        this.picture = imgFile;
-      });
+      this.spinner.show();
+        await MySwal.fire({
+          text: 'esta foto desea subir?',
+          imageUrl: image.webPath,
+          imageWidth: '75vw',
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          showConfirmButton: true,
+          confirmButtonText: 'Sí',
+          confirmButtonColor: '#a5dc86',
+          showDenyButton: true,
+          denyButtonText: 'No',
+          denyButtonColor: '#f27474',
+          showCancelButton: true,
+          cancelButtonText: 'Volver a tomar esta foto',
+          cancelButtonColor: '#f0ec0d',
+        }).then(async (res) => {
+          if(res.isConfirmed){
+            const imgFile = await this.getFileFromUri(image.webPath!, image.format);
+            this.picture = imgFile;
+            this.tempImg = image.webPath!;
+            this.frmMesa.controls['foto'].setErrors(null)
+            picTaken = true;
+
+            this.generateQRData();
+          }else if(res.isDenied){
+            picCancel = true;
+          }
+          this.spinner.hide();
+        });
+      }while(!picTaken && !picCancel)
     } catch (er: any) {
       if (er.message === 'User cancelled photos app')
-        // ToastInfo.fire('Operación cancelada.');
-        // else await MySwal.fire('Algo salió mal.', er.message, 'error');
+        ToastInfo.fire('Operación cancelada.');
+        else await MySwal.fire('Algo salió mal.', er.message, 'error');
         throw er;
     }
   }
@@ -104,33 +128,29 @@ export class AltaMesaPage {
   }
 
   async uploadPicture(image: File) {
-    // this.spinner.show();
+    this.spinner.show();
 
     const datetime: Date = new Date();
-    const dateStr: string = datePipe.transform(datetime, 'yyyyMMdd-HHmmss')!;
-    // const picName: string = `${this.auth.UserInSession!.name}-${this.auth.UserInSession!.lastname}-${dateStr}`;
-    // const nombreFoto: string = `${this.auth.UsuarioEnSesion!.nombre}-${
-    //   this.auth.UsuarioEnSesion!.apellido
-    // }-${dateStr}`;
 
-    const nombreFoto: string = `Mesa-${this.numero.value}-${dateStr}`;
-
+    const nombreFoto: string = 
+    `${Prefijos.Mesa}-
+    ${this.frmMesa.controls['nroMesa'].value}-
+    ${this.frmMesa.controls['cantComensales'].value}-
+    ${this.frmMesa.controls['tipoMesaControl'].value}`;
+    
+    
     try {
-      const url = await this.storage.subirArchivo(
-        image,
-        `${Colecciones.Mesas}/${Prefijos.Mesa}-${nombreFoto}`
-      );
-      const fotoDeMesa: Foto = {
+      const url = await this.storage.subirArchivo(image,`${Colecciones.Mesas}/${nombreFoto}`);
+      const fotoDePerfil: Foto = {
         id: '',
         name: nombreFoto,
         date: datetime,
         url: url,
       };
-      console.log(fotoDeMesa);
-      await this.db.subirDoc(Colecciones.Mesas, fotoDeMesa, true);
-      return url;
+      await this.db.subirDoc(Colecciones.Mesas, fotoDePerfil, true);
       this.spinner.hide();
       ToastSuccess.fire('Imagen subida con éxito!');
+      return url;
     } catch (error: any) {
       this.spinner.hide();
       ToastError.fire('Hubo un problema al subir la imagen.');
@@ -138,29 +158,71 @@ export class AltaMesaPage {
     }
   }
 
-  subirMesa() {
+
+  async manejarNroMesa() {
+    let nroMesaExiste = false;
+    this.spinner.show();
+
+    await this.db.traerColeccion<Mesa>(Colecciones.Mesas).then( mesas => {
+      mesas.forEach( (m, index) => {
+        if(m.nroMesa == this.frmMesa.controls['nroMesa'].value){
+          nroMesaExiste = true;
+          ToastError.fire('Este Numero de mesa ya se encuentra registrado.');
+        }
+      });
+      if(!nroMesaExiste){
+        document.getElementById('nroMesa')!.classList.add('deshabilitado');
+        (document.getElementById('input-nroMesa')! as HTMLIonInputElement).disabled = true;
+        (document.getElementById('btn-nroMesa')! as HTMLIonButtonElement).style.display = 'none';
+          
+        document.getElementById('cantComensales')!.classList.remove('deshabilitado');
+        document.getElementById('tipoMesa')!.classList.remove('deshabilitado');
+        (document.getElementById('btn-tomarFoto')! as HTMLIonButtonElement).classList.remove('deshabilitado');
+
+        ToastSuccess.fire('El numero de mesa no está en uso.');
+      }
+    })
+
+    this.spinner.hide();
+  }
+
+
+  subirMesa() { 
     let foto;
     this.uploadPicture(this.picture).then((url) => {
       foto = url;
     });
     if (foto) {
-      let supervisorDueno = new Mesa(
-        Number(this.numero.value),
-        Number(this.cantComensales.value),
-        <TipoMesa>this.tipoMesaControl.value!,
+      
+      const nroMesa = this.frmMesa.controls['nroMesa'].value;
+      const cantComensales = this.frmMesa.controls['cantComensales'].value;
+      const tipoMesaControl = this.frmMesa.controls['tipoMesaControl'].value;
+      let mesa = new Mesa(
+        nroMesa,
+        cantComensales,
+        tipoMesaControl,
         foto,
         this.QRs
       );
 
-      this.db.subirDoc(Colecciones.Mesas, supervisorDueno, true).then((r) => {
-        console.log('id' + r);
-      });
+      this.db
+        .subirDoc(Colecciones.Mesas, mesa, false)
+        .then((r) => {
+          console.log('id' + r);
+        });
     }
   }
 
-  fillFields() {
-    this.numero.setValue('1');
-    this.cantComensales.setValue('1');
-    this.tipoMesaControl.setValue('VIP');
+  selecTipo($ev: CustomEvent) {
+    this.frmMesa.controls['tipoMesaControl'].setValue($ev.detail.value);
+    console.log(this.frmMesa.controls['tipoMesaControl'].value);
+  }
+
+  private generateQRData() {
+    const mesaQR = 
+    `nro: ${this.frmMesa.controls['nroMesa'].value}\n` +
+    `cantComensales: ${this.frmMesa.controls['cantComensales'].value}\n` +
+    `tipoMesa: ${this.frmMesa.controls['tipoMesaControl'].value}`;
+    this.QRs.push(mesaQR);
   }
 }
