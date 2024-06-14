@@ -1,26 +1,25 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NavController } from '@ionic/angular';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { AuthService } from 'src/app/services/auth.service';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonFab, IonFabButton, IonFabList, IonIcon, IonCard, IonCardContent, IonButton, IonItem } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonFab, IonFabButton, IonFabList, IonIcon, IonCard, IonCardContent, IonButton, IonItem, IonInputPasswordToggle, IonCardHeader, IonCardTitle, IonRadioGroup, IonRadio } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { DatabaseService } from 'src/app/services/database.service';
-import { ErrorCodes, Exception } from 'src/app/utils/clases/exception';
+import { ErrorCodes, Exception } from 'src/app/utils/classes/exception';
 import { ToastError, ToastSuccess } from 'src/app/utils/alerts';
 import { addIcons } from 'ionicons';
 import { search } from 'ionicons/icons';
-import { Empleado, TipoEmpleado } from 'src/app/utils/clases/usuarios/empleado';
+import { Empleado, TipoEmpleado } from 'src/app/utils/classes/usuarios/empleado';
 
 @Component({
   selector: 'app-alta-empleado',
-  templateUrl: './alta-empleado.component.html',
-  styleUrls: ['./alta-empleado.component.scss'],
+  templateUrl: './alta-empleado.page.html',
+  styleUrls: ['./alta-empleado.page.scss'],
   standalone: true,
-  imports: [IonCard, IonItem, IonButton, IonCardContent, IonCard, IonIcon, IonFabList, IonFabButton, IonFab, IonContent, IonHeader, IonTitle, IonToolbar, FormsModule, ReactiveFormsModule, CommonModule],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  imports: [IonRadio, IonRadioGroup, IonCardTitle, IonCardHeader, IonCard, IonItem, IonButton, IonCardContent, IonCard, IonIcon, IonFabList, IonFabButton, IonFab, IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonInputPasswordToggle, FormsModule, ReactiveFormsModule, CommonModule],
 })
-export class AltaEmpleadoComponent {
+export class AltaEmpleadoPage {
   empleadoFrm: FormGroup;
 
   constructor(protected navCtrl: NavController, private auth: AuthService, private spinner: NgxSpinnerService, private db: DatabaseService) {
@@ -101,12 +100,12 @@ export class AltaEmpleadoComponent {
       .then((pers) => ToastError.fire('Este correo ya se encuentra registrado.'))
       .catch((error: any) => {
         if (error instanceof Exception && error.code === ErrorCodes.CorreoNoRegistrado) {
-          ToastSuccess.fire('El correo no está en uso.');
           document.getElementById('dni')!.classList.remove('deshabilitado');
           document.getElementById('correo')!.classList.add('deshabilitado');
           (document.getElementById('input-correo')! as HTMLIonInputElement).disabled = true;
           (document.getElementById('btn-correo')! as HTMLIonButtonElement).style.display = 'none';
           (document.getElementById('btn-dni')! as HTMLIonButtonElement).style.display = 'block';
+          ToastSuccess.fire('El correo no está en uso.');
         } else ToastError.fire('Ocurrió un erorr.', error.message);
       });
 

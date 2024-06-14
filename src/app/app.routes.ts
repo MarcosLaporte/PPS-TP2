@@ -3,12 +3,20 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'splash',
+    redirectTo: 'alta-producto',
     pathMatch: 'full',
   },
   {
     path: 'splash',
     loadComponent: () => import('./pages/splash/splash.page').then( m => m.SplashPage)
+  },
+  {
+    path: 'alta-cliente',
+    loadComponent: () => import('./pages/alta-cliente/alta-cliente.page').then( m => m.AltaClientePage)
+  },
+  {
+    path: 'alta-producto',
+    loadComponent: () => import('./pages/alta-producto/alta-producto.page').then( m => m.AltaProductoPage)
   },
   {
     path: 'alta-supervisor',
@@ -17,6 +25,10 @@ export const routes: Routes = [
   {
     path: 'alta-mesa',
     loadComponent: () => import('./pages/alta-mesa/alta-mesa.page').then( m => m.AltaMesaPage)
+  },
+  {
+    path: 'alta-empleado',
+    loadComponent: () => import('./pages/alta-empleado/alta-empleado.page').then( m => m.AltaEmpleadoPage)
   },
   {
     path: 'home',

@@ -1,35 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import {
-  IonContent,
-  IonHeader,
-  IonTitle,
-  IonToolbar,
-  IonItem,
-  IonRadioGroup,
-  IonButton,
-  IonSelectOption,
-  IonInput
-} from '@ionic/angular/standalone';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonRadioGroup, IonButton, IonSelectOption, IonInput } from '@ionic/angular/standalone';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators, } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
-import {
-  Colecciones,
-  DatabaseService,
-} from 'src/app/services/database.service';
+import { Colecciones, DatabaseService, } from 'src/app/services/database.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { MySwal, ToastError, ToastSuccess } from 'src/app/utils/alerts';
-import { Foto } from 'src/app/interfaces/foto';
-import { Prefijos } from 'src/app/enums/prefijos';
-import { Mesa, TipoMesa } from 'src/app/utils/clases/mesa';
+import { Foto } from 'src/app/utils/interfaces/foto';
+import { Prefijos } from 'src/app/utils/enums/prefijos';
+import { Mesa, TipoMesa } from 'src/app/utils/classes/mesa';
 
 const datePipe = new DatePipe('en-US', '-0300');
 
@@ -38,22 +18,9 @@ const datePipe = new DatePipe('en-US', '-0300');
   templateUrl: './alta-mesa.page.html',
   styleUrls: ['./alta-mesa.page.scss'],
   standalone: true,
-  imports: [
-    IonButton,
-    IonRadioGroup,
-    IonItem,
-    IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
-    IonSelectOption,
-    IonInput,
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-  ],
+  imports: [ IonButton, IonRadioGroup, IonItem, IonContent, IonHeader, IonTitle, IonToolbar, IonSelectOption, IonInput, CommonModule, FormsModule, ReactiveFormsModule, ],
 })
-export class AltaMesaPage implements OnInit {
+export class AltaMesaPage {
 
   frmMesa: FormGroup;
   numero = new FormControl('', [Validators.required]);
@@ -81,8 +48,6 @@ export class AltaMesaPage implements OnInit {
   }
 
   readonly supportedImageFormats = ['jpg', 'jpeg', 'png'];
-
-  ngOnInit() {}
 
   async takePic() {
     try {
