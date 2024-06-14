@@ -44,6 +44,16 @@
             }
           </div>
           <div id="DNI" class="DNI deshabilitado">
+            <!-- <ion-button
+              class="deshabilitado"
+              id="btn-scan-DNI"
+              expand="block"
+              color="tertiary"
+              (click)="scan()"
+              [disabled]="frmSupervisor.controls['correo'].invalid">
+              Escanear DNI
+            </ion-button> -->
+
             <ion-input
               id="input-DNI"
               label="DNI"
@@ -54,6 +64,27 @@
               required
               ngDefaultControl
             >
+              <ion-button
+                id="btn-scan-DNI"
+                fill="clear"
+                slot="start"
+                aria-label="escanear"
+                (click)="scan()"
+                [disabled]="frmSupervisor.controls['correo'].invalid"
+                [style.display]="'none'"
+              >
+                <ion-icon
+                  slot="icon-only"
+                  name="scan-outline"
+                  aria-hidden="true"
+                ></ion-icon>
+                <!-- <ion-icon
+                  slot="icon-only"
+                  name="scan-circle-outline"
+                  aria-hidden="true"
+                ></ion-icon> -->
+              </ion-button>
+
               <ion-button
                 id="btn-DNI"
                 fill="clear"
@@ -221,9 +252,9 @@
               >Foto</ion-button
             >
             @if(tempImg != ""){
-              <div id="tempImg">
-                <img [src]="tempImg"/>
-              </div>
+            <div id="tempImg">
+              <img [src]="tempImg" />
+            </div>
             }
           </div>
         </div>

@@ -13,7 +13,9 @@ import { Foto } from 'src/app/utils/interfaces/foto';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Exception, ErrorCodes } from 'src/app/utils/classes/exception';
 import { addIcons } from 'ionicons';
-import { search } from 'ionicons/icons';
+import { search, scanOutline, scanCircleOutline} from 'ionicons/icons';
+import { Barcode } from '@capacitor-mlkit/barcode-scanning';
+import { ScannerService } from 'src/app/services/scanner.service';
 
 const datePipe = new DatePipe('en-US', '-0300');
 
@@ -29,13 +31,17 @@ export class AltaSupervisorPage implements OnInit {
   picture!: File;
   tempImg: string = "";
 
+  isSupported = false;
+  scanActive = false;
+
   frmSupervisor: FormGroup;
   constructor(
     private db: DatabaseService,
     private storage: StorageService,
     private auth: AuthService,
     private formBuilder: FormBuilder,
-    private spinner: NgxSpinnerService
+    private spinner: NgxSpinnerService,
+    private scanService: ScannerService
   ) {
     this.frmSupervisor = this.formBuilder.group({
       nombre: new FormControl('', [Validators.required]),
@@ -48,7 +54,7 @@ export class AltaSupervisorPage implements OnInit {
       supervisorDueno: [null, [Validators.required]],
     });
 
-    addIcons({ search });
+    addIcons({ search, scanOutline, scanCircleOutline});
   }
 
   readonly supportedImageFormats = ['jpg', 'jpeg', 'png'];
@@ -98,6 +104,8 @@ export class AltaSupervisorPage implements OnInit {
             const imgFile = await this.getFileFromUri(image.webPath!, image.format);
             this.picture = imgFile;
             this.tempImg = image.webPath!;
+            this.frmSupervisor.controls['foto'].setErrors(null)
+            console.log(this.frmSupervisor.controls);
             picTaken = true;
           }else if(res.isDenied){
             picCancel = true;
@@ -197,21 +205,20 @@ export class AltaSupervisorPage implements OnInit {
       )
       .catch((error: any) => {
         if (
-          error instanceof Exception &&
-          error.code === ErrorCodes.CorreoNoRegistrado
+          error instanceof Exception && error.code === ErrorCodes.CorreoNoRegistrado
         ) {
-          document.getElementById('DNI')!.classList.remove('deshabilitado');
           document.getElementById('correo')!.classList.add('deshabilitado');
-          (
-            document.getElementById('input-correo')! as HTMLIonInputElement
-          ).disabled = true;
-          (
-            document.getElementById('btn-correo')! as HTMLIonButtonElement
-          ).style.display = 'none';
-          (
-            document.getElementById('btn-DNI')! as HTMLIonButtonElement
-          ).style.display = 'block';
+          (document.getElementById('input-correo')! as HTMLIonInputElement).disabled = true;
+          (document.getElementById('btn-correo')! as HTMLIonButtonElement).style.display = 'none';
+          
+          document.getElementById('DNI')!.classList.remove('deshabilitado');
+          (document.getElementById('btn-DNI')! as HTMLIonButtonElement).style.display = 'block';
+          (document.getElementById('btn-scan-DNI')! as HTMLIonButtonElement).style.display = 'block';
+
+          // (document.getElementById('btn-scan-DNI')! as HTMLIonButtonElement).classList.remove('deshabilitado');
+
           ToastSuccess.fire('El correo no está en uso.');
+
         } else ToastError.fire('Ocurrió un erorr.', error.message);
       });
 
@@ -263,5 +270,25 @@ export class AltaSupervisorPage implements OnInit {
 
   selecTipo($ev: CustomEvent) {
     this.frmSupervisor.controls['supervisorDueno'].setValue($ev.detail.value);
+  }
+
+  async scan() {
+    this.scanActive = true;
+    const barcodes = await this.scanService.scanBarcodes();
+    this.processBarcodes(barcodes);
+    this.scanActive = false;
+  }
+
+  processBarcodes(barcodes: Barcode[]) {
+    barcodes.forEach(barcode => {
+      const dniData = this.scanService.extractDniData(barcode.rawValue);
+      if (dniData) {
+        this.frmSupervisor.patchValue({
+          DNI: dniData.dni,
+          nombre: dniData.nombre,
+          apellido: dniData.apellido
+        });
+      }
+    });
   }
 }

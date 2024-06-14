@@ -82,8 +82,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            max-width: 50%;
-            background-color: red;
+            width: 100%;
+            
+            img{
+              width: 50%;
+            }
         }
     }
 
