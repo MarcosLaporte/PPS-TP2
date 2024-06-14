@@ -273,10 +273,24 @@ export class AltaSupervisorPage implements OnInit {
   }
 
   async scan() {
-    this.scanActive = true;
-    const barcodes = await this.scanService.scanBarcodes();
-    this.processBarcodes(barcodes);
-    this.scanActive = false;
+    await MySwal.fire({
+      text: 'desea escanear su dni?',
+      showConfirmButton: true,
+      confirmButtonText: 'Sí',
+      confirmButtonColor: '#a5dc86',
+      showDenyButton: true,
+      denyButtonText: 'No',
+      denyButtonColor: '#f27474',
+    }).then(async (res) => {
+      this.spinner.show();
+      if(res.isConfirmed){
+        this.scanActive = true;
+        const barcodes = await this.scanService.scanBarcodes();
+        this.processBarcodes(barcodes);
+        this.scanActive = false;
+      }
+      this.spinner.hide();
+    });
   }
 
   processBarcodes(barcodes: Barcode[]) {
