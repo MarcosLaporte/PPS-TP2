@@ -37,13 +37,13 @@
 @import '@ionic/angular/css/palettes/dark.system.css';
 @import './theme/variables.scss';
 
-.container {
+.container { //siempre
   height: 100%;
   width: 100%;
   margin-top: 56px; // Toolbar
 }
 
-.background-pri {
+.background-pri { //fondo
   background-color: $slate-grey;
   --background: $slate-grey;
 }

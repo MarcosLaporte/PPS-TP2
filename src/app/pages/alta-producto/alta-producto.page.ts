@@ -120,8 +120,7 @@ export class AltaProductoPage {
         );
         await this.data.subirDoc(Colecciones.Productos, producto);
 
-        // Generate QR Code after uploading pictures
-        this.generateQRData(fotosUrls);
+        this.generarQr(fotosUrls);
 
         MySwal.fire('Producto agregado con éxito');
       }
@@ -130,8 +129,7 @@ export class AltaProductoPage {
     }
   }
 
-  private generateQRData(imageUrls: string[]) {
-    // Concatenate the product information along with the photo URLs
+  private generarQr(imageUrls: string[]) {
     const productoInfo = `Nombre: ${this.frmProducto.value.nombre}\n` +
                          `Descripción: ${this.frmProducto.value.descripcion}\n` +
                          `Tiempo: ${this.frmProducto.value.minutos}:${this.frmProducto.value.segundos}\n` +
@@ -139,4 +137,5 @@ export class AltaProductoPage {
                          `Fotos: ${imageUrls.join(', ')}`;
     this.qrData = productoInfo;
   }
+
 }
