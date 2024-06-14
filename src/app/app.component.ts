@@ -13,7 +13,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 })
 export class AppComponent {
   constructor(protected router: Router) {
-    // router.navigateByUrl('splash');
-    router.navigateByUrl('alta-supervisor');
+    router.navigateByUrl('splash');
+    // router.navigateByUrl('alta-supervisor');
   }
 }
