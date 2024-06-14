@@ -45,7 +45,7 @@ export class LoginPage implements OnInit {
     try {
       const correoContr = this.form.controls['correo'];
       const contraContr = this.form.controls['contra'];
-      await this.auth.ingresarFireAuth(correoContr.value, contraContr.value);
+      await this.auth.ingresarUsuario(correoContr.value, contraContr.value);
 
       correoContr.setValue("");
       contraContr.setValue("");
