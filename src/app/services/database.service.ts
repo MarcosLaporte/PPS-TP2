@@ -9,6 +9,15 @@ export enum Colecciones {
   Productos = 'productos',
   Encuestas = 'encuestas',
 }
+//ahora si marcos, gil
+export enum Prefijos {
+  Usuario = 'usuario',
+  Mesa = 'mesa',
+  Producto = 'producto',
+  Encuesta = 'encuesta',
+  Supervisor = 'supervisor',
+  duenio = 'dueño'
+}
 @Injectable({
   providedIn: 'root'
 })
