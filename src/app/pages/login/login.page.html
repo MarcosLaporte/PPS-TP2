@@ -1,10 +1,54 @@
 <div class="container background-pri">
   <ion-card class="ion-padding background-sec">
     <ion-card-content class="ion-no-padding">
+      <div expand="block" class="acceso-rapido ion-text-center">
+        <ion-row class="ion-justify-content-center">
+          <ion-col size="auto">
+            Metre
+            <ion-button (click)="accesoRapido('metre@empleado.com')">
+              <i class="fi fi-bs-concierge-bell"></i>
+            </ion-button>
+          </ion-col>
+          <ion-col size="auto">
+            Chef
+            <ion-button (click)="accesoRapido('chef@empleado.com')">
+              <i class="fi fi-bs-user-chef"></i>
+            </ion-button>
+          </ion-col>
+          <ion-col size="auto">
+            Mozo
+            <ion-button (click)="accesoRapido('mozo@empleado.com')">
+              <i class="fi fi-bs-room-service"></i>
+            </ion-button>
+          </ion-col>
+          <ion-col size="auto">
+            Bar
+            <ion-button (click)="accesoRapido('bartender@empleado.com')">
+              <i class="fi fi-bs-martini-glass-citrus"></i>
+            </ion-button>
+          </ion-col>
+          <ion-col size="auto">
+            Dueño
+            <ion-button (click)="accesoRapido('duenio@jefe.com')">
+              <i class="fi fi-bs-boss"></i>
+            </ion-button>
+          </ion-col>
+          <ion-col size="auto">
+            Cliente
+            <ion-button (click)="accesoRapido('registrado@cliente.com')">
+              <i class="fi fi-bs-review"></i>
+            </ion-button>
+          </ion-col>
+          <ion-col size="auto">
+            Anónimo
+            <ion-button (click)="accesoRapido('anonimo@cliente.com')">
+              <i class="fi fi-bs-spy"></i>
+            </ion-button>
+          </ion-col>
+        </ion-row>
+      </div>
+
       <form [formGroup]="form" (ngSubmit)="ingresar()">
-        <div class="img" style="display: flex; justify-content: center;">
-          <img src="../../../assets/login.png" width="60%">
-        </div>
         <div class="inputs">
           <div class="correo">
             <ion-input label="Correo electrónico" [clearInput]="true" label-placement="stacked"
@@ -32,11 +76,11 @@
         </ion-button>
       </form>
 
-      <div class="ion-margin-top">
-        <ion-text>No está registrado? 
+      <!-- <div class="ion-margin-top">
+        <ion-text>No está registrado?
           <a (click)="navCtrl.navigateRoot('registro')">Crear cuenta</a>
         </ion-text>
-      </div>
+      </div> -->
     </ion-card-content>
   </ion-card>
 </div>

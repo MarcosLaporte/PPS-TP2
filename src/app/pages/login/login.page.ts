@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonFab, IonInput, IonInputPasswordToggle, IonFabButton, IonFabList, IonIcon, IonCard, IonCardContent, IonButton, IonItem, IonText } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonFab, IonInput, IonInputPasswordToggle, IonFabButton, IonFabList, IonIcon, IonCard, IonCardContent, IonButton, IonItem, IonText, IonRow, IonCol } from '@ionic/angular/standalone';
 import { NavController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
 import { ToastError, ToastInfo, ToastQuestion, ToastSuccess, ToastWarning } from 'src/app/utils/alerts';
@@ -12,7 +12,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   standalone: true,
-  imports: [IonText, IonItem, IonButton, IonInput, IonInputPasswordToggle, IonCardContent, IonCard, IonIcon, IonFabList, IonFabButton, IonFab, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [IonCol, IonRow, IonText, IonItem, IonButton, IonInput, IonInputPasswordToggle, IonCardContent, IonCard, IonIcon, IonFabList, IonFabButton, IonFab, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, ReactiveFormsModule],
 })
 export class LoginPage implements OnInit {
   form: FormGroup;
@@ -60,8 +60,8 @@ export class LoginPage implements OnInit {
     }
   }
 
-  accesoRapido(correo: string, contr: string) {
+  accesoRapido(correo: string) {
     this.form.controls['correo'].setValue(correo);
-    this.form.controls['contr'].setValue(contr);
+    this.form.controls['contra'].setValue('UTNFRA');
   }
 }

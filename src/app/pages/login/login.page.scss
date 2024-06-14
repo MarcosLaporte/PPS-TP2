@@ -1,3 +1,5 @@
+@import '../../../theme/variables.scss';
+
 * {
   font-size: 1.15rem;
   color: #1f1f1f;
@@ -15,6 +17,26 @@
   align-items: center;
 
   ion-card {
+    .acceso-rapido {
+      ion-row ion-col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0 5px;
+        text-transform: uppercase;
+
+        ion-button {
+          width: fit-content;
+          margin-top: 0;
+          --background: #21D19F;
+
+          i {
+            font-size: 1.5rem;
+          }
+        }
+      }
+    }
+
     .inputs .errores {
       color: red;
     }
