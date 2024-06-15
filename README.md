@@ -32,23 +32,23 @@ Una aplicación móvil que permite gestionar y administrar tanto los pedidos as�
 | C  | Alta cliente                      | Yober       | Pendiente |
 | D  | Alta mesa                         | Jaco        | Pendiente |
 | E  | Alta producto                     | Yober       | Pendiente |
-| F  | Qr ingreso al local               | Pendiente   |           |
-| G  | Qr de la mesa                     | Jaco        |           |
-| H  | Qr de propina                     | Pendiente   |           |
-| I  | Encuesta Cliente                  | Pendiente   |           |
-| J  | Encuesta Empleado                 | Pendiente   |           |
-| K  | Encuesta Supervisor               | Pendiente   |           |
-| L  | Agregar cliente registrado        | Pendiente   |           |
-| M  | Ingresar al local                 | Pendiente   |           |
-| N  | Pedir platos y bebidas            | Pendiente   |           |
-| O  | Confirmar pedido                  | Pendiente   |           |
-| P  | Hacer reservas agendadas          | Pendiente   |           |
-| Q  | PushN - Cliente nuevo             | Pendiente   |           |
-| R  | PushN - Ingreso al local          | Pendiente   |           |
-| S  | PushN - Consultar mozo            | Pendiente   |           |
-| T  | PushN - Confirmar pedido          | Pendiente   |           |
-| U  | PushN - Pedido listo              | Pendiente   |           |
-| V  | PushN - Generar reservas/Delivery | Pendiente   |           |
+| F  | Qr ingreso al local               | Marcos      | Pendiente |
+| G  | Qr de la mesa                     | Jaco        | Pendiente |
+| H  | Qr de propina                     | Yober       | Pendiente |
+| I  | Encuesta Cliente                  | Yober       | Pendiente |
+| J  | Encuesta Empleado                 | Marcos      | Pendiente |
+| K  | Encuesta Supervisor               | Jaco        | Pendiente |
+| L  | Agregar cliente registrado        | Yober       | Pendiente |
+| M  | Ingresar al local                 | Marcos      | Pendiente |
+| N  | Pedir platos y bebidas            | Jaco        | Pendiente |
+| O  | Confirmar pedido                  | Jaco        | Pendiente |
+| P  | Hacer reservas agendadas          | Yober       | Pendiente |
+| Q  | PushN - Cliente nuevo             | Yober       | Pendiente |
+| R  | PushN - Ingreso al local          | Yober       | Pendiente |
+| S  | PushN - Consultar mozo            | Jaco        | Pendiente |
+| T  | PushN - Confirmar pedido          | Jaco        | Pendiente |
+| U  | PushN - Pedido listo              | Marcos      | Pendiente |
+| V  | PushN - Generar reservas/Delivery | Marcos      | Pendiente |
 | W  | Delivery - Hacer pedido con GPS   | Pendiente   |           |
 | X  | Delivery - Mapa                   | Pendiente   |           |
 | Y  | Juego 10% descuento               | Pendiente   |           |
