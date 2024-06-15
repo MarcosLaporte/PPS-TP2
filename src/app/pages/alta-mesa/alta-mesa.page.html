@@ -132,7 +132,7 @@
         @if (frmMesa.controls['foto'].valid) {
           <ion-item>
             <ion-select aria-label="datos" value="foto" 
-            (ionChange)="selectOption($event)">
+            (ionChange)="selectOption($event)" interface="popover">
               <ion-select-option value="foto">Foto de la mesa</ion-select-option>
               <ion-select-option value="QR">QR de la mesa</ion-select-option>
             </ion-select>

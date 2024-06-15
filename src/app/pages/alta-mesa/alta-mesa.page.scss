@@ -1,13 +1,11 @@
 @import "../../../theme/variables.scss";
 
 ion-card {
-  // margin: auto;
   min-width: 90%;
   max-width: 90%;
 }
 
 .container {
-  margin-top: 0;
   display: flex;
   flex-direction: column;
   align-items: center;

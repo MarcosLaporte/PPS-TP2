@@ -195,6 +195,7 @@ export class AltaMesaPage {
       const cantComensales = this.frmMesa.controls['cantComensales'].value;
       const tipoMesaControl = this.frmMesa.controls['tipoMesaControl'].value;
       let mesa = new Mesa(
+        '',
         nroMesa,
         cantComensales,
         tipoMesaControl,
@@ -203,7 +204,7 @@ export class AltaMesaPage {
       );
 
       this.db
-        .subirDoc(Colecciones.Mesas, mesa, false)
+        .subirDoc(Colecciones.Mesas, mesa, true)
         .then((r) => {
           console.log('id' + r);
         });
