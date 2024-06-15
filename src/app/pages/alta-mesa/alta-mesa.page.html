@@ -39,6 +39,9 @@
               @if (frmMesa.controls['nroMesa'].errors['required']) {
               <small>Debe rellenar este campo.</small>
               }
+              @if (frmMesa.controls['nroMesa'].errors['min']) {
+              <small>el valor debe ser mayor a 0</small>
+              }
             </div>
             }
           </div>
@@ -60,6 +63,9 @@
             <div class="errores">
               @if (frmMesa.controls['cantComensales'].errors['required']) {
               <small>Debe rellenar este campo.</small>
+              }
+              @if (frmMesa.controls['cantComensales'].errors['min']) {
+              <small>el valor debe ser mayor a 0</small>
               }
             </div>
             }
@@ -110,7 +116,7 @@
           expand="block"
           color="tertiary"
           (click)="takePic()"
-          class="deshabilitado"
+          [ngClass]="(frmMesa.controls['cantComensales'].valid && frmMesa.controls['tipoMesaControl'].valid)?'':'deshabilitado'"
         >
           Foto de la mesa<img id="tomarFotoImg"
             src="../../../assets/fotografo.png"
@@ -123,9 +129,11 @@
           <img [src]="tempImg" />
         </div>
         } -->
-        <div *ngIf="QRs.length > 0">
-          <qr-code [value]="QRs[0]" size="300" errorCorrectionLevel="M"></qr-code>
-        </div>
+        @if (QRs.length > 0) {
+          <div id="QR">
+            <qr-code [value]="QRs[0]" size="300" errorCorrectionLevel="M"></qr-code>
+          </div>
+        }
 
         <ion-button
           type="submit"

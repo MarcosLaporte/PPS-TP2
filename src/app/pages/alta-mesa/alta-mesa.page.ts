@@ -35,10 +35,7 @@ QR de la mesa
 export class AltaMesaPage {
 
   frmMesa: FormGroup;
-  cantComensales = new FormControl('', [Validators.required]);
-  tipoMesaControl = new FormControl('', [Validators.required]);
-  foto = new FormControl('', [Validators.required]);
-
+  
   picture!: File;
   tempImg: string = "";
   QRs: string[] = [];
@@ -51,10 +48,10 @@ export class AltaMesaPage {
     private spinner: NgxSpinnerService
   ) {
     this.frmMesa = this.formBuilder.group({
-      nroMesa: new FormControl('', [Validators.required]),
-      cantComensales: this.cantComensales,
-      tipoMesaControl: this.tipoMesaControl,
-      foto: this.foto,
+      nroMesa: new FormControl('', [Validators.required, Validators.min(1)]),
+      cantComensales: new FormControl('', [Validators.required, Validators.min(1)]),
+      tipoMesaControl: new FormControl('', [Validators.required]),
+      foto: new FormControl('', [Validators.required]),
     });
 
     addIcons({ search });
@@ -177,7 +174,6 @@ export class AltaMesaPage {
           
         document.getElementById('cantComensales')!.classList.remove('deshabilitado');
         document.getElementById('tipoMesa')!.classList.remove('deshabilitado');
-        (document.getElementById('btn-tomarFoto')! as HTMLIonButtonElement).classList.remove('deshabilitado');
 
         ToastSuccess.fire('El numero de mesa no está en uso.');
       }
@@ -215,7 +211,6 @@ export class AltaMesaPage {
 
   selecTipo($ev: CustomEvent) {
     this.frmMesa.controls['tipoMesaControl'].setValue($ev.detail.value);
-    console.log(this.frmMesa.controls['tipoMesaControl'].value);
   }
 
   private generateQRData() {
