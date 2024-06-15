@@ -116,20 +116,35 @@
           expand="block"
           color="tertiary"
           (click)="takePic()"
-          [ngClass]="(frmMesa.controls['cantComensales'].valid && frmMesa.controls['tipoMesaControl'].valid)?'':'deshabilitado'"
-        >
-          Foto de la mesa<img id="tomarFotoImg"
+          [ngClass]="(frmMesa.controls['cantComensales'].valid && frmMesa.controls['tipoMesaControl'].valid)?'':'deshabilitado'">
+          @if (tempImg != '') {
+            volver a tomar Foto
+          }@else {
+            Foto de la mesa
+          }
+          
+          <img id="tomarFotoImg"
             src="../../../assets/fotografo.png"
             width="auto"
           />
         </ion-button>
 
-        <!-- @if(tempImg != ""){
-        <div id="tempImg">
-          <img [src]="tempImg" />
-        </div>
-        } -->
-        @if (QRs.length > 0) {
+        @if (frmMesa.controls['foto'].valid) {
+          <ion-item>
+            <ion-select aria-label="datos" value="foto" 
+            (ionChange)="selectOption($event)">
+              <ion-select-option value="foto">Foto de la mesa</ion-select-option>
+              <ion-select-option value="QR">QR de la mesa</ion-select-option>
+            </ion-select>
+          </ion-item>
+        }
+
+        @if(selectedData == 'foto' && tempImg != ""){
+          <div id="tempImg">
+            <img [src]="tempImg" />
+          </div>
+        } 
+        @if (selectedData == 'QR' && QRs.length > 0) {
           <div id="QR">
             <qr-code [value]="QRs[0]" size="300" errorCorrectionLevel="M"></qr-code>
           </div>

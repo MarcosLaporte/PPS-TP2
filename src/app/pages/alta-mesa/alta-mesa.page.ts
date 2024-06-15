@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonRadioGroup, IonButton, IonSelectOption, IonInput, IonCardHeader, IonCard, IonCardTitle, IonCardContent, IonIcon, IonRadio } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonRadioGroup, IonButton, IonSelectOption, IonInput, IonCardHeader, IonCard, IonCardTitle, IonCardContent, IonIcon, IonRadio, IonSelect } from '@ionic/angular/standalone';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators, } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
 import { Colecciones, Prefijos, DatabaseService, } from 'src/app/services/database.service';
@@ -30,7 +30,7 @@ QR de la mesa
   templateUrl: './alta-mesa.page.html',
   styleUrls: ['./alta-mesa.page.scss'],
   standalone: true,
-  imports: [IonRadio, IonIcon, IonCardContent, IonCardTitle, IonCard, IonCardHeader,  IonButton, IonRadioGroup, IonItem, IonContent, IonHeader, IonTitle, IonToolbar, IonSelectOption, IonInput, CommonModule, FormsModule, ReactiveFormsModule, QrCodeModule],
+  imports: [IonRadio, IonIcon, IonCardContent, IonCardTitle, IonCard, IonCardHeader,  IonButton, IonRadioGroup, IonItem, IonContent, IonHeader, IonTitle, IonToolbar, IonSelectOption, IonInput, CommonModule, FormsModule, ReactiveFormsModule, QrCodeModule, IonSelect],
 })
 export class AltaMesaPage {
 
@@ -39,7 +39,8 @@ export class AltaMesaPage {
   picture!: File;
   tempImg: string = "";
   QRs: string[] = [];
-  
+  selectedData = 'foto';
+
   constructor(
     private db: DatabaseService,
     private storage: StorageService,
@@ -219,5 +220,8 @@ export class AltaMesaPage {
     `cantComensales: ${this.frmMesa.controls['cantComensales'].value}\n` +
     `tipoMesa: ${this.frmMesa.controls['tipoMesaControl'].value}`;
     this.QRs.push(mesaQR);
+  }
+  selectOption(event: CustomEvent){
+    this.selectedData = event.detail.value;
   }
 }
