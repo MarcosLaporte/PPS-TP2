@@ -27,13 +27,13 @@ Una aplicación móvil que permite gestionar y administrar tanto los pedidos as�
 | -  | Iconos + Splash                   | Marcos      | Terminado |
 | -  | Login                             | Marcos      | Terminado |
 | -  | Registro                          | Marcos      | Pendiente |
-| A  | Alta dueño/supervisor             | Jaco        | Pendiente |
+| A  | Alta dueño/supervisor             | Jaco        | Terminado |
 | B  | Alta empleados                    | Marcos      | Terminado |
 | C  | Alta cliente                      | Yober       | Pendiente |
 | D  | Alta mesa                         | Jaco        | Pendiente |
 | E  | Alta producto                     | Yober       | Pendiente |
 | F  | Qr ingreso al local               | Pendiente   |           |
-| G  | Qr de la mesa                     | Pendiente   |           |
+| G  | Qr de la mesa                     | Jaco        |           |
 | H  | Qr de propina                     | Pendiente   |           |
 | I  | Encuesta Cliente                  | Pendiente   |           |
 | J  | Encuesta Empleado                 | Pendiente   |           |
