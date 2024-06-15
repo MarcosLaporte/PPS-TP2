@@ -1,0 +1,15 @@
+@import '../theme/variables.scss';
+
+ion-menu {
+  margin-top: 56px;
+
+  &::part(container) {
+    border-radius: 0 20px 20px 0;
+    box-shadow: 4px 0px 42px #{$mint};
+  }
+
+  ion-content {
+    --padding-top: 20px;
+    --padding-bottom: 20px;
+  }
+}

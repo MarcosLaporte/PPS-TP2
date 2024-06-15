@@ -1,13 +1,38 @@
 <ion-app>
   <ion-header [translucent]="true" *ngIf="router.url !== '/splash'">
     <ion-toolbar>
-      <ion-item lines="none">
-        <ion-title>La Comanda - Yourdonistas</ion-title>
-      </ion-item>
+      <ion-buttons slot="start">
+        <ion-menu-button></ion-menu-button>
+      </ion-buttons>
+      <ion-title>La Comanda - Yourdonistas</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <ion-router-outlet></ion-router-outlet>
+  <ion-menu *ngIf="router.url !== '/splash' && router.url !== '/login'" content-id="main" type="overlay">
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Bienvenido, {{auth.UsuarioEnSesion?.nombre}}!</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content>
+      <ion-list id="lista-inbox">
+        <ion-list-header>xxxxxx</ion-list-header>
+        <ion-menu-toggle auto-hide="false" *ngFor="let pag of paginas; let i = index">
+          <ion-item routerDirection="root" [routerLink]="[pag.url]" lines="none" routerLinkActive="selected">
+            <ion-icon aria-hidden="true" slot="start" [md]="pag.icono + '-sharp'"></ion-icon>
+            <ion-label>{{ pag.titulo }}</ion-label>
+          </ion-item>
+        </ion-menu-toggle>
+      </ion-list>
+
+      <ion-list id="labels-list">
+        <ion-list-header>xxxxxx</ion-list-header>
+      </ion-list>
+    </ion-content>
+  </ion-menu>
+  <ion-router-outlet id="main"></ion-router-outlet>
+
   <ngx-spinner [fullScreen]="true" template="
     <img src='../assets/spinner.gif' style='width: 125vw; max-width: 125vh;'>
   "></ngx-spinner>

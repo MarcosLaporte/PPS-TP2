@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { IonApp, IonRouterOutlet, IonHeader, IonToolbar, IonItem, IonTitle } from '@ionic/angular/standalone';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { AuthService } from './services/auth.service';
+import { skullSharp } from 'ionicons/icons';
+import { addIcons } from 'ionicons';
 
 @Component({
   selector: 'app-root',
@@ -14,10 +16,20 @@ import { AuthService } from './services/auth.service';
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppComponent {
+  public paginas = [
+    { titulo: 'Mesas', url: '/mesas', icono: 'skull' },
+    { titulo: 'Productos', url: '/productos', icono: 'skull' },
+    { titulo: 'Clientes', url: '/clientes', icono: 'skull' },
+    { titulo: 'Encuestas', url: '/encuestas', icono: 'skull' },
+  ];
+
   constructor(protected router: Router, protected auth: AuthService) {
     const ssUser = sessionStorage.getItem('usuario');
     this.auth.UsuarioEnSesion = ssUser ? JSON.parse(ssUser) : null;
 
     router.navigateByUrl('splash');
+
+    addIcons({ skullSharp });
+
   }
 }
