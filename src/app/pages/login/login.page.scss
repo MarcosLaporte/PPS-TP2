@@ -1,7 +1,6 @@
 @import '../../../theme/variables.scss';
 
 * {
-  font-size: 1.15rem;
   color: #1f1f1f;
 
   a {
@@ -10,35 +9,61 @@
   }
 }
 
+.bg-img {
+  --background: url('../../../assets/restaurant-wallpaper.avif') no-repeat center center fixed;
+  background: url('../../../assets/restaurant-wallpaper.avif') no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
 .container {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
+  
   ion-card {
+    --background: #{$lavander}cc;
+
     .acceso-rapido {
-      ion-row ion-col {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+
+      .acceso {
+        font-size: 1.15rem;
         display: flex;
         flex-direction: column;
         align-items: center;
-        margin: 0 5px;
+        margin: 2.5px 15px;
         text-transform: uppercase;
 
         ion-button {
           width: fit-content;
-          margin-top: 0;
-          --background: #21D19F;
+          --background: #{$mint};
 
           i {
-            font-size: 1.5rem;
+            font-size: 2.5rem;
           }
         }
       }
     }
 
-    .inputs .errores {
-      color: red;
+    form {
+      border-top: 1px solid #1f1f1f;
+      .inputs {
+        font-size: 1.5rem;
+
+        .errores * {
+          color: red;
+        }
+      }
+
+      ion-button {
+        font-size: 2rem;
+      }
     }
   }
 }

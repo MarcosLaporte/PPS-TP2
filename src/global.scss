@@ -46,27 +46,27 @@
 
 .background-pri {
   background-color: $slate-grey;
-  --background: $slate-grey;
+  --background: #{$slate-grey};
 }
 
 .background-sec {
   background-color: $cool-grey;
-  --background: $cool-grey;
+  --background: #{$cool-grey};
 }
 
 .background-ter {
   background-color: $lavander;
-  --background: $lavander;
+  --background: #{$lavander};
 }
 
 .background-for {
   background-color: $keppel;
-  --background: $keppel;
+  --background: #{$keppel};
 }
 
 .background-fif {
   background-color: $mint;
-  --background: $mint;
+  --background: #{$mint};
 }
 
 .deshabilitado {
