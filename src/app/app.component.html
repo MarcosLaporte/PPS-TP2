@@ -13,13 +13,13 @@
         <ion-icon name="chevron-down-circle"></ion-icon>
       </ion-fab-button>
       <ion-fab-list side="bottom">
-        <ion-fab-button *ngFor="let func of funciones" (click)="func.accion">
+        <ion-fab-button *ngFor="let func of funciones" (click)="func.accion()">
           <ion-icon [name]="func.icono" size="large"></ion-icon>
         </ion-fab-button>
       </ion-fab-list>
     </ion-fab>
 
-    <ion-router-outlet id="main"></ion-router-outlet>
+    <ion-router-outlet></ion-router-outlet>
 
     <ion-modal id="pagsModal" trigger="abrirPags">
       <ion-toolbar>
@@ -27,7 +27,7 @@
       </ion-toolbar>
       <div id="lista-container">
         <ion-accordion-group id="lista-global" [multiple]="true" [value]="['General', 'Altas']">
-          <ion-accordion *ngFor="let grupo of grupos" [value]="grupo.nombre">
+          <ion-accordion *ngFor="let grupo of grupos" [value]="grupo.nombre" [disabled]="grupo.deshabilitado">
             <ion-item slot="header" color="light">
               <ion-label>{{grupo.nombre}}</ion-label>
             </ion-item>

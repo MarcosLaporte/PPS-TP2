@@ -4,12 +4,11 @@ import { Router } from '@angular/router';
 import { IonApp, IonRouterOutlet, IonHeader, IonToolbar, IonItem, IonTitle } from '@ionic/angular/standalone';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { AuthService } from './services/auth.service';
-import { scan, logOutOutline, menuOutline, chevronDownCircle } from 'ionicons/icons';
+import { scan, logOutOutline, menuOutline, chevronDownCircle, logInOutline } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
-import { MySwal, ToastInfo, ToastSuccess } from './utils/alerts';
+import { ToastInfo, ToastSuccess } from './utils/alerts';
 import { AlertController, NavController } from '@ionic/angular';
 import { ScannerService } from './services/scanner.service';
-import { BarcodeFormat } from '@capacitor-mlkit/barcode-scanning';
 
 @Component({
   selector: 'app-root',
@@ -23,10 +22,12 @@ export class AppComponent {
   public grupos = [
     {
       nombre: 'General',
+      deshabilitado: false,
       paginas: [{ titulo: 'Inicio', url: '/home', icono: 'house-chimney' }]
     },
     {
       nombre: 'Altas',
+      deshabilitado: true,
       paginas: [
         { titulo: 'Mesa', url: '/alta-mesa', icono: 'table-picnic' },
         { titulo: 'Empleado', url: '/alta-empleado', icono: 'room-service' },
@@ -37,18 +38,27 @@ export class AppComponent {
     }
   ];
 
-  public funciones = [
-    { titulo: 'Cerrar sesión', icono: 'log-out-outline', accion: async () => await this.cerrarSesion() },
+  public funciones: { titulo: string, icono: string, accion: () => Promise<any> }[] = [
+    { titulo: 'Sesión', icono: 'log-in-outline', accion: async () => { } },
     { titulo: 'Escanear', icono: 'scan', accion: async () => await this.scanner.escanear() },
   ]
 
+  readonly funcIniciarSesion =
+    { titulo: 'Iniciar sesión', icono: 'log-in-outline', accion: async () => this.navCtrl.navigateRoot('login') };
+  readonly funcCerrarSesion =
+    { titulo: 'Cerrar sesión', icono: 'log-out-outline', accion: async () => await this.cerrarSesion() };
   constructor(protected router: Router, protected navCtrl: NavController, protected auth: AuthService, private alertCtrl: AlertController, private scanner: ScannerService) {
+    auth.usuarioEnSesionObs.subscribe((usuario) => {
+      this.grupos[1].deshabilitado = !usuario;
+      this.funciones[0] = usuario ? this.funcCerrarSesion : this.funcIniciarSesion;
+    });
+
     const ssUser = sessionStorage.getItem('usuario');
     this.auth.UsuarioEnSesion = ssUser ? JSON.parse(ssUser) : null;
 
     navCtrl.navigateRoot('home');
 
-    addIcons({ menuOutline, chevronDownCircle, logOutOutline, scan });
+    addIcons({ menuOutline, chevronDownCircle, logInOutline, logOutOutline, scan });
   }
 
   itemClick(url: string) {
