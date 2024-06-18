@@ -1,15 +1,21 @@
 @import '../theme/variables.scss';
 
-ion-menu {
-  margin-top: 56px;
-
-  &::part(container) {
-    border-radius: 0 20px 20px 0;
-    box-shadow: 4px 0px 42px #{$mint};
+ion-fab-list {
+  ion-fab-button {
+    height: 50px;
+    width: 50px;
   }
+}
 
-  ion-content {
-    --padding-top: 20px;
-    --padding-bottom: 20px;
+ion-modal {
+  --height: auto;
+  align-items: end;
+
+  #lista-container {
+    ion-item {
+      i {
+        margin-right: 2rem;
+      }
+    }
   }
 }
