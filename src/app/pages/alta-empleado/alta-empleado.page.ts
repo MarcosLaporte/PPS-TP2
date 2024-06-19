@@ -14,6 +14,7 @@ import { Empleado, TipoEmpleado } from 'src/app/utils/classes/usuarios/empleado'
 import { ScannerService } from 'src/app/services/scanner.service';
 import { tomarFoto } from 'src/main';
 import { StorageService } from 'src/app/services/storage.service';
+import { BarcodeFormat } from '@capacitor-mlkit/barcode-scanning';
 
 @Component({
   selector: 'app-alta-empleado',
@@ -25,7 +26,7 @@ import { StorageService } from 'src/app/services/storage.service';
 export class AltaEmpleadoPage {
   empleadoFrm: FormGroup;
 
-  constructor(protected navCtrl: NavController, private auth: AuthService, private spinner: NgxSpinnerService, private db: DatabaseService, private scannerServ: ScannerService, private storage: StorageService) {
+  constructor(protected navCtrl: NavController, private auth: AuthService, private spinner: NgxSpinnerService, private db: DatabaseService, private scanner: ScannerService, private storage: StorageService) {
     this.empleadoFrm = inject(FormBuilder).group({
       tipoEmpleado: [
         null, [
@@ -131,19 +132,23 @@ export class AltaEmpleadoPage {
   }
 
   async escanearDni() {
-    this.spinner.show();
-    const barcodes = await this.scannerServ.scanBarcodes();
-    barcodes.forEach(barcode => {
-      const dniData = this.scannerServ.extractDniData(barcode.rawValue);
-      if (dniData) {
-        this.empleadoFrm.patchValue({
-          nombre: dniData.nombre,
-          apellido: dniData.apellido,
-          dni: dniData.dni,
-        });
-      }
-    });
-    this.spinner.hide();
+    try {
+      this.spinner.show();
+
+      const valorCrudo = await this.scanner.escanear([BarcodeFormat.Pdf417]);
+      const datosDni = this.scanner.extraerDatosDni(valorCrudo);
+      this.empleadoFrm.patchValue({
+        dni: datosDni.dni,
+        cuil: datosDni.cuil,
+        nombre: datosDni.nombre,
+        apellido: datosDni.apellido
+      });
+
+      this.spinner.hide();
+    } catch (error: any) {
+      this.spinner.hide();
+      ToastError.fire('Ups...', error.message);
+    }
   }
 
   async subirEmpleado() {

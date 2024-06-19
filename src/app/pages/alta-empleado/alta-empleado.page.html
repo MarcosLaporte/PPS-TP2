@@ -22,10 +22,15 @@
           <div id="dni" class="dni deshabilitado">
             <ion-input id="input-dni" label="DNI" label-placement="fixed" type="text"
               formControlName="dni" name="dni" required ngDefaultControl>
-              <ion-button id="btn-dni" fill="clear" slot="end" aria-label="buscar" (click)="buscarDni();"
-                [disabled]="empleadoFrm.controls['dni'].errors" [style.display]="'none'">
-                <ion-icon slot="icon-only" name="search" aria-hidden="true"></ion-icon>
+              <ion-button id="btn-dni" *ngIf="empleadoFrm.controls['dni'].errors; else buscar"
+                fill="clear" slot="end" aria-label="escanear" (click)="escanearDni();">
+                <ion-icon slot="icon-only" name="scan" aria-hidden="true"></ion-icon>
               </ion-button>
+              <ng-template #buscar>
+                <ion-button id="btn-dni" fill="clear" slot="end" aria-label="buscar" (click)="buscarDni();">
+                  <ion-icon slot="icon-only" name="search" aria-hidden="true"></ion-icon>
+                </ion-button>
+              </ng-template>
             </ion-input>
             <div class="errores" *ngIf="empleadoFrm.controls['dni'].dirty && empleadoFrm.controls['dni'].errors">
               <small *ngIf="empleadoFrm.controls['dni'].errors['required']">Debe rellenar este campo.</small>
