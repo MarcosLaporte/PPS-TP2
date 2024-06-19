@@ -114,9 +114,10 @@ export class AltaEmpleadoPage {
 
   async buscarDni() {
     this.spinner.show();
-    const dniCtrl = this.empleadoFrm.controls['dni'];
+    const dniValue = <string>this.empleadoFrm.controls['dni'].value;
+    const dni = dniValue.replace(/[-. ]/g, '');
 
-    await this.db.buscarUsuarioPorDni(Number(dniCtrl.value.replace(/[-. ]/g, '')))
+    await this.db.buscarUsuarioPorDni(Number(dni))
       .then((pers) => ToastError.fire('Este DNI ya se encuentra registrado.'))
       .catch((error: any) => {
         if (error instanceof Exception && error.code === ErrorCodes.DniNoRegistrado) {
@@ -138,8 +139,8 @@ export class AltaEmpleadoPage {
       const valorCrudo = await this.scanner.escanear([BarcodeFormat.Pdf417]);
       const datosDni = this.scanner.extraerDatosDni(valorCrudo);
       this.empleadoFrm.patchValue({
-        dni: datosDni.dni,
-        cuil: datosDni.cuil,
+        dni: (datosDni.dni).toString(),
+        cuil: (datosDni.cuil).toString(),
         nombre: datosDni.nombre,
         apellido: datosDni.apellido
       });
