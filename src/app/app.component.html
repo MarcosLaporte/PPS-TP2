@@ -1,14 +1,15 @@
 <ion-app>
-  <ion-header [translucent]="true" *ngIf="router.url !== '/splash'">
+  <!-- <ion-header [translucent]="true" *ngIf="router.url !== '/splash'">
     <ion-toolbar>
       <ion-title (click)="navCtrl.navigateRoot('home')">La Comanda - Yourdonistas</ion-title>
       <ion-button slot="end" fill="clear" (click)="scanner.escanear()">
         <ion-icon slot="icon-only" name="scan"></ion-icon>
       </ion-button>
     </ion-toolbar>
-  </ion-header>
-
+  </ion-header> -->
+  
   <ion-content>
+    <app-menu></app-menu>
     <ion-router-outlet></ion-router-outlet>
   </ion-content>
 
