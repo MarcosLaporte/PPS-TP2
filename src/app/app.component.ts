@@ -12,6 +12,7 @@ import { ToastInfo, ToastSuccess, ToastError, MySwal } from './utils/alerts';
 import { Colecciones, DatabaseService } from './services/database.service';
 import { Mesa } from './utils/classes/mesa';
 import { Cliente } from './utils/classes/usuarios/cliente';
+import { ErrorCodes, Exception } from './utils/classes/exception';
 
 @Component({
   selector: 'app-root',
@@ -106,23 +107,26 @@ export class AppComponent {
 
   async escanearQrMesa(){
     // const QR : string = await this.scanner.escanear();
-    const QR : string = "id:DLDy65F46o10UeAQVcyG" //esto es simulado
+    const QR : string = "DLDy65F46o10UeAQVcyG" //esto es simulado
     // const valorCrudo = await this.scanner.escanear([BarcodeFormat.Pdf417]);
     try {
       this.spinner.show();
-
-      const mesa = await this.db.traerDoc<Mesa>(Colecciones.Mesas, QR.split(':')[1]);
+      const mesa = await this.db.traerDoc<Mesa>(Colecciones.Mesas, QR);
       // const cliente = await this.db.traerDoc<Cliente>(Colecciones.Usuarios, this.auth.UsuarioEnSesion!.id);
-      const cliente = await this.db.traerDoc<Cliente>(Colecciones.Usuarios, 'PxxHa5NQnLBf74kho38W');
+      // const cliente = await this.db.traerDoc<Cliente>(Colecciones.Usuarios, 'PxxHa5NQnLBf74kho38W');
+      const cliente = this.auth.UsuarioEnSesion as Cliente;
+      console.log(mesa);
+      console.log(cliente);
 
-      let TEST = true;
+      // let TEST = true;
       
       if(mesa && cliente){
 
         switch(mesa.estado){
           case 'disponible':
             this.spinner.hide();
-            if(cliente.idMesa == mesa.id || TEST){
+            // if(cliente.idMesa == mesa.id || TEST){
+              if(cliente.idMesa == mesa.id){
               await MySwal.fire({
                 title: `Bienvenido ${cliente.nombre}`,
                 text: 'Ya desea realizar su pedido?',
@@ -143,22 +147,20 @@ export class AppComponent {
                 }
               });
             }else{
-              ToastError.fire(`Esta no es su mesa`);  
+              throw new Exception(ErrorCodes.MesaEquivocada,"esta no es tu mesa");
             }
           break;
 
           case 'cliente sin pedido':
             this.pedirComida(mesa);
-            console.log('sin pedido');
+            console.log('cliente sin pedido');
           break;
-
+          /*
           case 'cliente pidiendo comida':
-            this.pedirComida(mesa);
             console.log('cliente pidiendo comid');
           break;
-
+          */
           case 'cliente esperando comida':
-            this.pedirComida(mesa);
             console.log('cliente esperando comida');
           break;
 
@@ -171,7 +173,6 @@ export class AppComponent {
           break;
         }
       }
-
       this.spinner.hide();
     } catch (error: any) {
       this.spinner.hide();

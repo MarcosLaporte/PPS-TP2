@@ -160,7 +160,7 @@ export class AltaMesaPage {
   }
 
   private generateQRData(mesaId:string) {
-    const QRid = `id:${mesaId}`;
+    const QRid = `${mesaId}`;
     // const QRMenu;
     // const QRPropina1;
     // const QRPropina2;
