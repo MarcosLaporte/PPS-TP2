@@ -1,47 +1,39 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Alta producto</ion-title>
-  </ion-toolbar>
-</ion-header>
+<form [formGroup]="frmProducto">
+  <ion-item>
+    <ion-label position="floating">Nombre</ion-label>
+    <ion-input placeholder="Nombre" formControlName="nombre"></ion-input>
+  </ion-item>
 
-<ion-content [fullscreen]="true">
-  <form [formGroup]="frmProducto">
-    <ion-item>
-      <ion-label position="floating">Nombre</ion-label>
-      <ion-input placeholder="Nombre" formControlName="nombre"></ion-input>
-    </ion-item>
+  <ion-item>
+    <ion-label position="floating">Descripción</ion-label>
+    <ion-input placeholder="Descripción" formControlName="descripcion"></ion-input>
+  </ion-item>
 
-    <ion-item>
-      <ion-label position="floating">Descripción</ion-label>
-      <ion-input placeholder="Descripción" formControlName="descripcion"></ion-input>
-    </ion-item>
+  <ion-item>
+    <ion-label position="floating">Tiempo de Elaboración (MM:SS)</ion-label>
+    <ion-input type="number" placeholder="MM" formControlName="minutos" maxlength="2"></ion-input>
+    <span>:</span>
+    <ion-input type="number" placeholder="SS" formControlName="segundos" maxlength="2"></ion-input>
+  </ion-item>
 
-    <ion-item>
-      <ion-label position="floating">Tiempo de Elaboración (MM:SS)</ion-label>
-      <ion-input type="number" placeholder="MM" formControlName="minutos" maxlength="2"></ion-input>
-      <span>:</span>
-      <ion-input type="number" placeholder="SS" formControlName="segundos" maxlength="2"></ion-input>
-    </ion-item>
+  <ion-item>
+    <ion-label position="floating">Precio</ion-label>
+    <ion-input type="number" placeholder="Precio" formControlName="precio"></ion-input>
+  </ion-item>
 
-    <ion-item>
-      <ion-label position="floating">Precio</ion-label>
-      <ion-input type="number" placeholder="Precio" formControlName="precio"></ion-input>
-    </ion-item>
+  <ion-button shape="round" expand="full" (click)="takePics()">Tomar Fotos</ion-button>
+  <ion-button shape="round" expand="full" (click)="subirProducto()">Cargar Producto</ion-button>
 
-    <ion-button shape="round" expand="full" (click)="takePics()">Tomar Fotos</ion-button>
-    <ion-button shape="round" expand="full" (click)="subirProducto()">Cargar Producto</ion-button>
+  <!-- QR Code Display -->
+  <div *ngIf="qrData">
+    <qr-code [value]="qrData" size="300" errorCorrectionLevel="M"></qr-code>
+  </div>
 
-    <!-- QR Code Display -->
-    <div *ngIf="qrData">
-      <qr-code [value]="qrData" size="300" errorCorrectionLevel="M"></qr-code>
+  <!-- Display uploaded photos -->
+  <!-- <div *ngIf="pictureUrls.length > 0">
+    <h3>Fotos del Producto:</h3>
+    <div *ngFor="let url of pictureUrls">
+      <img [src]="url" style="width: 100%; max-width: 300px; margin: 10px 0;" />
     </div>
-
-    <!-- Display uploaded photos -->
-    <div *ngIf="pictureUrls.length > 0">
-      <h3>Fotos del Producto:</h3>
-      <div *ngFor="let url of pictureUrls">
-        <img [src]="url" style="width: 100%; max-width: 300px; margin: 10px 0;" />
-      </div>
-    </div>
-  </form>
-</ion-content>
+  </div> -->
+</form>

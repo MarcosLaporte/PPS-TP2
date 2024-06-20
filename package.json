@@ -32,6 +32,7 @@
     "@capacitor/keyboard": "6.0.0",
     "@capacitor/splash-screen": "^6.0.0",
     "@capacitor/status-bar": "6.0.0",
+    "@flaticon/flaticon-uicons": "^3.2.1",
     "@ionic/angular": "^8.0.0",
     "firebase-tools": "^13.11.2",
     "ionicons": "^7.2.1",

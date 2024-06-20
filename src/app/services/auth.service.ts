@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 import { Colecciones, DatabaseService } from './database.service';
 import { Persona } from '../utils/classes/usuarios/persona';
 import { ErrorCodes, Exception } from '../utils/classes/exception';
+import { LoginPage } from '../pages/login/login.page';
 
 @Injectable({
   providedIn: 'root'
@@ -42,7 +43,7 @@ export class AuthService {
    * 
    * @throws Un Fire error traducido a un mensaje comprensible para el usuario.
    */
-  async registrarFireAuth(usuario: Persona, contr: string): Promise<string> {
+  async registrarUsuario(usuario: Persona, contr: string): Promise<string> {
     try {
       await this.db.buscarUsuarioPorDni(usuario.dni) // Tira Error si no encuentra el DNI
         .catch((error: Exception) => {
@@ -71,7 +72,7 @@ export class AuthService {
    * 
    * @throws Un Fire error traducido a un mensaje comprensible para el usuario.
 */
-  async ingresarFireAuth(email: string, contr: string) {
+  async ingresarUsuario(email: string, contr: string) {
     try {
       await signInWithEmailAndPassword(this.auth, email, contr);
       const objUsuario = await this.db.buscarUsuarioPorCorreo(this.auth.currentUser?.email!)
