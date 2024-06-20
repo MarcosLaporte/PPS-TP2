@@ -1,0 +1,40 @@
+<ng-container *ngIf="router.url !== '/splash'">
+  <ion-header [translucent]="true">
+    <ion-toolbar>
+      <ion-title>La Comanda - Yourdonistas</ion-title>
+    </ion-toolbar>
+    <ion-toolbar *ngIf="router.url !== '/login'">
+      <ion-accordion-group id="lista-global" [multiple]="true">
+        <ion-accordion toggleIcon="caret-down-circle" toggleIconSlot="start">
+          <ion-item slot="header" color="light">
+            <ion-label>Páginas</ion-label>
+          </ion-item>
+          <div slot="content">
+            <ion-accordion *ngFor="let grupo of grupos" [value]="grupo.nombre" [disabled]="grupo.deshabilitado">
+              <ion-item slot="header" color="light">
+                <ion-label>{{grupo.nombre}}</ion-label>
+              </ion-item>
+              <div slot="content">
+                <ion-item button *ngFor="let pag of grupo.paginas" (click)="itemClick(pag.url)">
+                  <i [class]="'fi fi-tr-'+pag.icono"></i>
+                  {{pag.titulo}}
+                </ion-item>
+              </div>
+            </ion-accordion>
+          </div>
+        </ion-accordion>
+      </ion-accordion-group>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-fab *ngIf="router.url !== '/login'" slot="fixed" vertical="top" horizontal="end">
+    <ion-fab-button>
+      <ion-icon name="chevron-down-circle"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="bottom">
+      <ion-fab-button *ngFor="let func of funciones" (click)="func.accion()">
+        <ion-icon [name]="func.icono" size="large"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+</ng-container>

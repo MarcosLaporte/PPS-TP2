@@ -1,0 +1,19 @@
+#lista-global {
+  ion-item {
+    i {
+      margin-right: 2rem;
+    }
+  }
+}
+
+ion-fab {
+  top: 1px !important;
+  right: 5px !important;
+
+  ion-fab-list {
+    ion-fab-button {
+      height: 50px;
+      width: 50px;
+    }
+  }
+}
