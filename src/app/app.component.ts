@@ -2,13 +2,16 @@ import { CommonModule } from '@angular/common';
 import { CUSTOM_ELEMENTS_SCHEMA, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { IonApp, IonRouterOutlet, IonHeader, IonToolbar, IonItem, IonTitle } from '@ionic/angular/standalone';
-import { NgxSpinnerModule } from 'ngx-spinner';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { AuthService } from './services/auth.service';
 import { chevronDownCircle, logInOutline, logOutOutline, menuOutline, scan } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 import { AlertController, NavController } from '@ionic/angular';
 import { ScannerService } from './services/scanner.service';
-import { ToastInfo, ToastSuccess } from './utils/alerts';
+import { ToastInfo, ToastSuccess, ToastError, MySwal } from './utils/alerts';
+import { Colecciones, DatabaseService } from './services/database.service';
+import { Mesa } from './utils/classes/mesa';
+import { Cliente } from './utils/classes/usuarios/cliente';
 
 @Component({
   selector: 'app-root',
@@ -23,7 +26,7 @@ export class AppComponent {
   //   const ssUser = sessionStorage.getItem('usuario');
   //   this.auth.UsuarioEnSesion = ssUser ? JSON.parse(ssUser) : null;
 
-  //   // navCtrl.navigateRoot('splash');
+    // // navCtrl.navigateRoot('splash');
   //   navCtrl.navigateRoot('alta-mesa');
 
   //   addIcons({ scan });
@@ -49,14 +52,13 @@ export class AppComponent {
 
   public funciones: { titulo: string, icono: string, accion: () => Promise<any> }[] = [
     { titulo: 'Sesión', icono: 'log-in-outline', accion: async () => { } },
-    { titulo: 'Escanear', icono: 'scan', accion: async () => await this.scanner.escanear() },
+    { titulo: 'Escanear', icono: 'scan', accion: async () => await this.escanearQrMesa() },
   ]
-
   readonly funcIniciarSesion =
     { titulo: 'Iniciar sesión', icono: 'log-in-outline', accion: async () => this.navCtrl.navigateRoot('login') };
   readonly funcCerrarSesion =
     { titulo: 'Cerrar sesión', icono: 'log-out-outline', accion: async () => await this.cerrarSesion() };
-  constructor(protected router: Router, protected navCtrl: NavController, protected auth: AuthService, private alertCtrl: AlertController, private scanner: ScannerService) {
+  constructor(protected router: Router, protected navCtrl: NavController, protected auth: AuthService, private alertCtrl: AlertController, private scanner: ScannerService, private db: DatabaseService, private spinner: NgxSpinnerService) {
     auth.usuarioEnSesionObs.subscribe((usuario) => {
       this.grupos[1].deshabilitado = !usuario; //TODO: Agregar control por rol de usuario
       this.funciones[0] = usuario ? this.funcCerrarSesion : this.funcIniciarSesion;
@@ -65,7 +67,8 @@ export class AppComponent {
     const ssUser = sessionStorage.getItem('usuario');
     this.auth.UsuarioEnSesion = ssUser ? JSON.parse(ssUser) : null;
 
-    navCtrl.navigateRoot('home');
+    // navCtrl.navigateRoot('home');
+    navCtrl.navigateRoot('splash');
 
     addIcons({ menuOutline, chevronDownCircle, logInOutline, logOutOutline, scan });
   }
@@ -99,5 +102,59 @@ export class AppComponent {
     });
 
     await alert.present();
+  }
+
+  async escanearQrMesa(){
+    // const QR : string = await this.scanner.escanear();
+    const QR : string = "id:afxsMFiCa5JUOV7a0lfh" //esto es simulado
+    // const valorCrudo = await this.scanner.escanear([BarcodeFormat.Pdf417]);
+    try {
+      this.spinner.show();
+
+      const mesa = await this.db.traerDoc<Mesa>(Colecciones.Mesas, QR.split(':')[1]);
+      const cliente = await this.db.traerDoc<Cliente>(Colecciones.Usuarios, this.auth.UsuarioEnSesion!.id);
+
+      if(mesa && cliente){
+        switch(mesa.estado){
+          case 'disponible':
+            this.spinner.hide();
+            if(cliente.idMesa == mesa.id){
+              ToastSuccess.fire(`Bienvenido ${cliente.nombre}`);
+              await MySwal.fire({
+                title: 'Ya desea realizar su pedido?',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                showConfirmButton: true,
+                confirmButtonText: 'Sí',
+                confirmButtonColor: '#a5dc86',
+                showDenyButton: true,
+                denyButtonText: 'No',
+                denyButtonColor: '#f27474',
+              }).then(async (res) => {
+                if(res.isConfirmed){
+                  this.pedirComida();
+                }
+              });
+              
+            }else{
+              ToastError.fire(`Esta no es su mesa`);  
+            }
+          break;
+
+          case 'cliente sin pedido':
+            this.pedirComida();
+          break;
+        }
+      }
+
+      this.spinner.hide();
+    } catch (error: any) {
+      this.spinner.hide();
+      ToastError.fire('Ups...', error.message);
+    }
+    
+  }
+  pedirComida(){
+    //menu con funciones de pedir comida
   }
 }
