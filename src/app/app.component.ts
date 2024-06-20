@@ -22,7 +22,7 @@ export class AppComponent {
     const ssUser = sessionStorage.getItem('usuario');
     this.auth.UsuarioEnSesion = ssUser ? JSON.parse(ssUser) : null;
 
-    navCtrl.navigateRoot('splash');
+    // navCtrl.navigateRoot('splash');
 
     addIcons({ scan });
   }
