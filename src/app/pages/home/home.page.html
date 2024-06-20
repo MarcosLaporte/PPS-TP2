@@ -8,29 +8,9 @@
     </ion-card-content>
   </ion-card>
 
-  <ion-list class="ion-margin" lines="full">
-    <ion-item class="background-sec">
-      <ion-icon name="qr-code-outline" slot="start"></ion-icon>
-      <ion-label>
-        <h2>Escaneo de Códigos QR</h2>
-        <p>Accede a una variedad de instrucciones escaneando códigos QR. Desde consultar nuestro menú hasta participar en divertidos juegos interactivos, todo está a un escaneo de distancia.</p>
-      </ion-label>
-    </ion-item>
-
-    <ion-item class="background-sec">
-      <ion-icon name="people-outline" slot="start"></ion-icon>
-      <ion-label>
-        <h2>Manejo de Empleados</h2>
-        <p>Supervisores, tengan el control completo sobre la gestión de su equipo. Podrán realizar seguimientos, asignar turnos, monitorear el rendimiento y mucho más.</p>
-      </ion-label>
-    </ion-item>
-
-    <ion-item class="background-sec">
-      <ion-icon name="restaurant-outline" slot="start"></ion-icon>
-      <ion-label>
-        <h2>Manejo de Pedidos</h2>
-        <p>Empleados, simplifiquen el proceso de toma y gestión de pedidos. Desde la toma inicial hasta la entrega en la mesa, nuestra herramienta optimiza cada paso para asegurar una experiencia fluida y eficiente.</p>
-      </ion-label>
+  <ion-list class="ion-margin" *ngFor="let pag of paginas" lines="full">
+    <ion-item class="background-sec" (click)="nav.navigateRoot(pag)">
+      {{pag}}
     </ion-item>
   </ion-list>
 
