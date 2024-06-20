@@ -100,6 +100,18 @@ export class AltaProductoPage {
       await this.db.subirDoc(Colecciones.Productos, producto);
 
       MySwal.fire('Producto agregado con éxito');
+
+      this.frmProducto.reset({
+        nombre: '',
+        descripcion: '',
+        minutos: 0,
+        precio: 0
+      });
+
+      this.pictures.forEach(pic => {
+        pic.file = null;
+        pic.url = null;
+      });
     } catch (error: any) {
       console.error("Error al subir producto:", error);
     } finally {
