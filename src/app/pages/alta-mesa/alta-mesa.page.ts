@@ -13,6 +13,18 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { addIcons } from 'ionicons';
 import { search } from 'ionicons/icons';
 import { QrCodeModule } from 'ng-qrcode';
+import { Router } from '@angular/router';
+
+/*
+QR de la mesa
+● Para poder verificar la disponibilidad de una mesa.
+● Para relacionar al cliente con una mesa.
+● Para que el cliente pueda 'consultar' al mozo.
+● Para que el cliente pueda acceder al menú.
+● Para poder ver el estado del pedido.
+● Para acceder a la encuesta de satisfacción.
+● Para acceder a los juegos.
+*/
 import { tomarFoto } from 'src/main';
 
 @Component({
@@ -25,18 +37,18 @@ import { tomarFoto } from 'src/main';
 export class AltaMesaPage {
 
   frmMesa: FormGroup;
-  
   picture!: File;
-  tempImg: string = "";
   QRs: string[] = [];
   selectedData = 'foto';
-
+  mesaCreada: boolean = false;
+  mesaImg:string = "";
   constructor(
     private db: DatabaseService,
     private storage: StorageService,
     private auth: AuthService,
     private formBuilder: FormBuilder,
-    private spinner: NgxSpinnerService
+    private spinner: NgxSpinnerService,
+    private router: Router,
   ) {
     this.frmMesa = this.formBuilder.group({
       nroMesa: new FormControl('', [Validators.required, Validators.min(1)]),
@@ -52,28 +64,15 @@ export class AltaMesaPage {
     const foto = await tomarFoto();
     if (foto) {
       this.picture = foto;
-      this.generateQRData();
+      this.frmMesa.controls['foto'].setValue('valid');
     }
   }
 
   async uploadPicture(image: File) {
     this.spinner.show();
-
-    const datetime: Date = new Date();
-
-    const nombreFoto: string = 
-      `${Prefijos.Mesa}-${this.frmMesa.controls['nroMesa'].value}`;
-    
-    
+    const nombreFoto: string = `${Prefijos.Mesa}-${this.frmMesa.controls['nroMesa'].value}`;
     try {
       const url = await this.storage.subirArchivo(image,`${Colecciones.Mesas}/${nombreFoto}`);
-      const fotoDePerfil: Foto = {
-        id: '',
-        name: nombreFoto,
-        date: datetime,
-        url: url,
-      };
-      // await this.db.subirDoc(Colecciones.Mesas, fotoDePerfil, true);
       this.spinner.hide();
       ToastSuccess.fire('Imagen subida con éxito!');
       return url;
@@ -90,7 +89,7 @@ export class AltaMesaPage {
 
     await this.db.traerColeccion<Mesa>(Colecciones.Mesas).then( mesas => {
       mesas.forEach( (m, index) => {
-        if(m.nroMesa == this.frmMesa.controls['nroMesa'].value){
+        if(m.nroMesa == Number(this.frmMesa.controls['nroMesa'].value)){
           nroMesaExiste = true;
           ToastError.fire('Este Numero de mesa ya se encuentra registrado.');
         }
@@ -111,47 +110,71 @@ export class AltaMesaPage {
   }
 
 
-  subirMesa() { 
-    let foto;
-    this.uploadPicture(this.picture).then((url) => {
-      foto = url;
-    });
-    if (foto) {
+  async subirMesa() { 
+    this.uploadPicture(this.picture).then(async (url) => {
+      if (url != null) {
+        this.mesaImg = url;
+        await MySwal.fire({
+          title: 'todos los datos son correctos?',
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          showConfirmButton: true,
+          confirmButtonText: 'Sí',
+          confirmButtonColor: '#a5dc86',
+          showDenyButton: true,
+          denyButtonText: 'Revisar',
+          denyButtonColor: '#f27474',
+        }).then(async (res) => {
+          if(res.isConfirmed){
+            const nroMesa = this.frmMesa.controls['nroMesa'].value;
+            const cantComensales = this.frmMesa.controls['cantComensales'].value;
+            const tipoMesaControl = this.frmMesa.controls['tipoMesaControl'].value;
+  
+            let mesa = new Mesa(
+              '',
+              nroMesa,
+              cantComensales,
+              tipoMesaControl,
+              url,
+              this.QRs
+            );
       
-      const nroMesa = this.frmMesa.controls['nroMesa'].value;
-      const cantComensales = this.frmMesa.controls['cantComensales'].value;
-      const tipoMesaControl = this.frmMesa.controls['tipoMesaControl'].value;
-      let mesa = new Mesa(
-        '',
-        nroMesa,
-        cantComensales,
-        tipoMesaControl,
-        foto,
-        this.QRs
-      );
-
-      this.db
-        .subirDoc(Colecciones.Mesas, mesa, true)
-        .then((r) => {
-          console.log('id' + r);
+            const mesaId = await this.db.subirDoc(Colecciones.Mesas, mesa, true);
+            if(mesaId){
+              this.generateQRData(mesaId);
+              this.mesaCreada = true;
+              document.getElementById('cantComensales')!.classList.add('deshabilitado');
+              document.getElementById('tipoMesa')!.classList.add('deshabilitado');
+              (document.getElementById('btn-tomarFoto')! as HTMLIonButtonElement).classList.add('deshabilitado');
+              (document.getElementById('btn-agregarMesa')! as HTMLIonButtonElement).classList.add('deshabilitado');
+            }
+          }
+          this.spinner.hide();
         });
-    }
+      }
+    })
   }
 
   selecTipo($ev: CustomEvent) {
     this.frmMesa.controls['tipoMesaControl'].setValue($ev.detail.value);
   }
 
-  private generateQRData() {
-    const mesaQR = 
-    `nro: ${this.frmMesa.controls['nroMesa'].value}\n` +
-    `cantComensales: ${this.frmMesa.controls['cantComensales'].value}\n` +
-    `tipoMesa: ${this.frmMesa.controls['tipoMesaControl'].value}`;
-    this.QRs.push(mesaQR);
+  private generateQRData(mesaId:string) {
+    const QRid = `${mesaId}`;
+    // const QRMenu;
+    // const QRPropina1;
+    // const QRPropina2;
+    // const QRPropina3;
+    this.QRs.push(QRid);
+    this.db.actualizarDoc(Colecciones.Mesas, mesaId, {'codigoQr':this.QRs})
     //TODO: El QR tiene que ser el ID del producto en firebase.
   }
 
   selectOption(event: CustomEvent){
     this.selectedData = event.detail.value;
+  }
+
+  volver(){
+    this.router.navigateByUrl('home');
   }
 }

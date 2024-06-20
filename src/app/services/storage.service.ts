@@ -16,7 +16,6 @@ export class StorageService {
    */
 	async subirArchivo(archivo: File, ruta: string): Promise<string> {
 		const refArchivo = ref(this.storage, ruta);
-    
 		try {
       await uploadBytes(refArchivo, archivo);
 

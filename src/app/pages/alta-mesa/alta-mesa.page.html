@@ -117,20 +117,19 @@
           color="tertiary"
           (click)="takePic()"
           [ngClass]="(frmMesa.controls['cantComensales'].valid && frmMesa.controls['tipoMesaControl'].valid)?'':'deshabilitado'">
-          @if (tempImg != '') {
+          <!-- @if (mesaImg != '') {
             volver a tomar Foto
           }@else {
-            Foto de la mesa
-          }
-          
+          } -->
+          Foto de la mesa
           <img id="tomarFotoImg"
             src="../../../assets/fotografo.png"
             width="auto"
           />
         </ion-button>
 
-        @if (frmMesa.controls['foto'].valid) {
-          <ion-item>
+        @if (frmMesa.valid) {
+          <ion-item [ngClass]="!mesaCreada?'invisible':''">
             <ion-select aria-label="datos" value="foto" 
             (ionChange)="selectOption($event)" interface="popover">
               <ion-select-option value="foto">Foto de la mesa</ion-select-option>
@@ -139,18 +138,21 @@
           </ion-item>
         }
 
-        @if(selectedData == 'foto' && tempImg != ""){
-          <div id="tempImg">
-            <img [src]="tempImg" />
-          </div>
-        } 
-        @if (selectedData == 'QR' && QRs.length > 0) {
-          <div id="QR">
-            <qr-code [value]="QRs[0]" size="300" errorCorrectionLevel="M"></qr-code>
-          </div>
+        @if(mesaCreada){
+          @if(selectedData == 'foto' && mesaImg != ""){
+            <div id="tempImg">
+              <img [src]="mesaImg" />
+            </div>
+          } 
+          @if (selectedData == 'QR' && QRs.length > 0) {
+            <div id="QR">
+              <qr-code [value]="QRs[0]" size="300" errorCorrectionLevel="M"></qr-code>
+            </div>
+          }
         }
 
         <ion-button
+        id="btn-agregarMesa"
           type="submit"
           expand="block"
           color="tertiary"
@@ -158,6 +160,15 @@
         >
           Agregar Mesa
         </ion-button>
+        
+        <ion-button
+          expand="block"
+          color="tertiary"
+          (click)="volver()"
+          >
+          Volver
+        </ion-button>  
+        
       </form>
     </ion-card-content>
   </ion-card>
