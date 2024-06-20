@@ -1,2 +1,22 @@
-<div class="container">
+<div class="container background-ter">
+  <ion-card class="background-sec">
+    <ion-card-header>
+      <ion-card-title>¡Bienvenido a Los Yourdonistas!</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Estamos encantados de que formes parte de nuestra comunidad. Nuestra aplicación está diseñada para mejorar la eficiencia y la experiencia tanto para nuestros empleados como para nuestros clientes.</p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-list class="ion-margin" *ngFor="let pag of paginas" lines="full">
+    <ion-item class="background-sec" (click)="nav.navigateRoot(pag)">
+      {{pag}}
+    </ion-item>
+  </ion-list>
+
+  <ion-card class="background-sec">
+    <ion-card-content>
+      <p>Gracias por elegir Los Yourdonistas. Nos comprometemos a brindarte las mejores herramientas para que tu experiencia en el restaurante sea excepcional. ¡Vamos a hacer de cada visita algo especial!</p>
+    </ion-card-content>
+  </ion-card>
 </div>

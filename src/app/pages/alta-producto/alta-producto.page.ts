@@ -4,10 +4,11 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonButton, IonInput } from '@ionic/angular/standalone';
 import { Colecciones, DatabaseService } from 'src/app/services/database.service';
 import { StorageService } from 'src/app/services/storage.service';
-import { MySwal } from 'src/app/utils/alerts';
+import { MySwal, ToastInfo } from 'src/app/utils/alerts';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { Producto } from 'src/app/utils/classes/producto';
 import { QrCodeModule } from 'ng-qrcode';
+import { tomarFoto } from 'src/main';
 
 @Component({
   selector: 'app-alta-producto',
@@ -15,12 +16,12 @@ import { QrCodeModule } from 'ng-qrcode';
   styleUrls: ['./alta-producto.page.scss'],
   standalone: true,
   imports: [IonButton, IonLabel, IonItem, IonContent,
-    IonHeader, IonTitle, IonToolbar,CommonModule,IonInput,ReactiveFormsModule,QrCodeModule]
+    IonHeader, IonTitle, IonToolbar, CommonModule, IonInput, ReactiveFormsModule, QrCodeModule]
 })
 export class AltaProductoPage {
   frmProducto: FormGroup;
   pictures: File[] = [];
-  pictureUrls: string[] = []; // URLs to display the pictures
+  // pictureUrls: string[] = []; // URLs to display the pictures
   qrData: string = '';
 
   constructor(
@@ -37,68 +38,29 @@ export class AltaProductoPage {
     });
   }
 
-  readonly supportedImageFormats = ['jpg', 'jpeg', 'png'];
-
   async takePics() {
     try {
-      const images = [];
-      const urls = [];
-      for (let i = 0; i < 3; i++) {
-        const image = await Camera.getPhoto({
-          quality: 90,
-          allowEditing: false,
-          resultType: CameraResultType.Uri,
-        });
-        if (!this.supportedImageFormats.includes(image.format)) {
-          throw new Error('El archivo debe ser de formato .JPG, .JPEG o .PNG');
-        }
-        const imgFile = await this.getFileFromUri(image.webPath!, image.format);
-        images.push(imgFile);
-        urls.push(image.webPath!);
-        await MySwal.fire({
-          text: `¿Desea subir la foto ${i + 1}?`,
-          imageUrl: image.webPath,
-          imageWidth: '75vw',
-          allowOutsideClick: false,
-          allowEscapeKey: false,
-          showConfirmButton: true,
-          confirmButtonText: 'Sí',
-          confirmButtonColor: '#a5dc86',
-          showDenyButton: true,
-          denyButtonText: 'No',
-          denyButtonColor: '#f27474',
-          showCancelButton: true,
-          cancelButtonText: 'Volver a tomar esta foto',
-          cancelButtonColor: '#f0ec0d',
-        }).then((res) => {
-          if (res.isDenied) {
-            throw new Error('Operación cancelada por el usuario');
-          }
-        });
-      }
-      this.pictures = images;
-      this.pictureUrls = urls;
-    } catch (er: any) {
-      if (er.message.includes('cancelled')) {
-        // ToastInfo.fire('Operación cancelada.');
-      } else {
-        await MySwal.fire('Algo salió mal.', er.message, 'error');
-        throw er;
-      }
-    }
-  }
+      let continuar;
+      do {
+        continuar = false;
 
-  private async getFileFromUri(fileUri: string, fileFormat: string): Promise<File> {
-    const response = await fetch(fileUri);
-    const blob = await response.blob();
-    return new File([blob], `photo.${fileFormat}`, { type: `image/${fileFormat}` });
+        let foto = await tomarFoto();
+        //TODO: Si cancela la subida de fotos mostrar un error. Debe subir 3 sí o sí.
+        if (foto)
+          this.pictures.push(foto);
+
+      } while (this.pictures.length < 3);
+
+    } catch (er: any) {
+      await MySwal.fire('Algo salió mal.', er.message, 'error');
+    }
   }
 
   private async uploadPictures(images: File[]): Promise<string[]> {
     const nombreFotoBase = `${this.frmProducto.value.nombre}`;
-    const urls = [];
+    let urls = [];
     for (let i = 0; i < images.length; i++) {
-      const url = await this.storageService.subirArchivo(images[i], `${Colecciones.Productos}/'producto'-${nombreFotoBase}-${i + 1}`);
+      const url = await this.storageService.subirArchivo(images[i], `${Colecciones.Productos}/producto-${nombreFotoBase}-${i + 1}`);
       urls.push(url);
     }
     return urls;
@@ -131,11 +93,12 @@ export class AltaProductoPage {
 
   private generarQr(imageUrls: string[]) {
     const productoInfo = `Nombre: ${this.frmProducto.value.nombre}\n` +
-                         `Descripción: ${this.frmProducto.value.descripcion}\n` +
-                         `Tiempo: ${this.frmProducto.value.minutos}:${this.frmProducto.value.segundos}\n` +
-                         `Precio: ${this.frmProducto.value.precio}\n` +
-                         `Fotos: ${imageUrls.join(', ')}`;
+      `Descripción: ${this.frmProducto.value.descripcion}\n` +
+      `Tiempo: ${this.frmProducto.value.minutos}:${this.frmProducto.value.segundos}\n` +
+      `Precio: ${this.frmProducto.value.precio}\n` +
+      `Fotos: ${imageUrls.join(', ')}`;
     this.qrData = productoInfo;
+    //TODO: El QR tiene que ser el ID del producto en firebase.
   }
 
 }
