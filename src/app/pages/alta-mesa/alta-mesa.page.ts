@@ -37,12 +37,11 @@ import { tomarFoto } from 'src/main';
 export class AltaMesaPage {
 
   frmMesa: FormGroup;
-  
   picture!: File;
-  tempImg: string = "";
   QRs: string[] = [];
   selectedData = 'foto';
   mesaCreada: boolean = false;
+  mesaImg:string = "";
   constructor(
     private db: DatabaseService,
     private storage: StorageService,
@@ -65,26 +64,15 @@ export class AltaMesaPage {
     const foto = await tomarFoto();
     if (foto) {
       this.picture = foto;
-      this.generateQRData();
+      this.frmMesa.controls['foto'].setValue('valid');
     }
   }
 
   async uploadPicture(image: File) {
     this.spinner.show();
-    const nombreFoto: string = 
-      `${Prefijos.Mesa}-${this.frmMesa.controls['nroMesa'].value}`;
-    
-    
-      const datetime: Date = new Date();
+    const nombreFoto: string = `${Prefijos.Mesa}-${this.frmMesa.controls['nroMesa'].value}`;
     try {
       const url = await this.storage.subirArchivo(image,`${Colecciones.Mesas}/${nombreFoto}`);
-      const fotoDePerfil: Foto = {
-        id: '',
-        name: nombreFoto,
-        date: datetime,
-        url: url,
-      };
-      // await this.db.subirDoc(Colecciones.Mesas, fotoDePerfil, true);
       this.spinner.hide();
       ToastSuccess.fire('Imagen subida con éxito!');
       return url;
@@ -101,7 +89,7 @@ export class AltaMesaPage {
 
     await this.db.traerColeccion<Mesa>(Colecciones.Mesas).then( mesas => {
       mesas.forEach( (m, index) => {
-        if(m.nroMesa == this.frmMesa.controls['nroMesa'].value){
+        if(m.nroMesa == Number(this.frmMesa.controls['nroMesa'].value)){
           nroMesaExiste = true;
           ToastError.fire('Este Numero de mesa ya se encuentra registrado.');
         }
@@ -125,7 +113,7 @@ export class AltaMesaPage {
   async subirMesa() { 
     this.uploadPicture(this.picture).then(async (url) => {
       if (url != null) {
-
+        this.mesaImg = url;
         await MySwal.fire({
           title: 'todos los datos son correctos?',
           allowOutsideClick: false,
@@ -151,19 +139,18 @@ export class AltaMesaPage {
               this.QRs
             );
       
-            this.generateQRData();
-            this.db.subirDoc(Colecciones.Mesas, mesa, true);
-            this.mesaCreada = true;
-            
-            
-            document.getElementById('cantComensales')!.classList.add('deshabilitado');
-            document.getElementById('tipoMesa')!.classList.add('deshabilitado');
-            (document.getElementById('btn-tomarFoto')! as HTMLIonButtonElement).classList.add('deshabilitado');
-            (document.getElementById('btn-agregarMesa')! as HTMLIonButtonElement).classList.add('deshabilitado');
+            const mesaId = await this.db.subirDoc(Colecciones.Mesas, mesa, true);
+            if(mesaId){
+              this.generateQRData(mesaId);
+              this.mesaCreada = true;
+              document.getElementById('cantComensales')!.classList.add('deshabilitado');
+              document.getElementById('tipoMesa')!.classList.add('deshabilitado');
+              (document.getElementById('btn-tomarFoto')! as HTMLIonButtonElement).classList.add('deshabilitado');
+              (document.getElementById('btn-agregarMesa')! as HTMLIonButtonElement).classList.add('deshabilitado');
+            }
           }
           this.spinner.hide();
         });
-  
       }
     })
   }
@@ -172,12 +159,14 @@ export class AltaMesaPage {
     this.frmMesa.controls['tipoMesaControl'].setValue($ev.detail.value);
   }
 
-  private generateQRData() {
-    const mesaQR = 
-    `nro: ${this.frmMesa.controls['nroMesa'].value}\n` +
-    `cantComensales: ${this.frmMesa.controls['cantComensales'].value}\n` +
-    `tipoMesa: ${this.frmMesa.controls['tipoMesaControl'].value}`;
-    this.QRs.push(mesaQR);
+  private generateQRData(mesaId:string) {
+    const QRid = `id:${mesaId}`;
+    // const QRMenu;
+    // const QRPropina1;
+    // const QRPropina2;
+    // const QRPropina3;
+    this.QRs.push(QRid);
+    this.db.actualizarDoc(Colecciones.Mesas, mesaId, {'codigoQr':this.QRs})
     //TODO: El QR tiene que ser el ID del producto en firebase.
   }
 

@@ -1,5 +1,5 @@
 <ion-app>
-  <ion-header [translucent]="true" *ngIf="router.url !== '/splash'">
+  <!-- <ion-header [translucent]="true" *ngIf="router.url !== '/splash'">
     <ion-toolbar>
       <ion-title (click)="navCtrl.navigateRoot('home')">La Comanda - Yourdonistas</ion-title>
       <ion-button slot="end" fill="clear" (click)="scanner.escanear()">
@@ -10,8 +10,51 @@
 
   <ion-content>
     <ion-router-outlet></ion-router-outlet>
-  </ion-content>
+  </ion-content> -->
+  <ion-header [translucent]="true" *ngIf="router.url !== '/splash'">
+    <ion-toolbar>
+      <ion-button slot="start" fill="clear" id="abrirPags">
+        <ion-icon slot="icon-only" name="menu-outline"></ion-icon>
+      </ion-button>
+      <ion-title>La Comanda - Yourdonistas</ion-title>
+    </ion-toolbar>
+  </ion-header>
 
+<ion-content>
+    <ion-router-outlet></ion-router-outlet>
+
+    <ion-fab slot="fixed" vertical="top" horizontal="end" [edge]="true">
+      <ion-fab-button>
+        <ion-icon name="chevron-down-circle"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-list side="bottom">
+        <ion-fab-button *ngFor="let func of funciones" (click)="func.accion()">
+          <ion-icon [name]="func.icono" size="large"></ion-icon>
+        </ion-fab-button>
+      </ion-fab-list>
+    </ion-fab>
+    <ion-modal id="pagsModal" trigger="abrirPags">
+      <ion-toolbar>
+        <ion-title>Seleccione una página</ion-title>
+      </ion-toolbar>
+      <div id="lista-container">
+        <ion-accordion-group id="lista-global" [multiple]="true" [value]="['General', 'Altas']">
+          <ion-accordion *ngFor="let grupo of grupos" [value]="grupo.nombre" [disabled]="grupo.deshabilitado">
+            <ion-item slot="header" color="light">
+              <ion-label>{{grupo.nombre}}</ion-label>
+            </ion-item>
+            <div slot="content">
+              <ion-item button *ngFor="let pag of grupo.paginas" (click)="itemClick(pag.url)">
+                <i [class]="'fi fi-tr-'+pag.icono"></i>
+                {{pag.titulo}}
+              </ion-item>
+            </div>
+          </ion-accordion>
+        </ion-accordion-group>
+      </div>
+    </ion-modal>
+  </ion-content>
+  
   <ngx-spinner [fullScreen]="true"
     template="<img src='../assets/spinner.gif' style='width: 125vw; max-width: 125vh;'>">
   </ngx-spinner>

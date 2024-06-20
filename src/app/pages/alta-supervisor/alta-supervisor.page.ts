@@ -68,6 +68,7 @@ export class AltaSupervisorPage {
     const foto = await tomarFoto();
     if (foto)
       this.picture = foto;
+      this.frmSupervisor.controls['foto'].setValue('valid');
   }
 
   async uploadPicture(image: File) {
@@ -80,14 +81,6 @@ export class AltaSupervisorPage {
 
     try {
       const url = await this.storage.subirArchivo(image,`${Colecciones.Usuarios}/${nombreFoto}`);
-      const fotoDePerfil: Foto = {
-        id: '',
-        name: nombreFoto,
-        date: datetime,
-        url: url,
-      };
-
-      // await this.db.subirDoc(Colecciones.Usuarios, fotoDePerfil, true);
       this.spinner.hide();
       ToastSuccess.fire('Imagen subida con éxito!');
       return url;
@@ -100,15 +93,15 @@ export class AltaSupervisorPage {
 
   async subirSupervisor() {
     const fotoUrl = await this.uploadPicture(this.picture);
-
+    console.log(fotoUrl);
     if (fotoUrl) {
       const nombre = this.frmSupervisor.controls['nombre'].value;
       const apellido = this.frmSupervisor.controls['apellido'].value;
-      const DNI = Number((this.frmSupervisor.controls['dni'].value).replace(/[-. ]/g, ''));
-      const CUIL = Number((this.frmSupervisor.controls['cuil'].value).replace(/[-. ]/g, ''));
+      const DNI = Number((this.frmSupervisor.controls['DNI'].value).replace(/[-. ]/g, ''));
+      const CUIL = Number((this.frmSupervisor.controls['CUIL'].value).replace(/[-. ]/g, ''));
       const correo = this.frmSupervisor.controls['correo'].value;
       const contra = this.frmSupervisor.controls['contra'].value;
-      const supervisorDueno = this.frmSupervisor.controls['tipoEmpleado'].value as TipoJefe;
+      const supervisorDueno = this.frmSupervisor.controls['supervisorDueno'].value as TipoJefe;
 
       let jefe = new Jefe(
         '',
@@ -120,12 +113,7 @@ export class AltaSupervisorPage {
         fotoUrl,
         supervisorDueno
       );
-
-      this.db
-        .subirDoc(Colecciones.Usuarios, jefe, true)
-        .then((r) => {
-          console.log('id' + r);
-        });
+      this.auth.registrarUsuario(jefe, contra);
     }
   }
 
@@ -176,9 +164,8 @@ export class AltaSupervisorPage {
   async buscarDni() {
     this.spinner.show();
     const dniCtrl = this.frmSupervisor.controls['DNI'];
-
     await this.db
-      .buscarUsuarioPorDni(dniCtrl.value.replace(/[-. ]/g, ''))
+      .buscarUsuarioPorDni(Number(dniCtrl.value.replace(/[-. ]/g, '')))
       .then((pers) => ToastError.fire('Este DNI ya se encuentra registrado.'))
       .catch((error: any) => {
         if (
