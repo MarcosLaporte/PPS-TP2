@@ -17,5 +17,11 @@ export class Mesa {
     this.estado = 'disponible'
   }
 }
-export type EstadoMesa = 'disponible' | 'cliente sin pedido' | 'cliente esperando comida' | 'cliente comiendo' | 'cliente pagando';
+export type EstadoMesa = 
+'disponible' | 
+'cliente sin pedido' | 
+'cliente pidiendo comida' |
+'cliente esperando comida' | 
+'cliente comiendo' | 
+'cliente pagando';
 export type TipoMesa = 'VIP' | 'discapacitados' | 'estandar';

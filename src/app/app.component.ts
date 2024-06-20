@@ -67,9 +67,8 @@ export class AppComponent {
     const ssUser = sessionStorage.getItem('usuario');
     this.auth.UsuarioEnSesion = ssUser ? JSON.parse(ssUser) : null;
 
+    navCtrl.navigateRoot('home');
     // navCtrl.navigateRoot('splash');
-    // navCtrl.navigateRoot('home');
-    navCtrl.navigateRoot('splash');
 
     addIcons({ menuOutline, chevronDownCircle, logInOutline, logOutOutline, scan });
   }
@@ -107,22 +106,26 @@ export class AppComponent {
 
   async escanearQrMesa(){
     // const QR : string = await this.scanner.escanear();
-    const QR : string = "id:afxsMFiCa5JUOV7a0lfh" //esto es simulado
+    const QR : string = "id:DLDy65F46o10UeAQVcyG" //esto es simulado
     // const valorCrudo = await this.scanner.escanear([BarcodeFormat.Pdf417]);
     try {
       this.spinner.show();
 
       const mesa = await this.db.traerDoc<Mesa>(Colecciones.Mesas, QR.split(':')[1]);
-      const cliente = await this.db.traerDoc<Cliente>(Colecciones.Usuarios, this.auth.UsuarioEnSesion!.id);
+      // const cliente = await this.db.traerDoc<Cliente>(Colecciones.Usuarios, this.auth.UsuarioEnSesion!.id);
+      const cliente = await this.db.traerDoc<Cliente>(Colecciones.Usuarios, 'PxxHa5NQnLBf74kho38W');
 
+      let TEST = true;
+      
       if(mesa && cliente){
+
         switch(mesa.estado){
           case 'disponible':
             this.spinner.hide();
-            if(cliente.idMesa == mesa.id){
-              ToastSuccess.fire(`Bienvenido ${cliente.nombre}`);
+            if(cliente.idMesa == mesa.id || TEST){
               await MySwal.fire({
-                title: 'Ya desea realizar su pedido?',
+                title: `Bienvenido ${cliente.nombre}`,
+                text: 'Ya desea realizar su pedido?',
                 allowOutsideClick: false,
                 allowEscapeKey: false,
                 showConfirmButton: true,
@@ -133,17 +136,38 @@ export class AppComponent {
                 denyButtonColor: '#f27474',
               }).then(async (res) => {
                 if(res.isConfirmed){
-                  this.pedirComida();
+                  this.db.actualizarDoc(Colecciones.Mesas, mesa.id, {'estado':'cliente pidiendo comida'});
+                  this.pedirComida(mesa);
+                }else{
+                  this.db.actualizarDoc(Colecciones.Mesas, mesa.id, {'estado':'cliente sin comida'});
                 }
               });
-              
             }else{
               ToastError.fire(`Esta no es su mesa`);  
             }
           break;
 
           case 'cliente sin pedido':
-            this.pedirComida();
+            this.pedirComida(mesa);
+            console.log('sin pedido');
+          break;
+
+          case 'cliente pidiendo comida':
+            this.pedirComida(mesa);
+            console.log('cliente pidiendo comid');
+          break;
+
+          case 'cliente esperando comida':
+            this.pedirComida(mesa);
+            console.log('cliente esperando comida');
+          break;
+
+          case 'cliente comiendo':
+            console.log('cliente comiendo');
+          break;
+
+          case 'cliente pagando':
+          console.log('cliente pagando');
           break;
         }
       }
@@ -155,7 +179,8 @@ export class AppComponent {
     }
     
   }
-  pedirComida(){
+  pedirComida(mesa: Mesa){
     //menu con funciones de pedir comida
+    this.db.actualizarDoc(Colecciones.Mesas, mesa.id, {'estado':'cliente esperando comida'});
   }
 }
