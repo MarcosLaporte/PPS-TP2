@@ -122,7 +122,6 @@
           }@else {
             Foto de la mesa
           }
-          
           <img id="tomarFotoImg"
             src="../../../assets/fotografo.png"
             width="auto"
@@ -130,7 +129,7 @@
         </ion-button>
 
         @if (frmMesa.controls['foto'].valid) {
-          <ion-item>
+          <ion-item [ngClass]="!mesaCreada?'invisible':''">
             <ion-select aria-label="datos" value="foto" 
             (ionChange)="selectOption($event)" interface="popover">
               <ion-select-option value="foto">Foto de la mesa</ion-select-option>
@@ -150,7 +149,9 @@
           </div>
         }
 
+
         <ion-button
+        id="btn-agregarMesa"
           type="submit"
           expand="block"
           color="tertiary"
@@ -158,6 +159,15 @@
         >
           Agregar Mesa
         </ion-button>
+        
+        <ion-button
+          expand="block"
+          color="tertiary"
+          (click)="volver()"
+          >
+          Volver
+        </ion-button>  
+        
       </form>
     </ion-card-content>
   </ion-card>
