@@ -37,8 +37,7 @@ export class AltaProductoPage {
     this.frmProducto = this.formBuilder.group({
       nombre: ['', [Validators.required]],
       descripcion: ['', [Validators.required]],
-      minutos: [0, [Validators.required, Validators.min(0), Validators.max(59)]],
-      segundos: [0, [Validators.required, Validators.min(0), Validators.max(59)]],
+      minutos: [0, [Validators.required, Validators.min(0)]],
       precio: [0, [Validators.required, Validators.min(0.01)]],
     });
 
@@ -88,7 +87,7 @@ export class AltaProductoPage {
       this.spinner.show();
       await this.uploadPictures();
 
-      const tiempo = (this.frmProducto.value.minutos * 60) + this.frmProducto.value.segundos;
+      const tiempo = this.frmProducto.value.minutos;
       const producto = new Producto(
         '',
         this.frmProducto.value.nombre,
