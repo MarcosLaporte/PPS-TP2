@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -9,15 +9,14 @@ import { AuthService } from 'src/app/services/auth.service';
 import { Colecciones, Prefijos, DatabaseService } from 'src/app/services/database.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { Jefe, TipoJefe } from 'src/app/utils/classes/usuarios/jefe';
-import { Foto } from 'src/app/utils/interfaces/foto';
+import { Foto } from 'src/app/utils/interfaces/interfaces';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Exception, ErrorCodes } from 'src/app/utils/classes/exception';
 import { addIcons } from 'ionicons';
 import { search, scanOutline, scanCircleOutline} from 'ionicons/icons';
-import { Barcode } from '@capacitor-mlkit/barcode-scanning';
+import { Barcode, BarcodeFormat } from '@capacitor-mlkit/barcode-scanning';
 import { ScannerService } from 'src/app/services/scanner.service';
-
-const datePipe = new DatePipe('en-US', '-0300');
+import { tomarFoto } from 'src/main';
 
 @Component({
   selector: 'app-alta-supervisor',
@@ -26,13 +25,12 @@ const datePipe = new DatePipe('en-US', '-0300');
   standalone: true,
   imports: [ IonIcon, IonCardContent, IonCardTitle, IonCard, IonCardHeader, IonRadio, IonRadioGroup, IonItem, IonButton, IonInput, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, ReactiveFormsModule, IonInputPasswordToggle],
 })
-export class AltaSupervisorPage implements OnInit {
+export class AltaSupervisorPage {
 
   picture!: File;
   tempImg: string = "";
 
   isSupported = false;
-  scanActive = false;
 
   frmSupervisor: FormGroup;
   constructor(
@@ -57,10 +55,6 @@ export class AltaSupervisorPage implements OnInit {
     addIcons({ search, scanOutline, scanCircleOutline});
   }
 
-  readonly supportedImageFormats = ['jpg', 'jpeg', 'png'];
-
-  ngOnInit() {}
-
   fillFields(){
      this.frmSupervisor.controls['nombre'].setValue("Jaco");
      this.frmSupervisor.controls['apellido'].setValue("Luna");
@@ -71,63 +65,9 @@ export class AltaSupervisorPage implements OnInit {
   }
 
   async takePic() {
-    let picTaken = false;
-    let picCancel = false;
-    try {
-      do{
-      const image = await Camera.getPhoto({
-        quality: 90,
-        allowEditing: false,
-        resultType: CameraResultType.Uri,
-      });
-      if (!this.supportedImageFormats.includes(image.format))
-        throw new Error('El archivo debe ser de formato .JPG, .JPEG ó .PNG');
-
-      this.spinner.show();
-        await MySwal.fire({
-          text: 'esta foto desea subir?',
-          imageUrl: image.webPath,
-          imageWidth: '75vw',
-          allowOutsideClick: false,
-          allowEscapeKey: false,
-          showConfirmButton: true,
-          confirmButtonText: 'Sí',
-          confirmButtonColor: '#a5dc86',
-          showDenyButton: true,
-          denyButtonText: 'No',
-          denyButtonColor: '#f27474',
-          showCancelButton: true,
-          cancelButtonText: 'Volver a tomar esta foto',
-          cancelButtonColor: '#f0ec0d',
-        }).then(async (res) => {
-          if(res.isConfirmed){
-            const imgFile = await this.getFileFromUri(image.webPath!, image.format);
-            this.picture = imgFile;
-            this.tempImg = image.webPath!;
-            this.frmSupervisor.controls['foto'].setErrors(null)
-            console.log(this.frmSupervisor.controls);
-            picTaken = true;
-          }else if(res.isDenied){
-            picCancel = true;
-          }
-          this.spinner.hide();
-        });
-      }while(!picTaken && !picCancel)
-    } catch (er: any) {
-      if (er.message === 'User cancelled photos app')
-        ToastInfo.fire('Operación cancelada.');
-        else await MySwal.fire('Algo salió mal.', er.message, 'error');
-        throw er;
-    }
-  }
-
-  private async getFileFromUri( fileUri: string, fileFormat: string): Promise<File> {
-    const response = await fetch(fileUri);
-    const blob = await response.blob();
-    const file = new File([blob], 'photo.jpg', {
-      type: 'image/' + fileFormat,
-    });
-    return file;
+    const foto = await tomarFoto();
+    if (foto)
+      this.picture = foto;
   }
 
   async uploadPicture(image: File) {
@@ -136,10 +76,7 @@ export class AltaSupervisorPage implements OnInit {
     const datetime: Date = new Date();
 
     const nombreFoto: string = 
-    `${Prefijos.Supervisor}-
-    ${this.frmSupervisor.controls['nombre'].value}-
-    ${this.frmSupervisor.controls['apellido'].value}-
-    ${this.frmSupervisor.controls['DNI'].value}`;
+    `${Prefijos.Supervisor}-${this.frmSupervisor.controls['DNI'].value}`;
 
     try {
       const url = await this.storage.subirArchivo(image,`${Colecciones.Usuarios}/${nombreFoto}`);
@@ -149,8 +86,8 @@ export class AltaSupervisorPage implements OnInit {
         date: datetime,
         url: url,
       };
-      console.log(fotoDePerfil);
-      await this.db.subirDoc(Colecciones.Usuarios, fotoDePerfil, true);
+
+      // await this.db.subirDoc(Colecciones.Usuarios, fotoDePerfil, true);
       this.spinner.hide();
       ToastSuccess.fire('Imagen subida con éxito!');
       return url;
@@ -161,13 +98,10 @@ export class AltaSupervisorPage implements OnInit {
     }
   }
 
-  subirSupervisor() {
-    let foto;
-    this.uploadPicture(this.picture).then((url) => {
-      foto = url;
-    });
-    if (foto) {
-      
+  async subirSupervisor() {
+    const fotoUrl = await this.uploadPicture(this.picture);
+
+    if (fotoUrl) {
       const nombre = this.frmSupervisor.controls['nombre'].value;
       const apellido = this.frmSupervisor.controls['apellido'].value;
       const DNI = Number((this.frmSupervisor.controls['dni'].value).replace(/[-. ]/g, ''));
@@ -183,7 +117,7 @@ export class AltaSupervisorPage implements OnInit {
         DNI,
         CUIL,
         correo,
-        foto,
+        fotoUrl,
         supervisorDueno
       );
 
@@ -273,36 +207,22 @@ export class AltaSupervisorPage implements OnInit {
   }
 
   async scan() {
-    await MySwal.fire({
-      text: 'desea escanear su dni?',
-      showConfirmButton: true,
-      confirmButtonText: 'Sí',
-      confirmButtonColor: '#a5dc86',
-      showDenyButton: true,
-      denyButtonText: 'No',
-      denyButtonColor: '#f27474',
-    }).then(async (res) => {
+    try {
       this.spinner.show();
-      if(res.isConfirmed){
-        this.scanActive = true;
-        const barcodes = await this.scanService.scanBarcodes();
-        this.processBarcodes(barcodes);
-        this.scanActive = false;
-      }
-      this.spinner.hide();
-    });
-  }
 
-  processBarcodes(barcodes: Barcode[]) {
-    barcodes.forEach(barcode => {
-      const dniData = this.scanService.extractDniData(barcode.rawValue);
-      if (dniData) {
-        this.frmSupervisor.patchValue({
-          DNI: dniData.dni,
-          nombre: dniData.nombre,
-          apellido: dniData.apellido
-        });
-      }
-    });
+      const valorCrudo = await this.scanService.escanear([BarcodeFormat.Pdf417]);
+      const datosDni = this.scanService.extraerDatosDni(valorCrudo);
+      this.frmSupervisor.patchValue({
+        DNI: (datosDni.dni).toString(),
+        CUIL: (datosDni.cuil).toString(),
+        nombre: datosDni.nombre,
+        apellido: datosDni.apellido
+      });
+
+      this.spinner.hide();
+    } catch (error: any) {
+      this.spinner.hide();
+      ToastError.fire('Ups...', error.message);
+    }
   }
 }

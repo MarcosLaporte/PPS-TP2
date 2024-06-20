@@ -14,5 +14,9 @@ export enum ErrorCodes {
   QrInvalido,
   CorreoNoRegistrado,
   DniNoRegistrado,
-  ActualizarDocError
+  ActualizarDocError,
+  EscanerIncompatible,
+  PermisosCamaraDenegada,
+  CodigoNoDni,
+  
 }
