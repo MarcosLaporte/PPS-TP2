@@ -5,46 +5,11 @@
     </ion-card-header>
     <ion-card-content>
       <form [formGroup]="empleadoFrm" (ngSubmit)="subirEmpleado()">
-        <ion-radio-group class="tipo-empleado" name="tipo"required (ionChange)="selecTipo($event)">
-          <ion-item>
-            <ion-radio alignment="center" value='bartender'>
-              <div>
-                <label>Bartender</label>
-                <img src="../../../assets/empleados/bartender.png" width="auto">
-              </div>
-            </ion-radio>
-          </ion-item>
-          <ion-item>
-            <ion-radio alignment="center" value='cocinero'>
-              <div>
-                <label>Cocinero</label>
-                <img src="../../../assets/empleados/cocinero.png" width="auto">
-              </div>
-            </ion-radio>
-          </ion-item>
-          <ion-item>
-            <ion-radio alignment="center" value='metre'>
-              <div>
-                <label>Metre</label>
-                <img src="../../../assets/empleados/metre.png" width="auto">
-              </div>
-            </ion-radio>
-          </ion-item>
-          <ion-item>
-            <ion-radio alignment="center" value='mozo'>
-              <div>
-                <label>Mozo</label>
-                <img src="../../../assets/empleados/mozo.png" width="auto">
-              </div>
-            </ion-radio>
-          </ion-item>
-        </ion-radio-group>
-
         <div class="inputs">
           <div id="correo" class="correo">
             <ion-input id="input-correo" label="Correo" label-placement="fixed" type="email"
               formControlName="correo" name="email" required ngDefaultControl>
-              <ion-button id="btn-correo" fill="clear" slot="end" aria-label="Buscar/Cambiar" (click)="manejarCorreo();"
+              <ion-button id="btn-correo" fill="clear" slot="end" aria-label="Buscar/Cambiar" (click)="buscarCorreo();"
                 [disabled]="empleadoFrm.controls['correo'].errors">
                 <ion-icon slot="icon-only" name="search" aria-hidden="true"></ion-icon>
               </ion-button>
@@ -57,10 +22,15 @@
           <div id="dni" class="dni deshabilitado">
             <ion-input id="input-dni" label="DNI" label-placement="fixed" type="text"
               formControlName="dni" name="dni" required ngDefaultControl>
-              <ion-button id="btn-dni" fill="clear" slot="end" aria-label="buscar" (click)="buscarDni();"
-                [disabled]="empleadoFrm.controls['dni'].errors" [style.display]="'none'">
-                <ion-icon slot="icon-only" name="search" aria-hidden="true"></ion-icon>
+              <ion-button id="btn-dni" *ngIf="empleadoFrm.controls['dni'].errors; else buscar"
+                fill="clear" slot="end" aria-label="escanear" (click)="escanearDni();">
+                <ion-icon slot="icon-only" name="scan" aria-hidden="true"></ion-icon>
               </ion-button>
+              <ng-template #buscar>
+                <ion-button id="btn-dni" fill="clear" slot="end" aria-label="buscar" (click)="buscarDni();">
+                  <ion-icon slot="icon-only" name="search" aria-hidden="true"></ion-icon>
+                </ion-button>
+              </ng-template>
             </ion-input>
             <div class="errores" *ngIf="empleadoFrm.controls['dni'].dirty && empleadoFrm.controls['dni'].errors">
               <small *ngIf="empleadoFrm.controls['dni'].errors['required']">Debe rellenar este campo.</small>
@@ -113,19 +83,49 @@
                 <small *ngIf="empleadoFrm.controls['contra'].errors['required']">Debe rellenar este campo.</small>
               </div>
             </div>
-            <!-- <div class="foto">
-              <ion-input label="Foto" label-placement="fixed" placeholder="Los-Yourdonistas"
-                type="text" formControlName="contra" name="password" required
-                ngDefaultControl>
-              </ion-input>
-              <div class="errores" *ngIf="empleadoFrm.controls['contra'].dirty && empleadoFrm.controls['contra'].errors">
-                <small *ngIf="empleadoFrm.controls['contra'].errors['required']">Debe rellenar este campo.</small>
-              </div>
-            </div> -->
           </div>
         </div>
-        
-        <ion-button type="submit" expand="block" color="tertiary" [disabled]="empleadoFrm.invalid">Agregar empleado</ion-button>
+
+        <!-- #region Tipo empleado -->
+        <ion-radio-group id="tipo-radio" class="tipo-empleado" name="tipo" required (ionChange)="selecTipo($event)">
+          <ion-item>
+            <ion-radio alignment="center" value='bartender'>
+              <div>
+                <label>Bartender</label>
+                <img src="../../../assets/empleados/bartender.png" width="auto">
+              </div>
+            </ion-radio>
+          </ion-item>
+          <ion-item>
+            <ion-radio alignment="center" value='cocinero'>
+              <div>
+                <label>Cocinero</label>
+                <img src="../../../assets/empleados/cocinero.png" width="auto">
+              </div>
+            </ion-radio>
+          </ion-item>
+          <ion-item>
+            <ion-radio alignment="center" value='metre'>
+              <div>
+                <label>Metre</label>
+                <img src="../../../assets/empleados/metre.png" width="auto">
+              </div>
+            </ion-radio>
+          </ion-item>
+          <ion-item>
+            <ion-radio alignment="center" value='mozo'>
+              <div>
+                <label>Mozo</label>
+                <img src="../../../assets/empleados/mozo.png" width="auto">
+              </div>
+            </ion-radio>
+          </ion-item>
+        </ion-radio-group>
+        <!-- #endregion -->
+
+        <ion-button type="submit" expand="block" color="tertiary" [disabled]="empleadoFrm.invalid">
+          Agregar empleado
+        </ion-button>
       </form>
     </ion-card-content>
   </ion-card>

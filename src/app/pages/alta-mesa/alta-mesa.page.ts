@@ -7,23 +7,13 @@ import { Colecciones, Prefijos, DatabaseService, } from 'src/app/services/databa
 import { StorageService } from 'src/app/services/storage.service';
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { MySwal, ToastError, ToastSuccess, ToastInfo } from 'src/app/utils/alerts';
-import { Foto } from 'src/app/utils/interfaces/foto';
+import { Foto } from 'src/app/utils/interfaces/interfaces';
 import { Mesa, TipoMesa } from 'src/app/utils/classes/mesa';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { addIcons } from 'ionicons';
 import { search } from 'ionicons/icons';
 import { QrCodeModule } from 'ng-qrcode';
-
-/*
-QR de la mesa
-● Para poder verificar la disponibilidad de una mesa.
-● Para relacionar al cliente con una mesa.
-● Para que el cliente pueda 'consultar' al mozo.
-● Para que el cliente pueda acceder al menú.
-● Para poder ver el estado del pedido.
-● Para acceder a la encuesta de satisfacción.
-● Para acceder a los juegos.
-*/
+import { tomarFoto } from 'src/main';
 
 @Component({
   selector: 'app-alta-mesa',
@@ -58,71 +48,12 @@ export class AltaMesaPage {
     addIcons({ search });
   }
 
-  readonly supportedImageFormats = ['jpg', 'jpeg', 'png'];
-
-
   async takePic() {
-    let picTaken = false;
-    let picCancel = false;
-    try {
-      do{
-      const image = await Camera.getPhoto({
-        quality: 90,
-        allowEditing: false,
-        resultType: CameraResultType.Uri,
-      });
-      if (!this.supportedImageFormats.includes(image.format))
-        throw new Error('El archivo debe ser de formato .JPG, .JPEG ó .PNG');
-
-      this.spinner.show();
-        await MySwal.fire({
-          text: 'esta foto desea subir?',
-          imageUrl: image.webPath,
-          imageWidth: '75vw',
-          allowOutsideClick: false,
-          allowEscapeKey: false,
-          showConfirmButton: true,
-          confirmButtonText: 'Sí',
-          confirmButtonColor: '#a5dc86',
-          showDenyButton: true,
-          denyButtonText: 'No',
-          denyButtonColor: '#f27474',
-          showCancelButton: true,
-          cancelButtonText: 'Volver a tomar esta foto',
-          cancelButtonColor: '#f0ec0d',
-        }).then(async (res) => {
-          if(res.isConfirmed){
-            const imgFile = await this.getFileFromUri(image.webPath!, image.format);
-            this.picture = imgFile;
-            this.tempImg = image.webPath!;
-            this.frmMesa.controls['foto'].setErrors(null)
-            picTaken = true;
-
-            this.generateQRData();
-          }else if(res.isDenied){
-            picCancel = true;
-          }
-          this.spinner.hide();
-        });
-      }while(!picTaken && !picCancel)
-    } catch (er: any) {
-      if (er.message === 'User cancelled photos app')
-        ToastInfo.fire('Operación cancelada.');
-        else await MySwal.fire('Algo salió mal.', er.message, 'error');
-        throw er;
+    const foto = await tomarFoto();
+    if (foto) {
+      this.picture = foto;
+      this.generateQRData();
     }
-  }
-
-  private async getFileFromUri(
-    fileUri: string,
-    fileFormat: string
-  ): Promise<File> {
-    const response = await fetch(fileUri);
-    const blob = await response.blob();
-    const file = new File([blob], 'photo.jpg', {
-      type: 'image/' + fileFormat,
-    });
-    return file;
   }
 
   async uploadPicture(image: File) {
@@ -131,10 +62,7 @@ export class AltaMesaPage {
     const datetime: Date = new Date();
 
     const nombreFoto: string = 
-    `${Prefijos.Mesa}-
-    ${this.frmMesa.controls['nroMesa'].value}-
-    ${this.frmMesa.controls['cantComensales'].value}-
-    ${this.frmMesa.controls['tipoMesaControl'].value}`;
+      `${Prefijos.Mesa}-${this.frmMesa.controls['nroMesa'].value}`;
     
     
     try {
@@ -145,7 +73,7 @@ export class AltaMesaPage {
         date: datetime,
         url: url,
       };
-      await this.db.subirDoc(Colecciones.Mesas, fotoDePerfil, true);
+      // await this.db.subirDoc(Colecciones.Mesas, fotoDePerfil, true);
       this.spinner.hide();
       ToastSuccess.fire('Imagen subida con éxito!');
       return url;
@@ -155,7 +83,6 @@ export class AltaMesaPage {
       return null;
     }
   }
-
 
   async manejarNroMesa() {
     let nroMesaExiste = false;
@@ -221,7 +148,9 @@ export class AltaMesaPage {
     `cantComensales: ${this.frmMesa.controls['cantComensales'].value}\n` +
     `tipoMesa: ${this.frmMesa.controls['tipoMesaControl'].value}`;
     this.QRs.push(mesaQR);
+    //TODO: El QR tiene que ser el ID del producto en firebase.
   }
+
   selectOption(event: CustomEvent){
     this.selectedData = event.detail.value;
   }
