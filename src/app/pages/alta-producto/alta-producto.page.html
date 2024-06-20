@@ -1,39 +1,105 @@
-<form [formGroup]="frmProducto">
-  <ion-item>
-    <ion-label position="floating">Nombre</ion-label>
-    <ion-input placeholder="Nombre" formControlName="nombre"></ion-input>
-  </ion-item>
+<div class="container background-pri">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Alta de Producto</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="fotos-container">
+        <div class="foto-item" *ngFor="let foto of pictures">
+          <img [src]="foto.url" *ngIf="foto.url; else noPhoto">
+          <ng-template #noPhoto>
+            <ion-icon name="help-circle-outline"></ion-icon>
+          </ng-template>
+        </div>
+        <ion-button fill="clear" (click)="takePics()">
+          Tomar Fotos
+        </ion-button>
+      </div>
 
-  <ion-item>
-    <ion-label position="floating">Descripción</ion-label>
-    <ion-input placeholder="Descripción" formControlName="descripcion"></ion-input>
-  </ion-item>
-
-  <ion-item>
-    <ion-label position="floating">Tiempo de Elaboración (MM:SS)</ion-label>
-    <ion-input type="number" placeholder="MM" formControlName="minutos" maxlength="2"></ion-input>
-    <span>:</span>
-    <ion-input type="number" placeholder="SS" formControlName="segundos" maxlength="2"></ion-input>
-  </ion-item>
-
-  <ion-item>
-    <ion-label position="floating">Precio</ion-label>
-    <ion-input type="number" placeholder="Precio" formControlName="precio"></ion-input>
-  </ion-item>
-
-  <ion-button shape="round" expand="full" (click)="takePics()">Tomar Fotos</ion-button>
-  <ion-button shape="round" expand="full" (click)="subirProducto()">Cargar Producto</ion-button>
-
-  <!-- QR Code Display -->
-  <div *ngIf="qrData">
-    <qr-code [value]="qrData" size="300" errorCorrectionLevel="M"></qr-code>
-  </div>
-
-  <!-- Display uploaded photos -->
-  <!-- <div *ngIf="pictureUrls.length > 0">
-    <h3>Fotos del Producto:</h3>
-    <div *ngFor="let url of pictureUrls">
-      <img [src]="url" style="width: 100%; max-width: 300px; margin: 10px 0;" />
-    </div>
-  </div> -->
-</form>
+      <form [formGroup]="frmProducto" (ngSubmit)="subirProducto()">
+        <div class="inputs">
+          <div class="nombre">
+            <ion-input
+              label="Nombre"
+              label-placement="fixed"
+              type="text"
+              formControlName="nombre"
+              required
+              ngDefaultControl>
+            </ion-input>
+            <div class="errores" *ngIf="frmProducto.controls['nombre'].dirty && frmProducto.controls['nombre'].errors">
+              <small *ngIf="frmProducto.controls['nombre'].errors['required']">Debe rellenar este campo.</small>
+            </div>
+          </div>
+          <div class="descripcion">
+            <ion-input
+              label="Descripción"
+              label-placement="fixed"
+              type="text"
+              formControlName="descripcion"
+              required
+              ngDefaultControl>
+            </ion-input>
+            <div class="errores" *ngIf="frmProducto.controls['descripcion'].dirty && frmProducto.controls['descripcion'].errors">
+              <small *ngIf="frmProducto.controls['descripcion'].errors['required']">Debe rellenar este campo.</small>
+            </div>
+          </div>
+          <div class="tiempo">
+            <div class="minutos">
+              <ion-input
+                label="Minutos"
+                label-placement="fixed"
+                type="number"
+                formControlName="minutos"
+                min="0"
+                max="59"
+                required
+                ngDefaultControl>
+              </ion-input>
+              <div class="errores" *ngIf="frmProducto.controls['minutos'].dirty && frmProducto.controls['minutos'].errors">
+                <small *ngIf="frmProducto.controls['minutos'].errors['required']">Debe rellenar este campo.</small>
+                <small *ngIf="frmProducto.controls['minutos'].errors['min']">El valor debe ser mayor o igual a 0.</small>
+                <small *ngIf="frmProducto.controls['minutos'].errors['max']">El valor debe ser menor o igual a 59.</small>
+              </div>
+            </div>
+            <div class="segundos">
+              <ion-input
+                label="Segundos"
+                label-placement="fixed"
+                type="number"
+                formControlName="segundos"
+                min="0"
+                max="59"
+                required
+                ngDefaultControl>
+              </ion-input>
+              <div class="errores" *ngIf="frmProducto.controls['segundos'].dirty && frmProducto.controls['segundos'].errors">
+                <small *ngIf="frmProducto.controls['segundos'].errors['required']">Debe rellenar este campo.</small>
+                <small *ngIf="frmProducto.controls['segundos'].errors['min']">El valor debe ser mayor o igual a 0.</small>
+                <small *ngIf="frmProducto.controls['segundos'].errors['max']">El valor debe ser menor o igual a 59.</small>
+              </div>
+            </div>
+          </div>
+          <div class="precio">
+            <ion-input
+              label="Precio"
+              label-placement="fixed"
+              type="number"
+              formControlName="precio"
+              min="0.01"
+              required
+              ngDefaultControl>
+            </ion-input>
+            <div class="errores" *ngIf="frmProducto.controls['precio'].dirty && frmProducto.controls['precio'].errors">
+              <small *ngIf="frmProducto.controls['precio'].errors['required']">Debe rellenar este campo.</small>
+              <small *ngIf="frmProducto.controls['precio'].errors['min']">El valor debe ser mayor o igual a 0.01.</small>
+            </div>
+          </div>
+        </div>
+        <ion-button type="submit" expand="block" color="tertiary" [disabled]="frmProducto.invalid">
+          Agregar producto
+        </ion-button>
+      </form>
+    </ion-card-content>
+  </ion-card>
+</div>

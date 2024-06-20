@@ -38,12 +38,12 @@
 @import './theme/variables.scss';
 @import "@flaticon/flaticon-uicons/css/all/all.css";
 
-.container {
+.container { //siempre
   height: 100%;
   width: 100%;
 }
 
-.background-pri {
+.background-pri { //fondo
   background-color: $slate-grey;
   --background: #{$slate-grey};
 }
