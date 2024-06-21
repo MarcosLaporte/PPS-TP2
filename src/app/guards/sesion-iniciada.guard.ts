@@ -1,7 +1,12 @@
 import { inject } from '@angular/core';
-import { CanActivateFn } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
 export const sesionIniciadaGuard: CanActivateFn = (route, state) => {
-  return !!inject(AuthService).UsuarioEnSesion;
+  const enSesion = !!inject(AuthService).UsuarioEnSesion;
+
+  if (!enSesion)
+    inject(Router).navigate(['acceso-denegado']);
+
+  return enSesion;
 };

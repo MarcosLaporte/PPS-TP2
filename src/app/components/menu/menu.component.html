@@ -10,6 +10,10 @@
             <ion-label>Páginas</ion-label>
           </ion-item>
           <div slot="content">
+            <ion-item *ngIf="auth.UsuarioEnSesion" button (click)="itemClick('perfil')">
+              <i class="fi fi-tr-circle-user"></i>
+              Perfil
+            </ion-item>
             <ion-item button (click)="itemClick('home')">
               <i class="fi fi-tr-house-chimney"></i>
               Inicio

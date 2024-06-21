@@ -71,9 +71,15 @@ export const routes: Routes = [
   {
     path: 'login',
     loadComponent: () => import('./pages/login/login.page').then(m => m.LoginPage)
-  },  {
+  },
+  {
     path: 'acceso-denegado',
     loadComponent: () => import('./pages/acceso-denegado/acceso-denegado.page').then( m => m.AccesoDenegadoPage)
+  },
+  {
+    path: 'perfil',
+    loadComponent: () => import('./pages/perfil/perfil.page').then( m => m.PerfilPage),
+    canActivate: [sesionIniciadaGuard]
   },
 
 ];
