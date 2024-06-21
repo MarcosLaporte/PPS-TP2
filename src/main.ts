@@ -27,7 +27,8 @@ bootstrapApplication(AppComponent, {
     provideRouter(routes, withPreloading(PreloadAllModules)),
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
     provideAuth(() => getAuth()),
-    provideFirestore(() => getFirestore()), provideStorage(() => getStorage()),
+    provideFirestore(() => getFirestore()),
+    provideStorage(() => getStorage()),
     importProvidersFrom(NgxSpinnerModule.forRoot({ type: 'ball-scale-multiple' })),
     provideAnimations(),
   ],
@@ -39,7 +40,7 @@ export function delay(ms: number): Promise<void> {
 
 import { Camera, CameraResultType } from '@capacitor/camera';
 import { MySwal, ToastInfo } from './app/utils/alerts';
-export const formatosDeImagen = ['jpg', 'jpeg', 'png'];
+export const formatosDeImagen = ['jpg', 'jpeg', 'png', 'avif'];
 
 export async function tomarFoto(): Promise<File | undefined> {
   let archivoImagen: File | undefined;
