@@ -4,19 +4,42 @@
       <ion-card-title>¡Bienvenido a Los Yourdonistas!</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <p>Estamos encantados de que formes parte de nuestra comunidad. Nuestra aplicación está diseñada para mejorar la eficiencia y la experiencia tanto para nuestros empleados como para nuestros clientes.</p>
+      <p>Estamos encantados de que formes parte de nuestra comunidad.</p>
     </ion-card-content>
   </ion-card>
 
-  <ion-list class="ion-margin" *ngFor="let pag of paginas" lines="full">
-    <ion-item class="background-sec" (click)="nav.navigateRoot(pag)">
-      {{pag}}
+  <ion-list class="ion-margin-horizontal">
+    <ion-item class="background-sec">
+      <ion-icon name="qr-code-outline" slot="start"></ion-icon>
+      <ion-label>
+        <h2>Escaneo de Códigos QR</h2>
+        <p>Accede a una variedad de instrucciones escaneando códigos QR. Consulta nuestro menú y participa
+          en juegos, a un escaneo de distancia.</p>
+      </ion-label>
+    </ion-item>
+
+    <ion-item class="background-sec">
+      <ion-icon name="people-outline" slot="start"></ion-icon>
+      <ion-label>
+        <h2>Manejo de Empleados</h2>
+        <p>Supervisores, tengan el control completo sobre la gestión de su equipo.</p>
+      </ion-label>
+    </ion-item>
+
+    <ion-item class="background-sec">
+      <ion-icon name="restaurant-outline" slot="start"></ion-icon>
+      <ion-label>
+        <h2>Manejo de Pedidos</h2>
+        <p>Empleados, simplifiquen el proceso de toma y gestión de pedidos. Desde la toma inicial hasta la entrega en la
+          mesa, optimiza cada paso.</p>
+      </ion-label>
     </ion-item>
   </ion-list>
 
   <ion-card class="background-sec">
     <ion-card-content>
-      <p>Gracias por elegir Los Yourdonistas. Nos comprometemos a brindarte las mejores herramientas para que tu experiencia en el restaurante sea excepcional. ¡Vamos a hacer de cada visita algo especial!</p>
+      <p>Gracias por elegir Los Yourdonistas. Brindaremos las mejores herramientas para que tu
+        experiencia en el restaurante sea excepcional.</p>
     </ion-card-content>
   </ion-card>
 </div>
