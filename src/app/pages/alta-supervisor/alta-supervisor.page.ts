@@ -72,15 +72,11 @@ export class AltaSupervisorPage {
   }
 
   async uploadPicture(image: File) {
-    this.spinner.show();
-
-    const datetime: Date = new Date();
-
-    const nombreFoto: string = 
-    `${Prefijos.Supervisor}-${this.frmSupervisor.controls['DNI'].value}`;
-
     try {
-      const url = await this.storage.subirArchivo(image,`${Colecciones.Usuarios}/${nombreFoto}`);
+      this.spinner.show();
+      const dni = <string>this.frmSupervisor.controls['DNI'].value;
+      
+      const url = await this.storage.subirArchivo(image,`${Colecciones.Usuarios}/jefe-${dni}`);
       this.spinner.hide();
       ToastSuccess.fire('Imagen subida con éxito!');
       return url;
