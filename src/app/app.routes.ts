@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { sesionIniciadaGuard } from './guards/sesion-iniciada.guard';
+import { rolTipoGuard } from './guards/rol-tipo.guard';
 
 export const routes: Routes = [
   {
@@ -8,34 +10,70 @@ export const routes: Routes = [
   },
   {
     path: 'splash',
-    loadComponent: () => import('./pages/splash/splash.page').then( m => m.SplashPage)
+    loadComponent: () => import('./pages/splash/splash.page').then(m => m.SplashPage)
   },
   {
     path: 'alta-cliente',
-    loadComponent: () => import('./pages/alta-cliente/alta-cliente.page').then( m => m.AltaClientePage)
+    loadComponent: () => import('./pages/alta-cliente/alta-cliente.page').then(m => m.AltaClientePage),
+    canActivate: [sesionIniciadaGuard, rolTipoGuard],
+    data: {
+      roles_tipos: [
+        { rol: 'cliente' },
+        { rol: 'empleado', tipo: 'metre' }
+      ]
+    }
   },
   {
     path: 'alta-producto',
-    loadComponent: () => import('./pages/alta-producto/alta-producto.page').then( m => m.AltaProductoPage)
+    loadComponent: () => import('./pages/alta-producto/alta-producto.page').then(m => m.AltaProductoPage),
+    canActivate: [sesionIniciadaGuard, rolTipoGuard],
+    data: {
+      roles_tipos: [
+        { rol: 'empleado', tipo: 'cocinero' },
+        { rol: 'empleado', tipo: 'bartender' }
+      ]
+    }
   },
   {
     path: 'alta-supervisor',
-    loadComponent: () => import('./pages/alta-supervisor/alta-supervisor.page').then( m => m.AltaSupervisorPage)
+    loadComponent: () => import('./pages/alta-supervisor/alta-supervisor.page').then(m => m.AltaSupervisorPage),
+    canActivate: [sesionIniciadaGuard, rolTipoGuard],
+    data: {
+      roles_tipos: [
+        { rol: 'jefe' }
+      ]
+    }
   },
   {
     path: 'alta-mesa',
-    loadComponent: () => import('./pages/alta-mesa/alta-mesa.page').then( m => m.AltaMesaPage)
+    loadComponent: () => import('./pages/alta-mesa/alta-mesa.page').then(m => m.AltaMesaPage),
+    canActivate: [sesionIniciadaGuard, rolTipoGuard],
+    data: {
+      roles_tipos: [
+        { rol: 'jefe' },
+      ]
+    }
   },
   {
     path: 'alta-empleado',
-    loadComponent: () => import('./pages/alta-empleado/alta-empleado.page').then( m => m.AltaEmpleadoPage)
+    loadComponent: () => import('./pages/alta-empleado/alta-empleado.page').then(m => m.AltaEmpleadoPage),
+    canActivate: [sesionIniciadaGuard, rolTipoGuard],
+    data: {
+      roles_tipos: [
+        { rol: 'jefe' },
+      ]
+    }
   },
   {
     path: 'home',
-    loadComponent: () => import('./pages/home/home.page').then( m => m.HomePage)
+    loadComponent: () => import('./pages/home/home.page').then(m => m.HomePage)
   },
   {
     path: 'login',
-    loadComponent: () => import('./pages/login/login.page').then( m => m.LoginPage)
+    loadComponent: () => import('./pages/login/login.page').then(m => m.LoginPage)
+  },  {
+    path: 'acceso-denegado',
+    loadComponent: () => import('./pages/acceso-denegado/acceso-denegado.page').then( m => m.AccesoDenegadoPage)
   },
+
 ];

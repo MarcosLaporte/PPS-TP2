@@ -10,15 +10,21 @@
             <ion-label>Páginas</ion-label>
           </ion-item>
           <div slot="content">
-            <ion-accordion *ngFor="let grupo of grupos" [value]="grupo.nombre" [disabled]="grupo.deshabilitado">
+            <ion-item button (click)="itemClick('home')">
+              <i class="fi fi-tr-house-chimney"></i>
+              Inicio
+            </ion-item>
+            <ion-accordion *ngIf="grupoAltas.paginas.length > 0" [value]="grupoAltas.nombre">
               <ion-item slot="header" color="light">
-                <ion-label>{{grupo.nombre}}</ion-label>
+                <ion-label>{{grupoAltas.nombre}}</ion-label>
               </ion-item>
               <div slot="content">
-                <ion-item button *ngFor="let pag of grupo.paginas" (click)="itemClick(pag.url)">
-                  <i [class]="'fi fi-tr-'+pag.icono"></i>
-                  {{pag.titulo}}
-                </ion-item>
+                <ng-container *ngFor="let pag of grupoAltas.paginas">
+                  <ion-item *ngIf="mostrarPagina(pag)" button (click)="itemClick(pag.url)">
+                    <i [class]="'fi fi-tr-'+pag.icono"></i>
+                    {{pag.titulo}}
+                  </ion-item>
+                </ng-container>
               </div>
             </ion-accordion>
           </div>
