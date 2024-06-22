@@ -91,6 +91,7 @@ export class DatabaseService {
       await setDoc(nuevoDoc, { ...data });
     } catch (error) {
       deleteDoc(nuevoDoc);
+      console.error(error);
       throw new Exception(ErrorCodes.ActualizarDocError, 'Hubo un problema al subir los datos.');
     }
 
