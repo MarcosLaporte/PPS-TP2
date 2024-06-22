@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Auth, User as FireUser, createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from '@angular/fire/auth';
+import { Auth, User as FireUser, createUserWithEmailAndPassword, signInAnonymously, signInWithEmailAndPassword, updateCurrentUser } from '@angular/fire/auth';
+
 import { BehaviorSubject } from 'rxjs';
 import { Colecciones, DatabaseService } from './database.service';
 import { Persona } from '../utils/classes/usuarios/persona';
