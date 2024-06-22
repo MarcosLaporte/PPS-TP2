@@ -10,7 +10,7 @@ import { QrCodeModule } from 'ng-qrcode';
 import { tomarFoto } from 'src/main';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { addIcons } from 'ionicons';
-import { helpCircleOutline, search } from 'ionicons/icons';
+import { helpCircleOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-alta-producto',
@@ -22,11 +22,7 @@ import { helpCircleOutline, search } from 'ionicons/icons';
 })
 export class AltaProductoPage {
   frmProducto: FormGroup;
-  pictures: { file: File | null, url: string | null }[] = [
-    { file: null, url: null },
-    { file: null, url: null },
-    { file: null, url: null }
-  ];
+  fotos: { archivo: File | null, url: string | null }[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -44,37 +40,41 @@ export class AltaProductoPage {
     addIcons({ helpCircleOutline });
   }
 
-  async takePics() {
+  private async tomarFotos(): Promise<void> {
     try {
-      let continuar;
-      do {
-        continuar = false;
-        let foto = await tomarFoto();
+      let continuarTomando = true;
+      while (continuarTomando || this.fotos.length < 3) {
+        const foto = await tomarFoto();
         if (foto) {
-          // Find the first empty slot in pictures array and fill it
-          const emptySlotIndex = this.pictures.findIndex(p => p.file === null);
-          if (emptySlotIndex !== -1) {
-            this.pictures[emptySlotIndex].file = foto;
-            this.pictures[emptySlotIndex].url = URL.createObjectURL(foto); // Create a URL for preview
-          }
+          this.fotos.push({ archivo: foto, url: URL.createObjectURL(foto) });
         }
-      } while (this.pictures.some(p => p.file === null));
+        // Pregunta al usuario si desea tomar otra foto, excepto cuando tienen menos de 3 fotos
+        if (this.fotos.length >= 3) {
+          const resultado = await MySwal.fire({
+            title: '¿Desea tomar otra foto?',
+            showCancelButton: true,
+            confirmButtonText: 'Sí',
+            cancelButtonText: 'No'
+          });
+          continuarTomando = resultado.isConfirmed;
+        }
+      }
     } catch (er: any) {
       await MySwal.fire('Algo salió mal.', er.message, 'error');
     }
   }
 
-  private async uploadPictures(): Promise<void> {
+  private async subirFotos(): Promise<void> {
     try {
       this.spinner.show();
-      const promises = this.pictures.map(async (pic, index) => {
-        if (pic.file) {
-          const nombreFotoBase = `${this.frmProducto.value.nombre}-foto-${index + 1}`;
-          const url = await this.storage.subirArchivo(pic.file, `${Colecciones.Productos}/${nombreFotoBase}`);
-          this.pictures[index].url = url;
+      const promesas = this.fotos.map(async (foto, indice) => {
+        if (foto.archivo) {
+          const nombreFotoBase = `${this.frmProducto.value.nombre}-foto-${indice + 1}`;
+          const url = await this.storage.subirArchivo(foto.archivo, `${Colecciones.Productos}/${nombreFotoBase}`);
+          foto.url = url;
         }
       });
-      await Promise.all(promises);
+      await Promise.all(promesas);
     } catch (error: any) {
       console.error("Error al subir fotos:", error);
     } finally {
@@ -84,8 +84,10 @@ export class AltaProductoPage {
 
   async subirProducto() {
     try {
+      await this.tomarFotos();
+
       this.spinner.show();
-      await this.uploadPictures();
+      await this.subirFotos();
 
       const tiempo = this.frmProducto.value.minutos;
       const producto = new Producto(
@@ -94,8 +96,7 @@ export class AltaProductoPage {
         this.frmProducto.value.descripcion,
         tiempo,
         this.frmProducto.value.precio,
-        this.pictures.filter(p => p.url !== null).map(p => p.url as string),
-        ''
+        this.fotos.filter(f => f.url !== null).map(f => f.url as string),
       );
       await this.db.subirDoc(Colecciones.Productos, producto);
 
@@ -108,10 +109,7 @@ export class AltaProductoPage {
         precio: 0
       });
 
-      this.pictures.forEach(pic => {
-        pic.file = null;
-        pic.url = null;
-      });
+      this.fotos = [];
     } catch (error: any) {
       console.error("Error al subir producto:", error);
     } finally {

@@ -4,18 +4,6 @@
       <ion-card-title>Alta de Producto</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <div class="fotos-container">
-        <div class="foto-item" *ngFor="let foto of pictures">
-          <img [src]="foto.url" *ngIf="foto.url; else noPhoto">
-          <ng-template #noPhoto>
-            <ion-icon name="help-circle-outline"></ion-icon>
-          </ng-template>
-        </div>
-        <ion-button fill="clear" (click)="takePics()">
-          Tomar Fotos
-        </ion-button>
-      </div>
-
       <form [formGroup]="frmProducto" (ngSubmit)="subirProducto()">
         <div class="inputs">
           <div class="nombre">
@@ -52,7 +40,6 @@
                 type="number"
                 formControlName="minutos"
                 min="0"
-                max="59"
                 required
                 ngDefaultControl>
               </ion-input>
