@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Auth, User as FireUser, createUserWithEmailAndPassword, signInAnonymously, signInWithEmailAndPassword, updateCurrentUser } from '@angular/fire/auth';
-
+import { Auth, User as FireUser, createUserWithEmailAndPassword, getAuth, signInAnonymously, signInWithEmailAndPassword } from '@angular/fire/auth';
 import { BehaviorSubject } from 'rxjs';
 import { Colecciones, DatabaseService } from './database.service';
 import { Persona } from '../utils/classes/usuarios/persona';
@@ -69,6 +68,10 @@ export class AuthService {
       await createUserWithEmailAndPassword(authInst, usuario.correo, contr);
 
       const docId = await this.db.subirDoc(Colecciones.Usuarios, usuario, true);
+      usuario.id = docId;
+
+      if (!fireUserViejo)
+        this.UsuarioEnSesion = usuario;
 
       return docId;
     } catch (error: any) {
@@ -85,7 +88,7 @@ export class AuthService {
    * @param contr - La contraseña para intentar ingresar a `Firebase Authentication`.
    *
    * @throws Un Fire error traducido a un mensaje comprensible para el usuario.
-*/
+  */
   async ingresarUsuario(email: string, contr: string) {
     try {
       await signInWithEmailAndPassword(this.auth, email, contr);
@@ -97,6 +100,18 @@ export class AuthService {
       throw error;
     }
   }
+
+  /**
+   * Registra un usuario anónimo en `Firebase Authentication`
+   *  y guarda sus datos en la colección `users` en `Firestore`.
+   *
+   * @async
+   * @param usuario - El objeto Persona con los datos a guardar en `Firestore`.
+   * @param contr - La contraseña que será registrada en `Firebase Authentication`.
+   * @returns El ID del doc donde se guardó el usuario en la colección `users` en `Firestore`.
+   *
+   * @throws Un Fire error traducido a un mensaje comprensible para el usuario.
+   */
   async registrarUsuarioAnonimo(usuarioAnonimo: Persona): Promise<void> {
     try {
       const userCredential = await signInAnonymously(this.auth);
@@ -108,6 +123,7 @@ export class AuthService {
       throw new Error(this.parsearError(error));
     }
   }
+
   /**
    * Define la propiedad `UsuarioEnSesion` como nula.
    */
