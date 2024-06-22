@@ -44,24 +44,16 @@ export class AltaSupervisorPage {
     this.frmSupervisor = this.formBuilder.group({
       nombre: new FormControl('', [Validators.required]),
       apellido: new FormControl('', [Validators.required]),
-      DNI: new FormControl('', [ Validators.required,Validators.pattern(/^\b[\d]{1,3}(\.|\-|\/| )?[\d]{3}(\.|\-|\/| )?[\d]{3}$/),]),
+      DNI: new FormControl('', [ Validators.required, Validators.pattern(/^\b[\d]{1,3}(\.|\-|\/| )?[\d]{3}(\.|\-|\/| )?[\d]{3}$/),]),
       CUIL: new FormControl('', [Validators.required, this.verificarCuil]),
-      correo: new FormControl('', [Validators.required, Validators.email]),
+      correo: new FormControl('', [Validators.required, Validators.pattern(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)]),
       foto: new FormControl('', [Validators.required]),
       contra: new FormControl('', [Validators.required]),
+      reContra: new FormControl('', [Validators.required, this.contraseñasCoinciden]),
       supervisorDueno: [null, [Validators.required]],
     });
 
     addIcons({ search, scanOutline, scanCircleOutline});
-  }
-
-  fillFields(){
-     this.frmSupervisor.controls['nombre'].setValue("Jaco");
-     this.frmSupervisor.controls['apellido'].setValue("Luna");
-     this.frmSupervisor.controls['DNI'].setValue("43628819");
-     this.frmSupervisor.controls['CUIL'].setValue("20436288191");
-     this.frmSupervisor.controls['correo'].setValue("jacoluna01@gmail.com");
-     this.frmSupervisor.controls['contra'].setValue("123456");
   }
 
   async takePic() {
@@ -155,6 +147,31 @@ export class AltaSupervisorPage {
     else if (dniEnCuil !== DNI) return { dniNoEncontrado: true };
 
     return null;
+  }
+
+  private contraseñasCoinciden = (control: AbstractControl): ValidationErrors | null => {
+    if (!control.value) return null;
+
+    const contra = control.parent?.value.contra;
+    const reContra = <string>control.value;
+
+    if (contra !== reContra) {
+      return { noCoinciden: true };
+    }
+
+    return null;
+  }
+
+  verificarCoincid() {
+    const contraCtrl = this.frmSupervisor.controls['contra'];
+    const reContraCtrl = this.frmSupervisor.controls['reContra'];
+
+    if (reContraCtrl.dirty) {
+      if (contraCtrl.value !== reContraCtrl.value)
+        reContraCtrl.setErrors({ noCoinciden: true });
+      else
+        reContraCtrl.setErrors(null);
+    }
   }
 
   async buscarDni(): Promise<boolean> {

@@ -67,6 +67,13 @@ export class AltaEmpleadoPage {
         '', [
           Validators.required,
         ]
+      ],
+      reContra: [
+        '',
+        [
+          Validators.required,
+          this.contraseñasCoinciden
+        ]
       ]
     });
 
@@ -84,6 +91,19 @@ export class AltaEmpleadoPage {
       return { patron: true };
     else if (dniEnCuil !== dni)
       return { dniNoEncontrado: true };
+
+    return null;
+  }
+
+  private contraseñasCoinciden = (control: AbstractControl): ValidationErrors | null => {
+    if (!control.value) return null;
+
+    const contra = control.parent?.value.contra;
+    const reContra = <string>control.value;
+
+    if (contra !== reContra) {
+      return { noCoinciden: true };
+    }
 
     return null;
   }
@@ -165,9 +185,21 @@ export class AltaEmpleadoPage {
       ToastError.fire('Ups...', error.message);
     }
   }
+  
+  verificarCoincid() {
+    const contraCtrl = this.empleadoFrm.controls['contra'];
+    const reContraCtrl = this.empleadoFrm.controls['reContra'];
+
+    if (reContraCtrl.dirty) {
+      if (contraCtrl.value !== reContraCtrl.value)
+        reContraCtrl.setErrors({ noCoinciden: true });
+      else
+        reContraCtrl.setErrors(null);
+    }
+  }
+
 
   async subirEmpleado() {
-    return;
     try {
       let fotoUrl = '';
       await MySwal.fire({
