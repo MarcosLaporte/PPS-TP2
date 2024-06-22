@@ -1,20 +1,17 @@
 <div class="container background-pri">
-  <ion-card>
+  <ion-card style="width: 95%;">
     <ion-card-header>
       <ion-card-title>Alta de Cliente</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <ion-item>
-        <ion-label>Registrarse como anónimo</ion-label>
-        <ion-toggle (ionChange)="toggleTipoCliente($event)"></ion-toggle>
-      </ion-item>
+      <ion-toggle (ionChange)="toggleTipoCliente($event)">Registrarse como anónimo</ion-toggle>
       <form [formGroup]="frmCliente" (ngSubmit)="subirCliente()">
         <div class="inputs">
           <div id="correo" class="correo">
             <ion-input id="input-correo" label="Correo"  type="email"
               formControlName="correo" name="email" required ngDefaultControl>
-              <ion-button id="btn-correo" fill="clear" slot="end" aria-label="Buscar/Cambiar" (click)="buscarCorreo();"
-                [disabled]="frmCliente.controls['correo'].errors">
+              <ion-button *ngIf="frmCliente.controls['correo'].enabled" id="btn-correo" fill="clear" slot="end"
+                aria-label="Buscar/Cambiar" (click)="buscarCorreo();" [disabled]="frmCliente.controls['correo'].errors">
                 <ion-icon slot="icon-only" name="search" aria-hidden="true"></ion-icon>
               </ion-button>
             </ion-input>
@@ -23,18 +20,20 @@
               <small *ngIf="frmCliente.controls['correo'].errors['pattern']">No es un correo electrónico.</small>
             </div>
           </div>
-          <div id="dni" class="dni deshabilitado">
+          <div id="dni" class="dni">
             <ion-input id="input-dni" label="DNI"  type="text"
               formControlName="dni" name="dni" required ngDefaultControl>
-              <ion-button id="btn-dni" *ngIf="frmCliente.controls['dni'].errors; else buscar"
-                fill="clear" slot="end" aria-label="escanear" (click)="escanearDni();">
-                <ion-icon slot="icon-only" name="scan" aria-hidden="true"></ion-icon>
-              </ion-button>
-              <ng-template #buscar>
-                <ion-button id="btn-dni" fill="clear" slot="end" aria-label="buscar" (click)="buscarDni();">
-                  <ion-icon slot="icon-only" name="search" aria-hidden="true"></ion-icon>
+              <ng-container *ngIf="frmCliente.controls['dni'].enabled">
+                <ion-button id="btn-dni" *ngIf="frmCliente.controls['dni'].errors; else buscar"
+                  fill="clear" slot="end" aria-label="escanear" (click)="escanearDni();">
+                  <ion-icon slot="icon-only" name="scan" aria-hidden="true"></ion-icon>
                 </ion-button>
-              </ng-template>
+                <ng-template #buscar>
+                  <ion-button id="btn-dni" fill="clear" slot="end" aria-label="buscar" (click)="buscarDni();">
+                    <ion-icon slot="icon-only" name="search" aria-hidden="true"></ion-icon>
+                  </ion-button>
+                </ng-template>
+              </ng-container>
             </ion-input>
             <div class="errores" *ngIf="frmCliente.controls['dni'].dirty && frmCliente.controls['dni'].errors">
               <small *ngIf="frmCliente.controls['dni'].errors['required']">Debe rellenar este campo.</small>

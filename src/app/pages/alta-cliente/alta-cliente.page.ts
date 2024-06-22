@@ -63,21 +63,19 @@ export class AltaClientePage {
   }
 
   toggleTipoCliente(event: any) {
-    this.tipoCliente = event.detail.checked ? 'anonimo' : 'registrado';
+    const { checked } = event.detail;
+    this.tipoCliente = checked ? 'anonimo' : 'registrado';
 
-    if (this.tipoCliente === 'anonimo') {
-      this.frmCliente.controls['nombre'].enable();
-      this.frmCliente.controls['apellido'].disable();
-      this.frmCliente.controls['dni'].disable();
-      this.frmCliente.controls['correo'].disable();
-      this.frmCliente.controls['contra'].disable();
-    } else {
-      this.frmCliente.controls['nombre'].enable();
-      this.frmCliente.controls['apellido'].enable();
-      this.frmCliente.controls['dni'].enable();
-      this.frmCliente.controls['correo'].enable();
-      this.frmCliente.controls['contra'].enable();
-    }
+    document.getElementById('dni')!
+      .classList.toggle('deshabilitado', !checked);
+    document.getElementById('datos-personales')!
+      .classList.toggle('deshabilitado', !checked);
+    
+  
+    const controles = ['apellido', 'dni', 'correo', 'contra', 'reContra'];
+    controles.forEach(ctrl => {
+      this.frmCliente.controls[ctrl][checked ? 'disable' : 'enable']();
+    });
   }
 
   private contraseñasCoinciden = (control: AbstractControl): ValidationErrors | null => {
@@ -145,6 +143,7 @@ export class AltaClientePage {
       ToastError.fire('Ocurrió un error', error.message);
     }
   }
+
   async escanearDni() {
     try {
       this.spinner.show();
@@ -193,6 +192,7 @@ export class AltaClientePage {
       .catch((error: any) => {
         if (error instanceof Exception && error.code === ErrorCodes.CorreoNoRegistrado) {
           document.getElementById('dni')!.classList.remove('deshabilitado');
+          document.getElementById('datos-personales')!.classList.remove('deshabilitado');
           document.getElementById('correo')!.classList.add('deshabilitado');
           (document.getElementById('input-correo')! as HTMLIonInputElement).disabled = true;
           (document.getElementById('input-dni')! as HTMLIonInputElement).disabled = false;

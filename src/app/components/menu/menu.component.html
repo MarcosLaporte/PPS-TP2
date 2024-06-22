@@ -10,14 +10,13 @@
             <ion-label>Páginas</ion-label>
           </ion-item>
           <div slot="content">
-            <ion-item *ngIf="auth.UsuarioEnSesion" button (click)="itemClick('perfil')">
-              <i class="fi fi-tr-circle-user"></i>
-              Perfil
-            </ion-item>
-            <ion-item button (click)="itemClick('home')">
-              <i class="fi fi-tr-house-chimney"></i>
-              Inicio
-            </ion-item>
+            <ng-container *ngFor="let pag of paginasGenerales">
+              <ion-item *ngIf="CheckRolTipo(auth, pag.rol_tipo, pag.permitirAnon)"
+                button (click)="itemClick(pag.url)">
+                <i [class]="'fi fi-tr-'+pag.icono"></i>
+                {{pag.titulo}}
+              </ion-item>
+            </ng-container>
             <ion-accordion *ngIf="grupoAltas.paginas.length > 1; else unicaAlta" [value]="grupoAltas.nombre">
               <ion-item slot="header" color="light">
                 <ion-label>{{grupoAltas.nombre}}</ion-label>
