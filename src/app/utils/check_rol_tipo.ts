@@ -4,11 +4,13 @@ import { Empleado } from "./classes/usuarios/empleado";
 import { Jefe } from "./classes/usuarios/jefe";
 import { Roles_Tipos } from "./interfaces/interfaces";
 
-export function CheckRolTipo(auth: AuthService, roles_tipos: Roles_Tipos[], permitirAnon: boolean | undefined) {
+export function CheckRolTipo(auth: AuthService, roles_tipos: Roles_Tipos[] = [], permitirAnon: boolean = false): boolean {
   const usuario = auth.UsuarioEnSesion;
 
+  if (!usuario) return !!permitirAnon;
+  if (!roles_tipos || roles_tipos.length === 0) return true;
+
   return roles_tipos.some(rolPermitido => {
-    if (!usuario) return permitirAnon;
 
     if (!rolPermitido.tipo) { // Si no se provee un tipo específico, solo se compara el rol
       return rolPermitido.rol === usuario.rol;

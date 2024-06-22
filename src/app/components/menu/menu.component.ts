@@ -17,7 +17,7 @@ import { Roles_Tipos } from 'src/app/utils/interfaces/interfaces';
 import { CheckRolTipo } from 'src/app/utils/check_rol_tipo';
 
 declare interface Grupo { nombre: string, paginas: Pagina[] };
-declare interface Pagina { titulo: string, url: string, icono: string, rol_tipo: Roles_Tipos[], permitirAnon?: boolean };
+declare interface Pagina { titulo: string, url: string, icono: string, rol_tipo?: Roles_Tipos[], permitirAnon?: boolean };
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
@@ -26,6 +26,7 @@ declare interface Pagina { titulo: string, url: string, icono: string, rol_tipo:
   imports: [IonLabel, IonAccordion, IonAccordionGroup, IonModal, IonFabList, IonIcon, IonFab, IonFabButton, IonContent, IonButton, IonTitle, IonItem, IonToolbar, IonHeader, IonApp, IonRouterOutlet, CommonModule, NgxSpinnerModule],
 })
 export class MenuComponent {
+  readonly CheckRolTipo = CheckRolTipo;
   private readonly altas: Pagina[] = [
     { titulo: 'Cliente', url: '/alta-cliente', icono: 'review', rol_tipo: [{ rol: 'empleado', tipo: 'metre' }], permitirAnon: true },
     {
@@ -43,6 +44,11 @@ export class MenuComponent {
     nombre: 'Altas',
     paginas: []
   };
+
+  paginasGenerales: Pagina[] = [
+    { titulo: 'Perfil', url: '/perfil', icono: 'circle-user' },
+    { titulo: 'Inicio', url: '/home', icono: 'house-chimney', permitirAnon: true },
+  ];
 
   public funciones: { titulo: string, icono: string, accion: () => Promise<any> }[] = [
     { titulo: 'Sesión', icono: 'log-in-outline', accion: async () => { } },
