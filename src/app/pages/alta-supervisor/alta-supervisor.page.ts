@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators,
+import { AbstractControl, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonButton, IonItem, IonRadioGroup, IonRadio, IonCardHeader, IonCard, IonCardTitle, IonCardContent, IonIcon, IonInputPasswordToggle } from '@ionic/angular/standalone';
 import { Camera, CameraResultType } from '@capacitor/camera';
@@ -143,7 +143,7 @@ export class AltaSupervisorPage {
     this.spinner.hide();
   }
 
-  private verificarCuil(control: AbstractControl): null | object {
+  private verificarCuil = (control: AbstractControl): ValidationErrors | null => {
     if (!control.value) return null;
 
     const DNI = (<string>control.parent?.value.DNI).replace(/[-. ]/g, '');
@@ -157,9 +157,11 @@ export class AltaSupervisorPage {
     return null;
   }
 
-  async buscarDni() {
+  async buscarDni(): Promise<boolean> {
     this.spinner.show();
     const dniCtrl = this.frmSupervisor.controls['DNI'];
+    
+    let existe: boolean = true;
     await this.db
       .buscarUsuarioPorDni(Number(dniCtrl.value.replace(/[-. ]/g, '')))
       .then((pers) => ToastError.fire('Este DNI ya se encuentra registrado.'))
@@ -168,6 +170,7 @@ export class AltaSupervisorPage {
           error instanceof Exception &&
           error.code === ErrorCodes.DniNoRegistrado
         ) {
+          existe = false;
           ToastSuccess.fire('El DNI no está registrado.');
           document
             .getElementById('datos-personales')!
@@ -183,6 +186,7 @@ export class AltaSupervisorPage {
       });
 
     this.spinner.hide();
+    return existe;
   }
 
   selecTipo($ev: CustomEvent) {
@@ -195,12 +199,23 @@ export class AltaSupervisorPage {
 
       const valorCrudo = await this.scanService.escanear([BarcodeFormat.Pdf417]);
       const datosDni = this.scanService.extraerDatosDni(valorCrudo);
-      this.frmSupervisor.patchValue({
-        DNI: (datosDni.dni).toString(),
-        CUIL: (datosDni.cuil).toString(),
-        nombre: datosDni.nombre,
-        apellido: datosDni.apellido
-      });
+
+      const dniCtrl = this.frmSupervisor.controls['DNI'];
+      dniCtrl.setValue((datosDni.dni).toString());
+      dniCtrl.markAsDirty();
+      if (!await this.buscarDni()) {
+        const cuilCtrl = this.frmSupervisor.controls['CUIL'];
+        cuilCtrl.setValue((datosDni.cuil).toString());
+        cuilCtrl.markAsDirty();
+
+        const nombreCtrl = this.frmSupervisor.controls['nombre'];
+        nombreCtrl.setValue(datosDni.nombre);
+        nombreCtrl.markAsDirty();
+
+        const apellidoCtrl = this.frmSupervisor.controls['apellido'];
+        apellidoCtrl.setValue(datosDni.apellido);
+        apellidoCtrl.markAsDirty();
+      }
 
       this.spinner.hide();
     } catch (error: any) {
