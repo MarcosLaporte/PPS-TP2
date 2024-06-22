@@ -7,7 +7,7 @@
       <form [formGroup]="empleadoFrm" (ngSubmit)="subirEmpleado()">
         <div class="inputs">
           <div id="correo" class="correo">
-            <ion-input id="input-correo" label="Correo" label-placement="fixed" type="email"
+            <ion-input id="input-correo" label="Correo" type="email"
               formControlName="correo" name="email" required ngDefaultControl>
               <ion-button id="btn-correo" fill="clear" slot="end" aria-label="Buscar/Cambiar" (click)="buscarCorreo();"
                 [disabled]="empleadoFrm.controls['correo'].errors">
@@ -20,8 +20,8 @@
             </div>
           </div>
           <div id="dni" class="dni deshabilitado">
-            <ion-input id="input-dni" label="DNI" label-placement="fixed" type="text"
-              formControlName="dni" name="dni" required ngDefaultControl>
+            <ion-input id="input-dni" label="DNI" type="text" formControlName="dni"
+              name="dni" required ngDefaultControl>
               <ion-button id="btn-dni" *ngIf="empleadoFrm.controls['dni'].errors; else buscar"
                 fill="clear" slot="end" aria-label="escanear" (click)="escanearDni();">
                 <ion-icon slot="icon-only" name="scan" aria-hidden="true"></ion-icon>
@@ -39,8 +39,8 @@
           </div>
           <div id="datos-personales" class="deshabilitado">
             <div class="cuil">
-              <ion-input label="CUIL" label-placement="fixed" type="text"
-                formControlName="cuil" name="cuil" required ngDefaultControl>
+              <ion-input label="CUIL" type="text" formControlName="cuil" 
+                name="cuil" required ngDefaultControl>
               </ion-input>
               <div class="errores" *ngIf="empleadoFrm.controls['cuil'].dirty && empleadoFrm.controls['cuil'].errors">
                 <small *ngIf="empleadoFrm.controls['cuil'].errors['required']">Debe rellenar este campo.</small>
@@ -51,8 +51,8 @@
             </div>
             <div class="nombre_apellido">
               <div class="nombre">
-                <ion-input label="Nombre" label-placement="fixed" type="text"
-                  formControlName="nombre" name="name" required ngDefaultControl>
+                <ion-input label="Nombre" type="text" formControlName="nombre"
+                  name="name" required ngDefaultControl>
                 </ion-input>
                 <div class="errores"
                   *ngIf="empleadoFrm.controls['nombre'].dirty && empleadoFrm.controls['nombre'].errors">
@@ -61,26 +61,35 @@
                 </div>
               </div>
               <div class="apellido">
-                <ion-input label="Apellido" label-placement="fixed" type="text"
-                  formControlName="apellido" name="surname" required ngDefaultControl>
+                <ion-input label="Apellido" type="text" formControlName="apellido" 
+                  name="surname" required ngDefaultControl>
                 </ion-input>
                 <div class="errores"
                   *ngIf="empleadoFrm.controls['apellido'].dirty && empleadoFrm.controls['apellido'].errors">
                   <small *ngIf="empleadoFrm.controls['apellido'].errors['required']">Debe rellenar este campo.</small>
-                  <small *ngIf="empleadoFrm.controls['apellido'].errors['pattern']">Compruebe el texto
-                    ingresado.</small>
+                  <small *ngIf="empleadoFrm.controls['apellido'].errors['pattern']">Compruebe el texto ingresado.</small>
                 </div>
               </div>
             </div>
             <div class="contra">
-              <ion-input label="Contraseña" [clearOnEdit]="false" label-placement="fixed"
-                helperText="Entre 6 y 20 caracteres." type="password"
+              <ion-input label="Contraseña" [clearOnEdit]="false" type="password" (ionInput)="verificarCoincid()"
                 formControlName="contra" name="password" required ngDefaultControl>
                 <ion-input-password-toggle slot="end"></ion-input-password-toggle>
               </ion-input>
               <div class="errores"
                 *ngIf="empleadoFrm.controls['contra'].dirty && empleadoFrm.controls['contra'].errors">
                 <small *ngIf="empleadoFrm.controls['contra'].errors['required']">Debe rellenar este campo.</small>
+              </div>
+            </div>
+            <div class="reContra">
+              <ion-input label="Reingrese" [clearOnEdit]="false" type="password"
+                formControlName="reContra" name="passwordCheck" required ngDefaultControl>
+                <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+              </ion-input>
+              <div class="errores"
+                *ngIf="empleadoFrm.controls['reContra'].dirty && empleadoFrm.controls['reContra'].errors">
+                <small *ngIf="empleadoFrm.controls['reContra'].errors['required']">Debe rellenar este campo.</small>
+                <small *ngIf="empleadoFrm.controls['reContra'].errors['noCoinciden']">Las contraseñas deben coincidir.</small>
               </div>
             </div>
           </div>

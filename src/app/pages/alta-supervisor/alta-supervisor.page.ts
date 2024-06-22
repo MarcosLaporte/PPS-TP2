@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators,
+import { AbstractControl, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonButton, IonItem, IonRadioGroup, IonRadio, IonCardHeader, IonCard, IonCardTitle, IonCardContent, IonIcon, IonInputPasswordToggle } from '@ionic/angular/standalone';
 import { Camera, CameraResultType } from '@capacitor/camera';
@@ -44,24 +44,16 @@ export class AltaSupervisorPage {
     this.frmSupervisor = this.formBuilder.group({
       nombre: new FormControl('', [Validators.required]),
       apellido: new FormControl('', [Validators.required]),
-      DNI: new FormControl('', [ Validators.required,Validators.pattern(/^\b[\d]{1,3}(\.|\-|\/| )?[\d]{3}(\.|\-|\/| )?[\d]{3}$/),]),
+      DNI: new FormControl('', [ Validators.required, Validators.pattern(/^\b[\d]{1,3}(\.|\-|\/| )?[\d]{3}(\.|\-|\/| )?[\d]{3}$/),]),
       CUIL: new FormControl('', [Validators.required, this.verificarCuil]),
-      correo: new FormControl('', [Validators.required, Validators.email]),
+      correo: new FormControl('', [Validators.required, Validators.pattern(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)]),
       foto: new FormControl('', [Validators.required]),
       contra: new FormControl('', [Validators.required]),
+      reContra: new FormControl('', [Validators.required, this.contraseñasCoinciden]),
       supervisorDueno: [null, [Validators.required]],
     });
 
     addIcons({ search, scanOutline, scanCircleOutline});
-  }
-
-  fillFields(){
-     this.frmSupervisor.controls['nombre'].setValue("Jaco");
-     this.frmSupervisor.controls['apellido'].setValue("Luna");
-     this.frmSupervisor.controls['DNI'].setValue("43628819");
-     this.frmSupervisor.controls['CUIL'].setValue("20436288191");
-     this.frmSupervisor.controls['correo'].setValue("jacoluna01@gmail.com");
-     this.frmSupervisor.controls['contra'].setValue("123456");
   }
 
   async takePic() {
@@ -72,15 +64,11 @@ export class AltaSupervisorPage {
   }
 
   async uploadPicture(image: File) {
-    this.spinner.show();
-
-    const datetime: Date = new Date();
-
-    const nombreFoto: string = 
-    `${Prefijos.Supervisor}-${this.frmSupervisor.controls['DNI'].value}`;
-
     try {
-      const url = await this.storage.subirArchivo(image,`${Colecciones.Usuarios}/${nombreFoto}`);
+      this.spinner.show();
+      const dni = <string>this.frmSupervisor.controls['DNI'].value;
+      
+      const url = await this.storage.subirArchivo(image,`${Colecciones.Usuarios}/jefe-${dni}`);
       this.spinner.hide();
       ToastSuccess.fire('Imagen subida con éxito!');
       return url;
@@ -147,7 +135,7 @@ export class AltaSupervisorPage {
     this.spinner.hide();
   }
 
-  private verificarCuil(control: AbstractControl): null | object {
+  private verificarCuil = (control: AbstractControl): ValidationErrors | null => {
     if (!control.value) return null;
 
     const DNI = (<string>control.parent?.value.DNI).replace(/[-. ]/g, '');
@@ -161,9 +149,36 @@ export class AltaSupervisorPage {
     return null;
   }
 
-  async buscarDni() {
+  private contraseñasCoinciden = (control: AbstractControl): ValidationErrors | null => {
+    if (!control.value) return null;
+
+    const contra = control.parent?.value.contra;
+    const reContra = <string>control.value;
+
+    if (contra !== reContra) {
+      return { noCoinciden: true };
+    }
+
+    return null;
+  }
+
+  verificarCoincid() {
+    const contraCtrl = this.frmSupervisor.controls['contra'];
+    const reContraCtrl = this.frmSupervisor.controls['reContra'];
+
+    if (reContraCtrl.dirty) {
+      if (contraCtrl.value !== reContraCtrl.value)
+        reContraCtrl.setErrors({ noCoinciden: true });
+      else
+        reContraCtrl.setErrors(null);
+    }
+  }
+
+  async buscarDni(): Promise<boolean> {
     this.spinner.show();
     const dniCtrl = this.frmSupervisor.controls['DNI'];
+    
+    let existe: boolean = true;
     await this.db
       .buscarUsuarioPorDni(Number(dniCtrl.value.replace(/[-. ]/g, '')))
       .then((pers) => ToastError.fire('Este DNI ya se encuentra registrado.'))
@@ -172,6 +187,7 @@ export class AltaSupervisorPage {
           error instanceof Exception &&
           error.code === ErrorCodes.DniNoRegistrado
         ) {
+          existe = false;
           ToastSuccess.fire('El DNI no está registrado.');
           document
             .getElementById('datos-personales')!
@@ -187,6 +203,7 @@ export class AltaSupervisorPage {
       });
 
     this.spinner.hide();
+    return existe;
   }
 
   selecTipo($ev: CustomEvent) {
@@ -199,12 +216,23 @@ export class AltaSupervisorPage {
 
       const valorCrudo = await this.scanService.escanear([BarcodeFormat.Pdf417]);
       const datosDni = this.scanService.extraerDatosDni(valorCrudo);
-      this.frmSupervisor.patchValue({
-        DNI: (datosDni.dni).toString(),
-        CUIL: (datosDni.cuil).toString(),
-        nombre: datosDni.nombre,
-        apellido: datosDni.apellido
-      });
+
+      const dniCtrl = this.frmSupervisor.controls['DNI'];
+      dniCtrl.setValue((datosDni.dni).toString());
+      dniCtrl.markAsDirty();
+      if (!await this.buscarDni()) {
+        const cuilCtrl = this.frmSupervisor.controls['CUIL'];
+        cuilCtrl.setValue((datosDni.cuil).toString());
+        cuilCtrl.markAsDirty();
+
+        const nombreCtrl = this.frmSupervisor.controls['nombre'];
+        nombreCtrl.setValue(datosDni.nombre);
+        nombreCtrl.markAsDirty();
+
+        const apellidoCtrl = this.frmSupervisor.controls['apellido'];
+        apellidoCtrl.setValue(datosDni.apellido);
+        apellidoCtrl.markAsDirty();
+      }
 
       this.spinner.hide();
     } catch (error: any) {
