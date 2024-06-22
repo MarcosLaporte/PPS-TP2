@@ -5,13 +5,10 @@ import { Roles_Tipos } from '../utils/interfaces/interfaces';
 import { CheckRolTipo } from '../utils/check_rol_tipo';
 
 export const rolTipoGuard: CanActivateFn = (route, state) => {
-  const usuario = inject(AuthService).UsuarioEnSesion;
   const roles_tipos = route.data['roles_tipos'] as Array<Roles_Tipos>;
   const permitirAnon = route.data['permitirAnon'] as boolean;
 
-  if (!usuario) return permitirAnon;
-
-  if (!CheckRolTipo(usuario, roles_tipos)) {
+  if (!CheckRolTipo(inject(AuthService), roles_tipos, permitirAnon)) {
     inject(Router).navigate(['acceso-denegado']);
     return false;
   }

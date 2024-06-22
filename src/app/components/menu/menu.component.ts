@@ -17,7 +17,7 @@ import { Roles_Tipos } from 'src/app/utils/interfaces/interfaces';
 import { CheckRolTipo } from 'src/app/utils/check_rol_tipo';
 
 declare interface Grupo { nombre: string, paginas: Pagina[] };
-declare interface Pagina { titulo: string, url: string, icono: string, rol_tipo: Roles_Tipos[] };
+declare interface Pagina { titulo: string, url: string, icono: string, rol_tipo: Roles_Tipos[], permitirAnon?: boolean };
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
@@ -27,7 +27,7 @@ declare interface Pagina { titulo: string, url: string, icono: string, rol_tipo:
 })
 export class MenuComponent {
   private readonly altas: Pagina[] = [
-    { titulo: 'Cliente', url: '/alta-cliente', icono: 'review', rol_tipo: [{ rol: 'empleado', tipo: 'metre' }] },
+    { titulo: 'Cliente', url: '/alta-cliente', icono: 'review', rol_tipo: [{ rol: 'empleado', tipo: 'metre' }], permitirAnon: true },
     {
       titulo: 'Producto', url: '/alta-producto', icono: 'utensils', rol_tipo: [
         { rol: 'empleado', tipo: 'cocinero' },
@@ -58,20 +58,13 @@ export class MenuComponent {
     addIcons({ menuOutline, caretDownCircle, chevronDownCircle, logInOutline, logOutOutline, scan });
 
     auth.usuarioEnSesionObs.subscribe((usuario) => {
-      this.grupoAltas.paginas = [];
-      if (usuario)
-        this.grupoAltas.paginas = this.altas.filter((pag) => CheckRolTipo(usuario, pag.rol_tipo));
+      this.grupoAltas.paginas = this.altas.filter((pag) => CheckRolTipo(auth, pag.rol_tipo, pag.permitirAnon));
 
       this.funciones[0] = usuario ? this.funcCerrarSesion : this.funcIniciarSesion;
     });
 
     const ssUser = sessionStorage.getItem('usuario');
     this.auth.UsuarioEnSesion = ssUser ? JSON.parse(ssUser) : null;
-  }
-
-  mostrarPagina = (pag: Pagina) => {
-    const usuario = this.auth.UsuarioEnSesion;
-    return usuario && CheckRolTipo(usuario, pag.rol_tipo);
   }
 
   itemClick(url: string) {

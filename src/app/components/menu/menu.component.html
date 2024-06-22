@@ -18,19 +18,23 @@
               <i class="fi fi-tr-house-chimney"></i>
               Inicio
             </ion-item>
-            <ion-accordion *ngIf="grupoAltas.paginas.length > 0" [value]="grupoAltas.nombre">
+            <ion-accordion *ngIf="grupoAltas.paginas.length > 1; else unicaAlta" [value]="grupoAltas.nombre">
               <ion-item slot="header" color="light">
                 <ion-label>{{grupoAltas.nombre}}</ion-label>
               </ion-item>
               <div slot="content">
-                <ng-container *ngFor="let pag of grupoAltas.paginas">
-                  <ion-item *ngIf="mostrarPagina(pag)" button (click)="itemClick(pag.url)">
-                    <i [class]="'fi fi-tr-'+pag.icono"></i>
-                    {{pag.titulo}}
-                  </ion-item>
-                </ng-container>
+                <ion-item button *ngFor="let pag of grupoAltas.paginas" (click)="itemClick(pag.url)">
+                  <i [class]="'fi fi-tr-'+pag.icono"></i>
+                  {{pag.titulo}}
+                </ion-item>
               </div>
             </ion-accordion>
+            <ng-template #unicaAlta>
+              <ion-item *ngIf="grupoAltas.paginas[0] as alta" button (click)="itemClick(alta.url)">
+                <i [class]="'fi fi-tr-'+alta.icono"></i>
+                Alta {{alta.titulo}}
+              </ion-item>
+            </ng-template>
           </div>
         </ion-accordion>
       </ion-accordion-group>
