@@ -106,19 +106,26 @@ export class AuthService {
    *  y guarda sus datos en la colección `users` en `Firestore`.
    *
    * @async
-   * @param usuario - El objeto Persona con los datos a guardar en `Firestore`.
-   * @param contr - La contraseña que será registrada en `Firebase Authentication`.
+   * @param usuarioAnonimo - El objeto Persona con los datos a guardar en `Firestore`.
    * @returns El ID del doc donde se guardó el usuario en la colección `users` en `Firestore`.
    *
    * @throws Un Fire error traducido a un mensaje comprensible para el usuario.
    */
-  async registrarUsuarioAnonimo(usuarioAnonimo: Persona): Promise<void> {
+  async registrarUsuarioAnonimo(usuarioAnonimo: Persona): Promise<string> {
     try {
-      const userCredential = await signInAnonymously(this.auth);
-      const user = userCredential.user;
-      usuarioAnonimo.id = user.uid;
-      await this.db.subirDoc(Colecciones.Usuarios, usuarioAnonimo, true);
-      this.UsuarioEnSesion = usuarioAnonimo;
+      const ssFireUser = sessionStorage.getItem('fireUser');
+      const fireUserViejo: FireUser | null = ssFireUser ? JSON.parse(ssFireUser) : null;
+
+      const authInst = !fireUserViejo ? this.auth : getAuth(initializeApp(firebaseConfig, "Secondary"));
+      await signInAnonymously(authInst);
+
+      const docId = await this.db.subirDoc(Colecciones.Usuarios, usuarioAnonimo, true);
+      usuarioAnonimo.id = docId;
+
+      if (!fireUserViejo)
+        this.UsuarioEnSesion = usuarioAnonimo;
+
+      return docId;
     } catch (error: any) {
       throw new Error(this.parsearError(error));
     }
