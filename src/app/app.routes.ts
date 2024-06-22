@@ -15,10 +15,10 @@ export const routes: Routes = [
   {
     path: 'alta-cliente',
     loadComponent: () => import('./pages/alta-cliente/alta-cliente.page').then(m => m.AltaClientePage),
-    canActivate: [sesionIniciadaGuard, rolTipoGuard],
+    canActivate: [rolTipoGuard],
     data: {
+      permitirAnon: true,
       roles_tipos: [
-        { rol: 'cliente' },
         { rol: 'empleado', tipo: 'metre' }
       ]
     }

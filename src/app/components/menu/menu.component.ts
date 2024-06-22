@@ -27,12 +27,7 @@ declare interface Pagina { titulo: string, url: string, icono: string, rol_tipo:
 })
 export class MenuComponent {
   private readonly altas: Pagina[] = [
-    {
-      titulo: 'Cliente', url: '/alta-cliente', icono: 'review', rol_tipo: [
-        { rol: 'cliente' },
-        { rol: 'empleado', tipo: 'metre' }
-      ]
-    },
+    { titulo: 'Cliente', url: '/alta-cliente', icono: 'review', rol_tipo: [{ rol: 'empleado', tipo: 'metre' }] },
     {
       titulo: 'Producto', url: '/alta-producto', icono: 'utensils', rol_tipo: [
         { rol: 'empleado', tipo: 'cocinero' },
