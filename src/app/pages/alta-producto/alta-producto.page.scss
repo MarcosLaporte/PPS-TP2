@@ -10,16 +10,17 @@
 .fotos-container {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 
   .foto-item {
-    width: 100px;
+    width: 80px;
     height: 100px;
     border: 1px solid #ccc;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    margin-right: 10px; /* Espacio entre las imágenes */
 
     img {
       width: 100%;

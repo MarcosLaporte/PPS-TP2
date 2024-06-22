@@ -4,6 +4,10 @@
       <ion-card-title>Alta de Cliente</ion-card-title>
     </ion-card-header>
     <ion-card-content>
+      <ion-item>
+        <ion-label>Registrarse como anónimo</ion-label>
+        <ion-toggle (ionChange)="toggleTipoCliente($event)"></ion-toggle>
+      </ion-item>
       <form [formGroup]="frmCliente" (ngSubmit)="subirCliente()">
         <div class="inputs">
           <div id="correo" class="correo">
@@ -37,7 +41,7 @@
               <small *ngIf="frmCliente.controls['dni'].errors['pattern']">No es un DNI.</small>
             </div>
           </div>
-          <div id="datos-personales" class="deshabilitado">
+          <div id="datos-personales">
             <div class="nombre_apellido">
               <div class="nombre">
                 <ion-input label="Nombre" label-placement="fixed" type="text"
@@ -74,9 +78,8 @@
             </div>
           </div>
         </div>
-
         <ion-button type="submit" expand="block" color="tertiary" [disabled]="frmCliente.invalid">
-          Agregar empleado
+          Agregar cliente
         </ion-button>
       </form>
     </ion-card-content>

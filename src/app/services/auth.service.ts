@@ -5,6 +5,7 @@ import { Colecciones, DatabaseService } from './database.service';
 import { Persona } from '../utils/classes/usuarios/persona';
 import { ErrorCodes, Exception } from '../utils/classes/exception';
 import { LoginPage } from '../pages/login/login.page';
+import { Cliente } from '../utils/classes/usuarios/cliente';
 
 @Injectable({
   providedIn: 'root'
@@ -44,12 +45,12 @@ export class AuthService {
   /**
    * Registra un usuario con correo y contraseña en `Firebase Authentication`
    *  y guarda sus datos en la colección `users` en `Firestore`.
-   * 
+   *
    * @async
    * @param usuario - El objeto Persona con los datos a guardar en `Firestore`.
    * @param contr - La contraseña que será registrada en `Firebase Authentication`.
    * @returns El ID del doc donde se guardó el usuario en la colección `users` en `Firestore`.
-   * 
+   *
    * @throws Un Fire error traducido a un mensaje comprensible para el usuario.
    */
   async registrarUsuario(usuario: Persona, contr: string): Promise<string> {
@@ -81,11 +82,11 @@ export class AuthService {
 
   /**
    * Ingresa un usuario a la sesión de `Firebase Authentication` y asigna el objeto Persona a la propiedad local.
-   * 
+   *
    * @async
    * @param email - El correo para intentar ingresar a `Firebase Authentication`.
    * @param contr - La contraseña para intentar ingresar a `Firebase Authentication`.
-   * 
+   *
    * @throws Un Fire error traducido a un mensaje comprensible para el usuario.
 */
   async ingresarUsuario(email: string, contr: string) {
@@ -99,7 +100,17 @@ export class AuthService {
       throw error;
     }
   }
-
+  async registrarUsuarioAnonimo(usuarioAnonimo: Persona): Promise<void> {
+    try {
+      const userCredential = await signInAnonymously(this.auth);
+      const user = userCredential.user;
+      usuarioAnonimo.id = user.uid;
+      await this.db.subirDoc(Colecciones.Usuarios, usuarioAnonimo, true);
+      this.UsuarioEnSesion = usuarioAnonimo;
+    } catch (error: any) {
+      throw new Error(this.parsearError(error));
+    }
+  }
   /**
    * Define la propiedad `UsuarioEnSesion` como nula.
    */
@@ -109,8 +120,8 @@ export class AuthService {
 
   /**
    * Traduce un Fire error a un mensaje comprensible para el usuario.
-   * 
-   * @param error - El error arrojado por Firebase. 
+   *
+   * @param error - El error arrojado por Firebase.
    * @returns El mensaje de error traducido.
    */
   private parsearError(error: any): string {
