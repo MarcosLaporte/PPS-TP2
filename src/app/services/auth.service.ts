@@ -125,6 +125,9 @@ export class AuthService {
       case `auth/wrong-password`:
         message = `La contraseña es incorrecta.`;
         break;
+      case `auth/missing-password`:
+        message = `Debe ingresar una contraseña.`;
+        break;
       case `auth/email-already-in-use`:
         message = `Esta dirección de correo ya está registrada.`;
         break;
