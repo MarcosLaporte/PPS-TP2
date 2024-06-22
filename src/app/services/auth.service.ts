@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Auth, User as FireUser, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateCurrentUser } from '@angular/fire/auth';
+import { Auth, User as FireUser, createUserWithEmailAndPassword, getAuth, signInAnonymously, signInWithEmailAndPassword } from '@angular/fire/auth';
 import { BehaviorSubject } from 'rxjs';
 import { Colecciones, DatabaseService } from './database.service';
 import { Persona } from '../utils/classes/usuarios/persona';
 import { ErrorCodes, Exception } from '../utils/classes/exception';
-import { LoginPage } from '../pages/login/login.page';
+import { initializeApp } from '@angular/fire/app';
+import { firebaseConfig } from 'src/firebaseConfig';
 
 @Injectable({
   providedIn: 'root'
@@ -44,17 +45,18 @@ export class AuthService {
   /**
    * Registra un usuario con correo y contraseña en `Firebase Authentication`
    *  y guarda sus datos en la colección `users` en `Firestore`.
-   * 
+   *
    * @async
    * @param usuario - El objeto Persona con los datos a guardar en `Firestore`.
    * @param contr - La contraseña que será registrada en `Firebase Authentication`.
    * @returns El ID del doc donde se guardó el usuario en la colección `users` en `Firestore`.
-   * 
+   *
    * @throws Un Fire error traducido a un mensaje comprensible para el usuario.
    */
   async registrarUsuario(usuario: Persona, contr: string): Promise<string> {
     try {
-      const fireUserViejo = JSON.parse(sessionStorage.getItem('fireUser')!) as FireUser;
+      const ssFireUser = sessionStorage.getItem('fireUser');
+      const fireUserViejo: FireUser | null = ssFireUser ? JSON.parse(ssFireUser) : null;
 
       await this.db.buscarUsuarioPorDni(usuario.dni) // Tira Error si no encuentra el DNI
         .catch((error: Exception) => {
@@ -62,15 +64,14 @@ export class AuthService {
             throw error;
         });
 
-      await createUserWithEmailAndPassword(this.auth, usuario.correo, contr)
-        .then(async () => {
-          if (!fireUserViejo) { // Si no hay nadie logueado
-            this.UsuarioEnSesion = usuario;
-          } else { // Si existe, un empleado registra a alguien nuevo.
-            await updateCurrentUser(this.auth, fireUserViejo);
-          }
-        });
+      const authInst = !fireUserViejo ? this.auth : getAuth(initializeApp(firebaseConfig, "Secondary"));
+      await createUserWithEmailAndPassword(authInst, usuario.correo, contr);
+
       const docId = await this.db.subirDoc(Colecciones.Usuarios, usuario, true);
+      usuario.id = docId;
+
+      if (!fireUserViejo)
+        this.UsuarioEnSesion = usuario;
 
       return docId;
     } catch (error: any) {
@@ -81,13 +82,13 @@ export class AuthService {
 
   /**
    * Ingresa un usuario a la sesión de `Firebase Authentication` y asigna el objeto Persona a la propiedad local.
-   * 
+   *
    * @async
    * @param email - El correo para intentar ingresar a `Firebase Authentication`.
    * @param contr - La contraseña para intentar ingresar a `Firebase Authentication`.
-   * 
+   *
    * @throws Un Fire error traducido a un mensaje comprensible para el usuario.
-*/
+  */
   async ingresarUsuario(email: string, contr: string) {
     try {
       await signInWithEmailAndPassword(this.auth, email, contr);
@@ -101,6 +102,36 @@ export class AuthService {
   }
 
   /**
+   * Registra un usuario anónimo en `Firebase Authentication`
+   *  y guarda sus datos en la colección `users` en `Firestore`.
+   *
+   * @async
+   * @param usuarioAnonimo - El objeto Persona con los datos a guardar en `Firestore`.
+   * @returns El ID del doc donde se guardó el usuario en la colección `users` en `Firestore`.
+   *
+   * @throws Un Fire error traducido a un mensaje comprensible para el usuario.
+   */
+  async registrarUsuarioAnonimo(usuarioAnonimo: Persona): Promise<string> {
+    try {
+      const ssFireUser = sessionStorage.getItem('fireUser');
+      const fireUserViejo: FireUser | null = ssFireUser ? JSON.parse(ssFireUser) : null;
+
+      const authInst = !fireUserViejo ? this.auth : getAuth(initializeApp(firebaseConfig, "Secondary"));
+      await signInAnonymously(authInst);
+
+      const docId = await this.db.subirDoc(Colecciones.Usuarios, usuarioAnonimo, true);
+      usuarioAnonimo.id = docId;
+
+      if (!fireUserViejo)
+        this.UsuarioEnSesion = usuarioAnonimo;
+
+      return docId;
+    } catch (error: any) {
+      throw new Error(this.parsearError(error));
+    }
+  }
+
+  /**
    * Define la propiedad `UsuarioEnSesion` como nula.
    */
   signOut() {
@@ -109,8 +140,8 @@ export class AuthService {
 
   /**
    * Traduce un Fire error a un mensaje comprensible para el usuario.
-   * 
-   * @param error - El error arrojado por Firebase. 
+   *
+   * @param error - El error arrojado por Firebase.
    * @returns El mensaje de error traducido.
    */
   private parsearError(error: any): string {
@@ -127,6 +158,9 @@ export class AuthService {
         break;
       case `auth/wrong-password`:
         message = `La contraseña es incorrecta.`;
+        break;
+      case `auth/missing-password`:
+        message = `Debe ingresar una contraseña.`;
         break;
       case `auth/email-already-in-use`:
         message = `Esta dirección de correo ya está registrada.`;

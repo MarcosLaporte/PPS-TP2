@@ -13,8 +13,11 @@ import { Colecciones, DatabaseService } from 'src/app/services/database.service'
 import { Exception, ErrorCodes } from 'src/app/utils/classes/exception';
 import { Mesa } from 'src/app/utils/classes/mesa';
 import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
+import { Roles_Tipos } from 'src/app/utils/interfaces/interfaces';
+import { CheckRolTipo } from 'src/app/utils/check_rol_tipo';
 
-declare interface Pagina { titulo: string, url: string, icono: string }
+declare interface Grupo { nombre: string, paginas: Pagina[] };
+declare interface Pagina { titulo: string, url: string, icono: string, rol_tipo?: Roles_Tipos[], permitirAnon?: boolean };
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
@@ -23,23 +26,28 @@ declare interface Pagina { titulo: string, url: string, icono: string }
   imports: [IonLabel, IonAccordion, IonAccordionGroup, IonModal, IonFabList, IonIcon, IonFab, IonFabButton, IonContent, IonButton, IonTitle, IonItem, IonToolbar, IonHeader, IonApp, IonRouterOutlet, CommonModule, NgxSpinnerModule],
 })
 export class MenuComponent {
-  public grupos: { nombre: string, deshabilitado: boolean, paginas: Pagina[] }[] = [
+  readonly CheckRolTipo = CheckRolTipo;
+  private readonly altas: Pagina[] = [
+    { titulo: 'Cliente', url: '/alta-cliente', icono: 'review', rol_tipo: [{ rol: 'empleado', tipo: 'metre' }], permitirAnon: true },
     {
-      nombre: 'General',
-      deshabilitado: false,
-      paginas: [{ titulo: 'Inicio', url: '/home', icono: 'house-chimney' }]
-    },
-    {
-      nombre: 'Altas',
-      deshabilitado: true,
-      paginas: [
-        { titulo: 'Mesa', url: '/alta-mesa', icono: 'table-picnic' },
-        { titulo: 'Empleado', url: '/alta-empleado', icono: 'room-service' },
-        { titulo: 'Cliente', url: '/alta-cliente', icono: 'review' },
-        { titulo: 'Producto', url: '/alta-producto', icono: 'utensils' },
-        { titulo: 'Supervisor', url: '/alta-supervisor', icono: 'boss' },
+      titulo: 'Producto', url: '/alta-producto', icono: 'utensils', rol_tipo: [
+        { rol: 'empleado', tipo: 'cocinero' },
+        { rol: 'empleado', tipo: 'bartender' }
       ]
-    }
+    },
+    { titulo: 'Supervisor', url: '/alta-supervisor', icono: 'boss', rol_tipo: [{ rol: 'jefe' }] },
+    { titulo: 'Mesa', url: '/alta-mesa', icono: 'table-picnic', rol_tipo: [{ rol: 'jefe' }] },
+    { titulo: 'Empleado', url: '/alta-empleado', icono: 'room-service', rol_tipo: [{ rol: 'jefe' }] },
+  ];
+
+  grupoAltas: Grupo = {
+    nombre: 'Altas',
+    paginas: []
+  };
+
+  paginasGenerales: Pagina[] = [
+    { titulo: 'Perfil', url: '/perfil', icono: 'circle-user' },
+    { titulo: 'Inicio', url: '/home', icono: 'house-chimney', permitirAnon: true },
   ];
 
   public funciones: { titulo: string, icono: string, accion: () => Promise<any> }[] = [
@@ -52,11 +60,12 @@ export class MenuComponent {
   readonly funcCerrarSesion =
     { titulo: 'Cerrar sesión', icono: 'log-out-outline', accion: async () => await this.cerrarSesion() };
 
-  constructor(protected router: Router, protected navCtrl: NavController, protected auth: AuthService, private alertCtrl: AlertController, private scanner: ScannerService,  private db: DatabaseService, private spinner: NgxSpinnerService) {
+  constructor(protected router: Router, protected navCtrl: NavController, protected auth: AuthService, private alertCtrl: AlertController, private scanner: ScannerService, private db: DatabaseService, private spinner: NgxSpinnerService) {
     addIcons({ menuOutline, caretDownCircle, chevronDownCircle, logInOutline, logOutOutline, scan });
 
     auth.usuarioEnSesionObs.subscribe((usuario) => {
-      this.grupos[1].deshabilitado = !usuario; //TODO: Agregar control por rol de usuario
+      this.grupoAltas.paginas = this.altas.filter((pag) => CheckRolTipo(auth, pag.rol_tipo, pag.permitirAnon));
+
       this.funciones[0] = usuario ? this.funcCerrarSesion : this.funcIniciarSesion;
     });
 
@@ -87,6 +96,7 @@ export class MenuComponent {
           handler: async () => {
             this.auth.signOut();
             ToastSuccess.fire('Sesión cerrada!');
+            this.navCtrl.navigateRoot('login');
           },
         }
       ],
@@ -95,9 +105,9 @@ export class MenuComponent {
     await alert.present();
   }
 
-  async escanearQrMesa(){
+  async escanearQrMesa() {
     // const QR : string = await this.scanner.escanear();
-    const QR : string = "DLDy65F46o10UeAQVcyG" //esto es simulado
+    const QR: string = "DLDy65F46o10UeAQVcyG" //esto es simulado
     // const valorCrudo = await this.scanner.escanear([BarcodeFormat.Pdf417]);
     try {
       this.spinner.show();
@@ -107,13 +117,13 @@ export class MenuComponent {
       console.log(cliente);
 
       // let TEST = true;
-      
-      if(mesa && cliente){
 
-        switch(mesa.estado){
+      if (mesa && cliente) {
+
+        switch (mesa.estado) {
           case 'disponible':
             this.spinner.hide();
-              if(cliente.idMesa == mesa.id){
+            if (cliente.idMesa == mesa.id) {
               await MySwal.fire({
                 title: `Bienvenido ${cliente.nombre}`,
                 text: 'Ya desea realizar su pedido?',
@@ -126,22 +136,22 @@ export class MenuComponent {
                 denyButtonText: 'No',
                 denyButtonColor: '#f27474',
               }).then(async (res) => {
-                if(res.isConfirmed){
-                  this.db.actualizarDoc(Colecciones.Mesas, mesa.id, {'estado':'cliente pidiendo comida'});
+                if (res.isConfirmed) {
+                  this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { 'estado': 'cliente pidiendo comida' });
                   this.pedirComida(mesa);
-                }else{
-                  this.db.actualizarDoc(Colecciones.Mesas, mesa.id, {'estado':'cliente sin pedido'});
+                } else {
+                  this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { 'estado': 'cliente sin pedido' });
                 }
               });
-            }else{
-              throw new Exception(ErrorCodes.MesaEquivocada,"esta no es tu mesa");
+            } else {
+              throw new Exception(ErrorCodes.MesaEquivocada, "esta no es tu mesa");
             }
-          break;
+            break;
 
           case 'cliente sin pedido':
             this.pedirComida(mesa);
             console.log('cliente sin pedido');
-          break;
+            break;
           /*
           case 'cliente pidiendo comida':
             console.log('cliente pidiendo comid');
@@ -149,15 +159,15 @@ export class MenuComponent {
           */
           case 'cliente esperando comida':
             console.log('cliente esperando comida');
-          break;
+            break;
 
           case 'cliente comiendo':
             console.log('cliente comiendo');
-          break;
+            break;
 
           case 'cliente pagando':
-          console.log('cliente pagando');
-          break;
+            console.log('cliente pagando');
+            break;
         }
       }
       this.spinner.hide();
@@ -165,10 +175,10 @@ export class MenuComponent {
       this.spinner.hide();
       ToastError.fire('Ups...', error.message);
     }
-    
+
   }
-  pedirComida(mesa: Mesa){
+  pedirComida(mesa: Mesa) {
     //menu con funciones de pedir comida
-    this.db.actualizarDoc(Colecciones.Mesas, mesa.id, {'estado':'cliente esperando comida'});
+    this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { 'estado': 'cliente esperando comida' });
   }
 }
