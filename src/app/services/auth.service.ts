@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Auth, User as FireUser, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateCurrentUser } from '@angular/fire/auth';
+import { Auth, User as FireUser, createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from '@angular/fire/auth';
 import { BehaviorSubject } from 'rxjs';
 import { Colecciones, DatabaseService } from './database.service';
 import { Persona } from '../utils/classes/usuarios/persona';
 import { ErrorCodes, Exception } from '../utils/classes/exception';
-import { LoginPage } from '../pages/login/login.page';
+import { initializeApp } from '@angular/fire/app';
+import { firebaseConfig } from 'src/firebaseConfig';
 
 @Injectable({
   providedIn: 'root'
@@ -54,7 +55,8 @@ export class AuthService {
    */
   async registrarUsuario(usuario: Persona, contr: string): Promise<string> {
     try {
-      const fireUserViejo = JSON.parse(sessionStorage.getItem('fireUser')!) as FireUser;
+      const ssFireUser = sessionStorage.getItem('fireUser');
+      const fireUserViejo: FireUser | null = ssFireUser ? JSON.parse(ssFireUser) : null;
 
       await this.db.buscarUsuarioPorDni(usuario.dni) // Tira Error si no encuentra el DNI
         .catch((error: Exception) => {
@@ -62,14 +64,9 @@ export class AuthService {
             throw error;
         });
 
-      await createUserWithEmailAndPassword(this.auth, usuario.correo, contr)
-        .then(async () => {
-          if (!fireUserViejo) { // Si no hay nadie logueado
-            this.UsuarioEnSesion = usuario;
-          } else { // Si existe, un empleado registra a alguien nuevo.
-            await updateCurrentUser(this.auth, fireUserViejo);
-          }
-        });
+      const authInst = !fireUserViejo ? this.auth : getAuth(initializeApp(firebaseConfig, "Secondary"));
+      await createUserWithEmailAndPassword(authInst, usuario.correo, contr);
+
       const docId = await this.db.subirDoc(Colecciones.Usuarios, usuario, true);
 
       return docId;
