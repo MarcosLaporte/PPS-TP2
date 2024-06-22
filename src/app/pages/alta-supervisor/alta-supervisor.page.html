@@ -10,7 +10,6 @@
             <ion-input
               id="input-correo"
               label="Correo"
-              label-placement="fixed"
               type="email"
               formControlName="correo"
               name="email"
@@ -57,7 +56,6 @@
             <ion-input
               id="input-DNI"
               label="DNI"
-              label-placement="fixed"
               type="text"
               formControlName="DNI"
               name="DNI"
@@ -112,7 +110,6 @@
             <div class="CUIL">
               <ion-input
                 label="CUIL"
-                label-placement="fixed"
                 type="text"
                 formControlName="CUIL"
                 name="CUIL"
@@ -139,7 +136,6 @@
               <div class="nombre">
                 <ion-input
                   label="Nombre"
-                  label-placement="fixed"
                   type="text"
                   formControlName="nombre"
                   name="name"
@@ -162,7 +158,6 @@
               <div class="apellido">
                 <ion-input
                   label="Apellido"
-                  label-placement="fixed"
                   type="text"
                   formControlName="apellido"
                   name="surname"
@@ -187,13 +182,12 @@
               <ion-input
                 label="Contraseña"
                 [clearOnEdit]="false"
-                label-placement="fixed"
-                helperText="Entre 6 y 20 caracteres."
                 type="password"
                 formControlName="contra"
                 name="password"
                 required
                 ngDefaultControl
+                (ionInput)="verificarCoincid()"
               >
                 <ion-input-password-toggle
                   slot="end"
@@ -204,6 +198,32 @@
               <div class="errores">
                 @if (frmSupervisor.controls['contra'].errors['required']) {
                 <small>Debe rellenar este campo.</small>
+                }
+              </div>
+              }
+            </div>
+            <div class="reContra">
+              <ion-input
+                label="Reingrese"
+                [clearOnEdit]="false"
+                type="password"
+                formControlName="reContra"
+                name="passwordCheck"
+                required
+                ngDefaultControl
+              >
+                <ion-input-password-toggle
+                  slot="end"
+                ></ion-input-password-toggle>
+              </ion-input>
+              @if (frmSupervisor.controls['reContra'].dirty &&
+              frmSupervisor.controls['reContra'].errors) {
+              <div class="errores">
+                @if (frmSupervisor.controls['reContra'].errors['required']) {
+                <small>Debe rellenar este campo.</small>
+                }
+                @if (frmSupervisor.controls['reContra'].errors['noCoinciden']) {
+                <small>Las contraseñas deben coincidir.</small>
                 }
               </div>
               }
@@ -263,9 +283,6 @@
           Agregar
         </ion-button>
       </form>
-      <ion-button expand="block" color="tertiary" (click)="fillFields()"
-        >completar campos</ion-button
-      >
     </ion-card-content>
   </ion-card>
 </div>

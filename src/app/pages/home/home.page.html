@@ -1,22 +1,31 @@
 <div class="container background-ter">
   <ion-card class="background-sec">
     <ion-card-header>
-      <ion-card-title>¡Bienvenido a Los Yourdonistas!</ion-card-title>
+      <ion-card-title>Sobre Nosotros</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <p>Estamos encantados de que formes parte de nuestra comunidad. Nuestra aplicación está diseñada para mejorar la eficiencia y la experiencia tanto para nuestros empleados como para nuestros clientes.</p>
+      <p>Los Yourdonistas es un restaurante reconocido por su ambiente acogedor y su cocina excepcional. Nuestro
+        objetivo es brindar una experiencia gastronómica única a todos nuestros clientes.</p>
     </ion-card-content>
   </ion-card>
 
-  <ion-list class="ion-margin" *ngFor="let pag of paginas" lines="full">
-    <ion-item class="background-sec" (click)="nav.navigateRoot(pag)">
-      {{pag}}
-    </ion-item>
-  </ion-list>
+  <ion-card class="background-sec">
+    <ion-card-header>
+      <ion-card-title>Nuestras Comidas</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>Ofrecemos una amplia variedad de platos que van desde lo tradicional hasta lo más innovador. Cada plato es
+        preparado con los ingredientes más frescos y de la más alta calidad.</p>
+    </ion-card-content>
+  </ion-card>
 
   <ion-card class="background-sec">
+    <ion-card-header>
+      <ion-card-title>Nuestra Reputación</ion-card-title>
+    </ion-card-header>
     <ion-card-content>
-      <p>Gracias por elegir Los Yourdonistas. Nos comprometemos a brindarte las mejores herramientas para que tu experiencia en el restaurante sea excepcional. ¡Vamos a hacer de cada visita algo especial!</p>
+      <p>Con una puntuación de 4.8 sobre 5 en las principales plataformas de reseñas,
+        Los Yourdonistas se enorgullece de su reputación impecable.</p>
     </ion-card-content>
   </ion-card>
 </div>

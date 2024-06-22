@@ -1,7 +1,7 @@
 import { TipoCliente } from './../../utils/classes/usuarios/cliente';
 import { Component, inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonFab, IonIcon, IonFabButton, IonFabList, IonGrid, IonRow, IonCol, IonLabel, IonItem, IonButton, IonImg, IonRadioGroup, IonRadio, IonCard, IonCardHeader, IonCardTitle, IonCardContent,IonInputPasswordToggle, IonToggle } from '@ionic/angular/standalone';
 import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
 import { AuthService } from 'src/app/services/auth.service';
@@ -52,7 +52,11 @@ export class AltaClientePage {
         Validators.required,
         Validators.pattern(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/),
       ]],
-      contra: [{ value: '', disabled: false }, [Validators.required]]
+      contra: ['', [Validators.required]],
+      reContra: ['', [
+        Validators.required,
+        this.contraseñasCoinciden,
+      ]],
     });
 
     addIcons({ search });
@@ -73,6 +77,31 @@ export class AltaClientePage {
       this.frmCliente.controls['dni'].enable();
       this.frmCliente.controls['correo'].enable();
       this.frmCliente.controls['contra'].enable();
+    }
+  }
+
+  private contraseñasCoinciden = (control: AbstractControl): ValidationErrors | null => {
+    if (!control.value) return null;
+
+    const contra = control.parent?.value.contra;
+    const reContra = <string>control.value;
+
+    if (contra !== reContra) {
+      return { noCoinciden: true };
+    }
+
+    return null;
+  }
+
+  verificarCoincid() {
+    const contraCtrl = this.frmCliente.controls['contra'];
+    const reContraCtrl = this.frmCliente.controls['reContra'];
+
+    if (reContraCtrl.dirty) {
+      if (contraCtrl.value !== reContraCtrl.value)
+        reContraCtrl.setErrors({ noCoinciden: true });
+      else
+        reContraCtrl.setErrors(null);
     }
   }
 

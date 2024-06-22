@@ -1,0 +1,11 @@
+<div class="container background-for">
+  <ion-card class="ion-padding-vertical ion-text-center usuario background-ter">
+    <div class="image-div">
+      <img [src]="usuario.fotoUrl">
+    </div>
+    <ion-title>
+      <h1>{{usuario.nombre}} {{usuario.apellido}}</h1>
+      <h2>{{usuarioRol() | uppercase}}</h2>
+    </ion-title>
+  </ion-card>
+</div>

@@ -14,16 +14,7 @@ import { CommonModule } from '@angular/common';
   imports: [IonLabel, IonIcon, IonCardContent, IonCardHeader, IonCardTitle, IonList, IonButton, IonCard, IonText, IonItem, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule]
 })
 export class HomePage {
-  paginas = [
-    'alta-cliente',
-    'alta-producto',
-    'alta-supervisor',
-    'alta-mesa',
-    'alta-empleado'
-  ];
-
-  constructor(public scanner: ScannerService, protected nav: NavController) {
+  constructor() {
     addIcons({ qrCodeOutline, peopleOutline, restaurantOutline });
   }
-
 }
