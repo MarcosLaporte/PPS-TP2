@@ -1,5 +1,5 @@
 <div class="container background-pri">
-  <ion-card>
+  <ion-card style="width: 95%;">
     <ion-card-header>
       <ion-card-title>Alta de Producto</ion-card-title>
     </ion-card-header>
@@ -9,7 +9,6 @@
           <div class="nombre">
             <ion-input
               label="Nombre"
-              label-placement="fixed"
               type="text"
               formControlName="nombre"
               required
@@ -22,7 +21,6 @@
           <div class="descripcion">
             <ion-input
               label="Descripción"
-              label-placement="fixed"
               type="text"
               formControlName="descripcion"
               required
@@ -33,26 +31,22 @@
             </div>
           </div>
           <div class="tiempo">
-            <div class="minutos">
-              <ion-input
-                label="Minutos"
-                label-placement="fixed"
-                type="number"
-                formControlName="minutos"
-                min="0"
-                required
-                ngDefaultControl>
-              </ion-input>
-              <div class="errores" *ngIf="frmProducto.controls['minutos'].dirty && frmProducto.controls['minutos'].errors">
-                <small *ngIf="frmProducto.controls['minutos'].errors['required']">Debe rellenar este campo.</small>
-                <small *ngIf="frmProducto.controls['minutos'].errors['min']">El valor debe ser mayor o igual a 0.</small>
-              </div>
+            <ion-input
+              label="Minutos"
+              type="number"
+              formControlName="minutos"
+              min="0"
+              required
+              ngDefaultControl>
+            </ion-input>
+            <div class="errores" *ngIf="frmProducto.controls['minutos'].dirty && frmProducto.controls['minutos'].errors">
+              <small *ngIf="frmProducto.controls['minutos'].errors['required']">Debe rellenar este campo.</small>
+              <small *ngIf="frmProducto.controls['minutos'].errors['min']">El valor debe ser mayor o igual a 0.</small>
             </div>
           </div>
           <div class="precio">
             <ion-input
               label="Precio"
-              label-placement="fixed"
               type="number"
               formControlName="precio"
               min="0.01"

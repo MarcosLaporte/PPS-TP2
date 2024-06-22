@@ -1,7 +1,7 @@
 import { TipoCliente } from './../../utils/classes/usuarios/cliente';
 import { Component, inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonFab, IonIcon, IonFabButton, IonFabList, IonGrid, IonRow, IonCol, IonLabel, IonItem, IonButton, IonImg, IonRadioGroup, IonRadio, IonCard, IonCardHeader, IonCardTitle, IonCardContent,IonInputPasswordToggle, IonToggle } from '@ionic/angular/standalone';
 import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
 import { AuthService } from 'src/app/services/auth.service';
@@ -52,27 +52,54 @@ export class AltaClientePage {
         Validators.required,
         Validators.pattern(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/),
       ]],
-      contra: [{ value: '', disabled: false }, [Validators.required]]
+      contra: ['', [Validators.required]],
+      reContra: ['', [
+        Validators.required,
+        this.contraseñasCoinciden,
+      ]],
     });
 
     addIcons({ search });
   }
 
   toggleTipoCliente(event: any) {
-    this.tipoCliente = event.detail.checked ? 'anonimo' : 'registrado';
+    const { checked } = event.detail;
+    this.tipoCliente = checked ? 'anonimo' : 'registrado';
 
-    if (this.tipoCliente === 'anonimo') {
-      this.frmCliente.controls['nombre'].enable();
-      this.frmCliente.controls['apellido'].disable();
-      this.frmCliente.controls['dni'].disable();
-      this.frmCliente.controls['correo'].disable();
-      this.frmCliente.controls['contra'].disable();
-    } else {
-      this.frmCliente.controls['nombre'].enable();
-      this.frmCliente.controls['apellido'].enable();
-      this.frmCliente.controls['dni'].enable();
-      this.frmCliente.controls['correo'].enable();
-      this.frmCliente.controls['contra'].enable();
+    document.getElementById('dni')!
+      .classList.toggle('deshabilitado', !checked);
+    document.getElementById('datos-personales')!
+      .classList.toggle('deshabilitado', !checked);
+    
+  
+    const controles = ['apellido', 'dni', 'correo', 'contra', 'reContra'];
+    controles.forEach(ctrl => {
+      this.frmCliente.controls[ctrl][checked ? 'disable' : 'enable']();
+    });
+  }
+
+  private contraseñasCoinciden = (control: AbstractControl): ValidationErrors | null => {
+    if (!control.value) return null;
+
+    const contra = control.parent?.value.contra;
+    const reContra = <string>control.value;
+
+    if (contra !== reContra) {
+      return { noCoinciden: true };
+    }
+
+    return null;
+  }
+
+  verificarCoincid() {
+    const contraCtrl = this.frmCliente.controls['contra'];
+    const reContraCtrl = this.frmCliente.controls['reContra'];
+
+    if (reContraCtrl.dirty) {
+      if (contraCtrl.value !== reContraCtrl.value)
+        reContraCtrl.setErrors({ noCoinciden: true });
+      else
+        reContraCtrl.setErrors(null);
     }
   }
 
@@ -116,6 +143,7 @@ export class AltaClientePage {
       ToastError.fire('Ocurrió un error', error.message);
     }
   }
+
   async escanearDni() {
     try {
       this.spinner.show();
@@ -164,6 +192,7 @@ export class AltaClientePage {
       .catch((error: any) => {
         if (error instanceof Exception && error.code === ErrorCodes.CorreoNoRegistrado) {
           document.getElementById('dni')!.classList.remove('deshabilitado');
+          document.getElementById('datos-personales')!.classList.remove('deshabilitado');
           document.getElementById('correo')!.classList.add('deshabilitado');
           (document.getElementById('input-correo')! as HTMLIonInputElement).disabled = true;
           (document.getElementById('input-dni')! as HTMLIonInputElement).disabled = false;

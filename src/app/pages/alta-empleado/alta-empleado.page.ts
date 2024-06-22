@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NavController } from '@ionic/angular';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { AuthService } from 'src/app/services/auth.service';
@@ -67,13 +67,20 @@ export class AltaEmpleadoPage {
         '', [
           Validators.required,
         ]
+      ],
+      reContra: [
+        '',
+        [
+          Validators.required,
+          this.contraseñasCoinciden
+        ]
       ]
     });
 
     addIcons({ search });
   }
 
-  private verificarCuil(control: AbstractControl): null | object {
+  private verificarCuil = (control: AbstractControl): ValidationErrors | null => {
     if (!control.value) return null;
 
     const dni = (<string>control.parent?.value.dni).replace(/[-. ]/g, '');
@@ -84,6 +91,19 @@ export class AltaEmpleadoPage {
       return { patron: true };
     else if (dniEnCuil !== dni)
       return { dniNoEncontrado: true };
+
+    return null;
+  }
+
+  private contraseñasCoinciden = (control: AbstractControl): ValidationErrors | null => {
+    if (!control.value) return null;
+
+    const contra = control.parent?.value.contra;
+    const reContra = <string>control.value;
+
+    if (contra !== reContra) {
+      return { noCoinciden: true };
+    }
 
     return null;
   }
@@ -112,15 +132,17 @@ export class AltaEmpleadoPage {
     this.spinner.hide();
   }
 
-  async buscarDni() {
+  async buscarDni(): Promise<boolean> {
     this.spinner.show();
     const dniValue = <string>this.empleadoFrm.controls['dni'].value;
     const dni = dniValue.replace(/[-. ]/g, '');
 
+    let existe: boolean = true;
     await this.db.buscarUsuarioPorDni(Number(dni))
       .then((pers) => ToastError.fire('Este DNI ya se encuentra registrado.'))
       .catch((error: any) => {
         if (error instanceof Exception && error.code === ErrorCodes.DniNoRegistrado) {
+          existe = false;
           ToastSuccess.fire('El DNI no está registrado.');
           document.getElementById('datos-personales')!.classList.remove('deshabilitado');
           document.getElementById('dni')!.classList.add('deshabilitado');
@@ -130,6 +152,7 @@ export class AltaEmpleadoPage {
       });
 
     this.spinner.hide();
+    return existe;
   }
 
   async escanearDni() {
@@ -138,12 +161,23 @@ export class AltaEmpleadoPage {
 
       const valorCrudo = await this.scanner.escanear([BarcodeFormat.Pdf417]);
       const datosDni = this.scanner.extraerDatosDni(valorCrudo);
-      this.empleadoFrm.patchValue({
-        dni: (datosDni.dni).toString(),
-        cuil: (datosDni.cuil).toString(),
-        nombre: datosDni.nombre,
-        apellido: datosDni.apellido
-      });
+
+      const dniCtrl = this.empleadoFrm.controls['dni'];
+      dniCtrl.setValue((datosDni.dni).toString());
+      dniCtrl.markAsDirty();
+      if (!await this.buscarDni()) {
+        const cuilCtrl = this.empleadoFrm.controls['cuil'];
+        cuilCtrl.setValue((datosDni.cuil).toString());
+        cuilCtrl.markAsDirty();
+
+        const nombreCtrl = this.empleadoFrm.controls['nombre'];
+        nombreCtrl.setValue(datosDni.nombre);
+        nombreCtrl.markAsDirty();
+
+        const apellidoCtrl = this.empleadoFrm.controls['apellido'];
+        apellidoCtrl.setValue(datosDni.apellido);
+        apellidoCtrl.markAsDirty();
+      }
 
       this.spinner.hide();
     } catch (error: any) {
@@ -151,6 +185,19 @@ export class AltaEmpleadoPage {
       ToastError.fire('Ups...', error.message);
     }
   }
+  
+  verificarCoincid() {
+    const contraCtrl = this.empleadoFrm.controls['contra'];
+    const reContraCtrl = this.empleadoFrm.controls['reContra'];
+
+    if (reContraCtrl.dirty) {
+      if (contraCtrl.value !== reContraCtrl.value)
+        reContraCtrl.setErrors({ noCoinciden: true });
+      else
+        reContraCtrl.setErrors(null);
+    }
+  }
+
 
   async subirEmpleado() {
     try {

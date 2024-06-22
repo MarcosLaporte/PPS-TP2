@@ -40,15 +40,15 @@
         </div>
       </div>
 
-      <form [formGroup]="form" (ngSubmit)="ingresar()">
+      <form [formGroup]="loginFrm" (ngSubmit)="ingresar()">
         <div class="inputs">
           <div class="correo">
             <ion-input type="email" label="Correo electrónico" [clearInput]="true" label-placement="stacked"
               placeholder="tucorreo@ejemplo.com" formControlName="correo" name="email" required
               ngDefaultControl></ion-input>
-            <div class="errores" *ngIf="form.controls['correo'].dirty && form.controls['correo'].errors">
-              <small *ngIf="form.controls['correo'].errors['required']">Debe rellenar este campo.</small>
-              <small *ngIf="form.controls['correo'].errors['pattern']">No es un correo electrónico.</small>
+            <div class="errores" *ngIf="loginFrm.controls['correo'].dirty && loginFrm.controls['correo'].errors">
+              <small *ngIf="loginFrm.controls['correo'].errors['required']">Debe rellenar este campo.</small>
+              <small *ngIf="loginFrm.controls['correo'].errors['pattern']">No es un correo electrónico.</small>
             </div>
           </div>
           <div class="contra">
@@ -56,20 +56,20 @@
               type="password" formControlName="contra" name="password" required ngDefaultControl>
               <ion-input-password-toggle slot="end"></ion-input-password-toggle>
             </ion-input>
-            <div class="errores" *ngIf="form.controls['contra'].dirty && form.controls['contra'].errors">
-              <small *ngIf="form.controls['contra'].errors['required']">Debe rellenar este campo.</small>
+            <div class="errores" *ngIf="loginFrm.controls['contra'].dirty && loginFrm.controls['contra'].errors">
+              <small *ngIf="loginFrm.controls['contra'].errors['required']">Debe rellenar este campo.</small>
             </div>
           </div>
         </div>
 
-        <ion-button type="submit" expand="block" [disabled]="form.invalid" color="primary">Ingresar</ion-button>
+        <ion-button type="submit" expand="block" color="primary">Ingresar</ion-button>
       </form>
 
-      <!-- <div class="ion-margin-top">
-        <ion-text>No está registrado?
-          <a (click)="navCtrl.navigateRoot('registro')">Crear cuenta</a>
+      <div class="ion-margin-top">
+        <ion-text>Soy un nuevo cliente y
+          <a (click)="navCtrl.navigateRoot('alta-cliente')">quiero registrarme</a>.
         </ion-text>
-      </div> -->
+      </div>
     </ion-card-content>
   </ion-card>
 </div>
