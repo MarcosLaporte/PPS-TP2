@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Auth, createUserWithEmailAndPassword, signInAnonymously, signInWithEmailAndPassword } from '@angular/fire/auth';
+import { Auth, User as FireUser, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateCurrentUser } from '@angular/fire/auth';
 import { BehaviorSubject } from 'rxjs';
 import { Colecciones, DatabaseService } from './database.service';
 import { Persona } from '../utils/classes/usuarios/persona';
@@ -21,8 +21,17 @@ export class AuthService {
   public set UsuarioEnSesion(value: Persona | null) {
     if (value) {
       sessionStorage.setItem('usuario', JSON.stringify(value));
+      let fireUser: FireUser;
+      const currentUser = this.auth.currentUser;
+      if (currentUser) {
+        fireUser = currentUser;
+        sessionStorage.setItem('fireUser', JSON.stringify(fireUser));
+      } else {
+        fireUser = JSON.parse(sessionStorage.getItem('fireUser')!);
+      }
     } else {
       sessionStorage.removeItem('usuario');
+      sessionStorage.removeItem('fireUser');
       if (this.auth.currentUser)
         this.auth.signOut();
     }
@@ -46,16 +55,23 @@ export class AuthService {
    */
   async registrarUsuario(usuario: Persona, contr: string): Promise<string> {
     try {
+      const fireUserViejo = JSON.parse(sessionStorage.getItem('fireUser')!) as FireUser;
+
       await this.db.buscarUsuarioPorDni(usuario.dni) // Tira Error si no encuentra el DNI
         .catch((error: Exception) => {
           if (error.code !== ErrorCodes.DniNoRegistrado) // Si el error no es sobre el DNI no encontrado, lo tira de nuevo.
             throw error;
         });
 
-      await createUserWithEmailAndPassword(this.auth, usuario.correo, contr);
+      await createUserWithEmailAndPassword(this.auth, usuario.correo, contr)
+        .then(async () => {
+          if (!fireUserViejo) { // Si no hay nadie logueado
+            this.UsuarioEnSesion = usuario;
+          } else { // Si existe, un empleado registra a alguien nuevo.
+            await updateCurrentUser(this.auth, fireUserViejo);
+          }
+        });
       const docId = await this.db.subirDoc(Colecciones.Usuarios, usuario, true);
-
-      this.UsuarioEnSesion = usuario;
 
       return docId;
     } catch (error: any) {
@@ -78,7 +94,7 @@ export class AuthService {
       await signInWithEmailAndPassword(this.auth, email, contr);
       const objUsuario = await this.db.buscarUsuarioPorCorreo(this.auth.currentUser?.email!)
 
-      if (objUsuario) this.UsuarioEnSesion = objUsuario;
+      this.UsuarioEnSesion = objUsuario;
     } catch (error: any) {
       error.message = this.parsearError(error);
       throw error;

@@ -18,5 +18,5 @@ export enum ErrorCodes {
   EscanerIncompatible,
   PermisosCamaraDenegada,
   CodigoNoDni,
-  
+  MesaEquivocada,
 }

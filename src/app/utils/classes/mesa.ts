@@ -5,7 +5,7 @@ export class Mesa {
   tipo: TipoMesa;
   fotoUrl: string | undefined;
   codigoQr: string[];
-  disponible: boolean;
+  estado: EstadoMesa;
 
   constructor(id: string, nroMesa: number, cantComensales: number, tipo: TipoMesa, fotoUrl: string | undefined, codigoQr: string[]) {
     this.id = id;
@@ -14,7 +14,14 @@ export class Mesa {
     this.tipo = tipo;
     this.fotoUrl = fotoUrl;
     this.codigoQr = codigoQr;
-    this.disponible = true
+    this.estado = 'disponible'
   }
 }
+export type EstadoMesa = 
+'disponible' | 
+'cliente sin pedido' | 
+'cliente pidiendo comida' |
+'cliente esperando comida' | 
+'cliente comiendo' | 
+'cliente pagando';
 export type TipoMesa = 'VIP' | 'discapacitados' | 'estandar';
