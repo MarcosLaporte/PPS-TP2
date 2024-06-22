@@ -26,6 +26,6 @@ Una aplicación móvil que permite gestionar y administrar tanto los pedidos as�
 | - | Registro               | Marcos      | Pendiente  |
 | A | Alta dueño/supervisor | Jaco        | Pendiente  |
 | B | Alta empleados         | Marcos      | Pendiente  |
-| C | Alta cliente           | Yober       | Pendiente  |
+| C | Alta cliente           | Yober       | Terminado  |
 | D | Alta mesa              | Jaco        | Pendiente  |
-| E | Alta producto          | Yober       | Pendiente  |
+| E | Alta producto          | Yober       | Terminado  |
