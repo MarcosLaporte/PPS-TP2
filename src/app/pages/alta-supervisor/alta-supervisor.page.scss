@@ -96,4 +96,10 @@
       color: red;
     }
   }
+
+  @media (min-width: 550px) {
+    ion-card {
+      max-width: 515px
+    }
+  }
 }

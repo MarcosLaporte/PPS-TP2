@@ -1,8 +1,9 @@
 @import "../../../theme/variables.scss";
 
-ion-card {
-  min-width: 90%;
-  max-width: 90%;
+@media (min-width: 550px) {
+  ion-card {
+    max-width: 515px
+  }
 }
 
 .container {
