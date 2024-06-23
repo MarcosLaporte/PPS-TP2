@@ -1,0 +1,36 @@
+ion-card-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  #icon-container {
+    height: 50px;
+    ion-icon {
+      height: 100%;
+      width: 50px;
+    }
+  }
+}
+#menu-container {
+  height: 650px;
+  #lista {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    swiper-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      swiper-slide {
+        display: flex;
+        justify-content: center;
+        img {
+        }
+      }
+    }
+  }
+}
+ion-icon:active {
+  scale: 0.8;
+}
