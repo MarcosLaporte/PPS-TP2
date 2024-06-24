@@ -4,7 +4,9 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { AuthService } from './services/auth.service';
 import { NavController } from '@ionic/angular';
 import { MenuComponent } from './components/menu/menu.component';
+import { register } from 'swiper/element/bundle';
 
+register();
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -18,6 +20,7 @@ export class AppComponent {
     const ssUser = sessionStorage.getItem('usuario');
     this.auth.UsuarioEnSesion = ssUser ? JSON.parse(ssUser) : null;
 
-    navCtrl.navigateRoot('home');
+    // navCtrl.navigateRoot('home');
+    navCtrl.navigateRoot('alta-pedido');
   }
 }

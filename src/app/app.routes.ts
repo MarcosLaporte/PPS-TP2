@@ -80,6 +80,10 @@ export const routes: Routes = [
     path: 'perfil',
     loadComponent: () => import('./pages/perfil/perfil.page').then( m => m.PerfilPage),
     canActivate: [sesionIniciadaGuard]
+  },  {
+    path: 'alta-pedido',
+    loadComponent: () => import('./pages/alta-pedido/alta-pedido.page').then( m => m.AltaPedidoPage)
   },
+
 
 ];
