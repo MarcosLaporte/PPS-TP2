@@ -105,19 +105,7 @@ export class AltaClientePage {
 
   async subirCliente() {
     try {
-      let fotoUrl = '';
-      await MySwal.fire({
-        title: '¿Desea subir foto del cliente?',
-        showConfirmButton: true,
-        confirmButtonText: 'Sí',
-        confirmButtonColor: '#a5dc86',
-        showDenyButton: true,
-        denyButtonText: 'No',
-        denyButtonColor: '#f0ec0d',
-      }).then(async (res) => {
-        if (res.isConfirmed)
-          fotoUrl = await this.tomarFotoCliente();
-      });
+      let fotoUrl = await this.tomarFotoCliente();
 
       this.spinner.show();
       const nombre = this.frmCliente.controls['nombre'].value;
@@ -168,17 +156,17 @@ export class AltaClientePage {
     const foto = await tomarFoto();
     let fotoUrl = '';
 
-    if (foto) {
-      this.spinner.show();
-      const dni = <string>this.frmCliente.controls['dni'].value;
-      const nombre=this.frmCliente.controls['nombre'].value;
-      if(this.tipoCliente==='registrado'){
-        fotoUrl = await this.storage.subirArchivo(foto, `${Colecciones.Usuarios}/cliente-${dni}`);
-      }else{
-        fotoUrl = await this.storage.subirArchivo(foto, `${Colecciones.Usuarios}/cliente-${nombre}`);
-      }
-      this.spinner.hide();
+    if (!foto) throw new Exception(ErrorCodes.FotoCancelada, 'Debe tomar una foto del cliente.');
+
+    this.spinner.show();
+    const dni = <string>this.frmCliente.controls['dni'].value;
+    const nombre=this.frmCliente.controls['nombre'].value;
+    if(this.tipoCliente==='registrado'){
+      fotoUrl = await this.storage.subirArchivo(foto, `${Colecciones.Usuarios}/cliente-${dni}`);
+    }else{
+      fotoUrl = await this.storage.subirArchivo(foto, `${Colecciones.Usuarios}/cliente-${nombre}`);
     }
+    this.spinner.hide();
 
     return fotoUrl;
   }
