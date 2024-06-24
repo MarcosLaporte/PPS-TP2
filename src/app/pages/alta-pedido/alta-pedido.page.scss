@@ -1,3 +1,5 @@
+@import '/src/theme/variables.scss'; 
+
 ion-card-header {
   display: flex;
   flex-direction: row;
@@ -18,14 +20,25 @@ ion-card-header {
     overflow-y: auto;
     overflow-x: hidden;
 
+    h2{
+      color: $lavander;
+      padding: 0 .5rem;
+      margin: 1rem 0;
+    }
+
     swiper-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+      padding-bottom: 1rem;
       swiper-slide {
         display: flex;
+        flex-direction: column;
         justify-content: center;
-        img {
+        align-items: center;
+
+        #cant-container{
+          width: 80%;
+          font-size: larger;
+          
+          
         }
       }
     }

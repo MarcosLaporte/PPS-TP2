@@ -3,7 +3,7 @@
     <ion-card-header>
       <ion-card-title>Pedido</ion-card-title>
       <div id="icon-container">
-        <ion-icon name="receipt-outline" aria-hidden="true"></ion-icon>
+        <ion-icon name="receipt-outline" aria-hidden="true" (click)="carrito()"></ion-icon>
       </div>
     </ion-card-header>
     
@@ -11,33 +11,58 @@
     <div id="lista">
       <ion-list>
         <ion-accordion-group>
-        @for (item of productos; track $index) {
-          <ion-accordion [value]="item.nombre">
-            <ion-item slot="header" color="light">
-              <ion-label>{{item.nombre}}</ion-label>
-              <ion-icon name="add-outline"></ion-icon>
-            </ion-item>
-            <div class="ion-padding" slot="content">{{item.descripcion}}
-              <div class="fotos">
-                
-                <!-- auto-height="true" -->
-            <swiper-container [loop] ="true">
-              @for (foto of item.fotosUrl; track $index) {
-                <swiper-slide>
-                  <img [src]="foto" alt="">
-                </swiper-slide>
-                }
-            </swiper-container>
+          
+          @for (item of productos; track $index) {
+            <ion-accordion [value]="item.nombre">
+              <ion-item slot="header" color="light">
+                <ion-label>{{item.nombre}}</ion-label>
+              </ion-item>
+              <div slot="content">
+                <h2>
+                  {{item.descripcion}}
+                </h2>
+                <div class="fotos">
+                  
+                  <swiper-container auto-height="true">
+                    @for (foto of item.fotosUrl; track $index) {
+                      <swiper-slide >
+                        <img [src]="foto" alt="">
+                        
+                          <div id="cant-container">
+                            <ion-input label="Cantidad" type="number" [value]="cant" #inputCant>
+                              <ion-button fill="clear" slot="end" aria-label="sacar" (click)="restarProd()">
+                                <ion-icon slot="icon-only" name="remove-outline" aria-hidden="true"></ion-icon>
+                              </ion-button>
+                              <ion-button fill="clear" slot="end" aria-label="agregar" (click)="sumarProd()">
+                                <ion-icon slot="icon-only" name="add-outline" aria-hidden="true"></ion-icon>
+                              </ion-button>
+                            </ion-input>
+                            <!-- @if ( cant <= 0 && inputCant.docu) {
+                              <div class="errores">
+                                <small>No puede pedir menos de 0 productos</small>
+                              </div>
+                            } -->
+    
+                            <ion-button type="submit" id="btn-agregar" expand="block" color="tertiary" (click)="addProducto(item, cant)">
+                              Agregar
+                            </ion-button>
+                          </div>
+                      </swiper-slide>
+                      }
+                  </swiper-container>
+                </div>
               </div>
-            </div>
-          </ion-accordion>
-        }
+            </ion-accordion>
+          }
       </ion-accordion-group>
       </ion-list>
     </div>
-
-
-
     </ion-card-content>
   </ion-card>
 </div>
+
+<template id="my-template">
+  <swal-html>
+    <app-pedido [productos]="pedido"></app-pedido>
+  </swal-html>
+</template>
