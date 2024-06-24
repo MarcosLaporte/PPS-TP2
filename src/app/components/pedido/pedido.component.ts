@@ -1,7 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { IonContent, IonCardContent } from '@ionic/angular/standalone';
-import { MySwal, ToastError, ToastSuccess } from 'src/app/utils/alerts';
 import { Producto } from 'src/app/utils/classes/producto';
+
+declare interface PedidoProd{
+  producto: Producto,
+  cantidad: number,
+};
 
 @Component({
   selector: 'app-pedido',
@@ -12,10 +16,22 @@ import { Producto } from 'src/app/utils/classes/producto';
 })
 export class PedidoComponent  implements OnInit {
 
-  @Input() productos!: Producto[];
+  prodCant: { [id: string]: number } = {};
+  productos: Producto[] = [];
+  protected pedido: PedidoProd[] = []; 
 
-  constructor() { }
+  constructor() {
+  }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.productos.forEach(prod => {
+      const cant: number | undefined = this.prodCant[prod.id];
+      if(cant){
+        this.pedido.push({producto : prod, cantidad: cant});
+      }
+    });
+
+    console.log(this.pedido);
+  }
 
 }
