@@ -19,4 +19,5 @@ export enum ErrorCodes {
   PermisosCamaraDenegada,
   CodigoNoDni,
   MesaEquivocada,
+  FotoCancelada,
 }
