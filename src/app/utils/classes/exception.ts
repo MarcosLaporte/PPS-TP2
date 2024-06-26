@@ -20,4 +20,5 @@ export enum ErrorCodes {
   CodigoNoDni,
   MesaEquivocada,
   FotoCancelada,
+  FotoFaltante,
 }

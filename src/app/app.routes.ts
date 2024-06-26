@@ -74,15 +74,33 @@ export const routes: Routes = [
   },
   {
     path: 'acceso-denegado',
-    loadComponent: () => import('./pages/acceso-denegado/acceso-denegado.page').then( m => m.AccesoDenegadoPage)
+    loadComponent: () => import('./pages/acceso-denegado/acceso-denegado.page').then(m => m.AccesoDenegadoPage)
   },
   {
     path: 'perfil',
-    loadComponent: () => import('./pages/perfil/perfil.page').then( m => m.PerfilPage),
+    loadComponent: () => import('./pages/perfil/perfil.page').then(m => m.PerfilPage),
     canActivate: [sesionIniciadaGuard]
-  },  {
+  },
+  {
     path: 'alta-pedido',
-    loadComponent: () => import('./pages/alta-pedido/alta-pedido.page').then( m => m.AltaPedidoPage)
+    loadComponent: () => import('./pages/alta-pedido/alta-pedido.page').then(m => m.AltaPedidoPage),
+    canActivate: [sesionIniciadaGuard, rolTipoGuard],
+    data: {
+      roles_tipos: [
+        { rol: 'empleado', tipo: 'mozo' },
+        { rol: 'cliente' },
+      ]
+    }
+  },
+  {
+    path: 'alta-encuestas-empleados',
+    loadComponent: () => import('./pages/encuestas/alta-encuestas-empleados/alta-encuestas-empleados.page').then(m => m.AltaEncuestasEmpleadosPage),
+    canActivate: [sesionIniciadaGuard, rolTipoGuard],
+    data: {
+      roles_tipos: [
+        { rol: 'empleado' },
+      ]
+    }
   },
 
 

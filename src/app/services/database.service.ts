@@ -7,7 +7,9 @@ export enum Colecciones {
   Usuarios = 'users',
   Mesas = 'mesas',
   Productos = 'productos',
-  Encuestas = 'encuestas',
+  EncuestasCliente = 'encuestas-cliente',
+  EncuestasEmpleado = 'encuestas-empleado',
+  EncuestasSupervisor = 'encuestas-supervisor',
 }
 
 export enum Prefijos {

@@ -38,8 +38,7 @@ export class MenuComponent {
     {
       titulo: 'Pedido', url: '/alta-pedido', icono: 'restaurant', rol_tipo: [
         { rol: 'empleado', tipo: 'mozo' },
-        { rol: 'cliente', tipo: 'registrado' },
-        { rol: 'cliente', tipo: 'anonimo' }
+        { rol: 'cliente' }
       ]
     },
     { titulo: 'Supervisor', url: '/alta-supervisor', icono: 'boss', rol_tipo: [{ rol: 'jefe' }] },
@@ -56,6 +55,10 @@ export class MenuComponent {
   paginasGenerales: Pagina[] = [
     { titulo: 'Perfil', url: '/perfil', icono: 'circle-user' },
     { titulo: 'Inicio', url: '/home', icono: 'house-chimney', permitirAnon: true },
+    { titulo: 'Encuestas empleados', url: '/alta-encuestas-empleados', icono: 'corporate', rol_tipo: [
+      { rol: 'empleado' },
+      { rol: 'jefe' }
+    ] },
   ];
 
   public funciones: { titulo: string, icono: string, accion: () => Promise<any> }[] = [

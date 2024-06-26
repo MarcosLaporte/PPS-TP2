@@ -1,0 +1,107 @@
+@import '../../../../theme/variables.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  ion-card-header {
+    padding-bottom: 0;
+  }
+
+  .turno-accion {
+    width: 100%;
+    display: flex;
+    align-items: center;
+
+    #turno {
+      width: 60%;
+
+      ion-select {
+        font-size: 1.25rem;
+      }
+    }
+
+    #accion {
+      width: 40%;
+
+      ion-radio-group {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+
+        ion-item {
+          width: auto;
+          --padding-start: 0;
+          --padding-end: 0;
+          --inner-padding-bottom: 0;
+          --inner-padding-end: 0;
+          --inner-border-width: 0;
+
+          ion-radio {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: .25s;
+            border-radius: 10%;
+
+            >div {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+
+              label {
+                margin-bottom: 5px;
+              }
+
+              i {
+                font-size: 2.5rem;
+              }
+            }
+
+            &::part(label) {
+              margin: 0;
+            }
+
+            &.radio-checked {
+              color: $mint !important;
+              border-color: transparent;
+              transition: .5s;
+            }
+          }
+
+          ion-radio::part(container) {
+            display: none;
+            margin: 0;
+            padding: 0;
+          }
+        }
+      }
+    }
+  }
+
+  .control {
+    display: flex;
+    flex-direction: column;
+    margin-top: 0.5rem;
+
+    .label {
+      font-size: 1.25rem;
+    }
+
+    .input {
+      width: 100%;
+    }
+
+    &#fotos {
+      font-size: 1.15rem;
+      font-style: italic;
+
+      ion-checkbox {
+        align-self: flex-end;
+      }
+    }
+  }
+}

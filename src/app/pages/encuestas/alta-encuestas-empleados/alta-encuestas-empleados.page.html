@@ -1,0 +1,74 @@
+<div class="container background-pri">
+  <ion-card style="width: 95%;">
+    <ion-card-header>
+      <ion-card-title>Encuesta de empleado</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <form [formGroup]="encuestaFrm" (ngSubmit)="subirEncuesta()">
+        <div class="turno-accion">
+          <div id="turno" class="control">
+            <ion-select label="Turno" interface="popover" (ionChange)="valorSelect($event)">
+              <ion-select-option value="mañana">Mañana</ion-select-option>
+              <ion-select-option value="tarde">Tarde</ion-select-option>
+              <ion-select-option value="noche">Noche</ion-select-option>
+            </ion-select>
+          </div>
+
+          <div id="accion" class="control">
+            <div class="input">
+              <ion-radio-group (ionChange)="valorRadio($event)">
+                <ion-item>
+                  <ion-radio alignment="center" value='entrada'>
+                    <div>
+                      <label>Entrante</label>
+                      <i class="fi fi-tr-house-return"></i>
+                    </div>
+                  </ion-radio>
+                </ion-item>
+                <ion-item>
+                  <ion-radio alignment="center" value='salida'>
+                    <div>
+                      <label>Saliente</label>
+                      <i class="fi fi-tr-house-leave"></i>
+                    </div>
+                  </ion-radio>
+                </ion-item>
+              </ion-radio-group>
+            </div>
+          </div>
+        </div>
+
+        <div id="condEspacio" class="control">
+          <app-range-estrellas titulo="¿Cómo fue entregado el espacio de trabajo?"
+            (cambioValor)="encuestaFrm.controls['condEspacio'].setValue($event)"></app-range-estrellas>
+        </div>
+
+        <div id="fotos" class="control">
+          <ion-button expand="block" type="button" (click)="tomarFoto()"
+            [disabled]="omitirFoto">Adjunte imagen del mismo</ion-button>
+          <ion-checkbox (ionChange)="toggleOmitirFotos()">Omitir foto</ion-checkbox>
+        </div>
+
+        <div id="comentarios" class="control">
+          <div class="label">
+            <ion-label>Comentarios</ion-label>
+          </div>
+          <div class="input">
+            <ion-textarea [autoGrow]="true" [counter]="true" [maxlength]="255"
+              formControlName="comentarios" required ngDefaultControl></ion-textarea>
+          </div>
+        </div>
+
+        <div id="aspectosBuenasCond">
+          <div class="label">
+            <ion-label>¿Qué aspectos se encontraban en buena condición?</ion-label>
+          </div>
+          <ion-chip button *ngFor="let asp of AspectosCheck" [color]="isChecked(asp.valor)?'success':'medium'"
+            (click)="valorCheck(asp.valor)">{{asp.label}}</ion-chip>
+        </div>
+
+        <ion-button type="submit" expand="block" [disabled]="encuestaFrm.invalid">Subir</ion-button>
+      </form>
+    </ion-card-content>
+  </ion-card>
+</div>
