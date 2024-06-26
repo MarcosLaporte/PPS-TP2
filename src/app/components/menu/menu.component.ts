@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
 import { menuOutline, chevronDownCircle, logInOutline, logOutOutline, scan, caretDownCircle } from 'ionicons/icons';
-import { IonApp, IonRouterOutlet, IonHeader, IonToolbar, IonItem, IonTitle, IonButton, IonContent, IonFabButton, IonFab, IonIcon, IonFabList, IonModal, IonAccordionGroup, IonAccordion, IonLabel } from '@ionic/angular/standalone';
+import { IonApp, IonRouterOutlet, IonHeader, IonToolbar, IonItem, IonTitle, IonButton, IonContent, IonFabButton, IonFab, IonIcon, IonFabList, IonModal, IonAccordionGroup, IonAccordion, IonLabel, IonTabButton } from '@ionic/angular/standalone';
 import { AuthService } from 'src/app/services/auth.service';
 import { ScannerService } from 'src/app/services/scanner.service';
 import { MySwal, ToastError, ToastInfo, ToastSuccess } from 'src/app/utils/alerts';
@@ -23,7 +23,7 @@ declare interface Pagina { titulo: string, url: string, icono: string, rol_tipo?
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss'],
   standalone: true,
-  imports: [IonLabel, IonAccordion, IonAccordionGroup, IonModal, IonFabList, IonIcon, IonFab, IonFabButton, IonContent, IonButton, IonTitle, IonItem, IonToolbar, IonHeader, IonApp, IonRouterOutlet, CommonModule, NgxSpinnerModule],
+  imports: [IonTabButton, IonLabel, IonAccordion, IonAccordionGroup, IonModal, IonFabList, IonIcon, IonFab, IonFabButton, IonContent, IonButton, IonTitle, IonItem, IonToolbar, IonHeader, IonApp, IonRouterOutlet, CommonModule, NgxSpinnerModule],
 })
 export class MenuComponent {
   readonly CheckRolTipo = CheckRolTipo;
@@ -38,6 +38,7 @@ export class MenuComponent {
     { titulo: 'Supervisor', url: '/alta-supervisor', icono: 'boss', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Mesa', url: '/alta-mesa', icono: 'table-picnic', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Empleado', url: '/alta-empleado', icono: 'room-service', rol_tipo: [{ rol: 'jefe' }] },
+
   ];
 
   grupoAltas: Grupo = {
@@ -48,8 +49,13 @@ export class MenuComponent {
   paginasGenerales: Pagina[] = [
     { titulo: 'Perfil', url: '/perfil', icono: 'circle-user' },
     { titulo: 'Inicio', url: '/home', icono: 'house-chimney', permitirAnon: true },
+    { titulo: 'Encuestas clientes', url: '/alta-encuesta-cliente', icono: 'corporate', rol_tipo: [
+      { rol: 'cliente' },
+    ] },
+    { titulo: 'Graficos Clientes', url: '/grafico-clientes', icono: 'bar-chart-outline', rol_tipo: [
+      { rol: 'cliente' },
+    ] },
   ];
-
   public funciones: { titulo: string, icono: string, accion: () => Promise<any> }[] = [
     { titulo: 'Sesión', icono: 'log-in-outline', accion: async () => { } },
     { titulo: 'Escanear', icono: 'scan', accion: async () => await this.escanearQrMesa() },
@@ -78,7 +84,10 @@ export class MenuComponent {
     accordion.value = [];
     this.navCtrl.navigateRoot(url)
   }
+saberUsuario(){
 
+  console.log(this.auth.currentUser())
+}
   async cerrarSesion() {
     const alert = await this.alertCtrl.create({
       header: '¿Desea cerrar sesión?',
