@@ -21,15 +21,16 @@
     touch-action: manipulation;
     -webkit-appearance: none;
     appearance: none;
+    // background-color: #121212;
 
     &::-moz-range-track {
-      background: var(--fillbg);
+      background: linear-gradient(to var(--dir), var(--fill) 0 var(--x), var(--fillbg) 0 var(--x));
       block-size: 100%;
       mask: repeat left center/var(--starsize) var(--star);
     }
 
     &::-webkit-slider-runnable-track {
-      background: var(--fillbg);
+      background: linear-gradient(to var(--dir), var(--fill) 0 var(--x), var(--fillbg) 0 var(--x));
       block-size: 100%;
       mask: repeat left center/var(--starsize) var(--star);
       -webkit-mask: repeat left center/var(--starsize) var(--star);

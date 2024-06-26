@@ -1,6 +1,7 @@
 <div class="control">
-  <div class="label">
+  <div class="label" *ngIf="titulo">
     <h1>{{titulo}}</h1>
   </div>
-  <input type="range" class="estrellas" [min]="0" [max]="5" [step]="0.5" (change)="emit($event)">
+  <input [disabled]="readonly" class="estrellas" id="{{idEstrellas}}" type="range"
+    [step]="step" [(ngModel)]="valor" [min]="min" [max]="max" (change)="cambiarValor($event)">
 </div>
