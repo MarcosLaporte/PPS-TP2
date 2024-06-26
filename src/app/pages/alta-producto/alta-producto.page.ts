@@ -7,10 +7,10 @@ import { StorageService } from 'src/app/services/storage.service';
 import { MySwal } from 'src/app/utils/alerts';
 import { Producto } from 'src/app/utils/classes/producto';
 import { QrCodeModule } from 'ng-qrcode';
-import { tomarFoto } from 'src/main';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { addIcons } from 'ionicons';
 import { helpCircleOutline } from 'ionicons/icons';
+import { FotosService } from 'src/app/services/fotos.service';
 
 @Component({
   selector: 'app-alta-producto',
@@ -28,7 +28,8 @@ export class AltaProductoPage {
     private formBuilder: FormBuilder,
     private spinner: NgxSpinnerService,
     private db: DatabaseService,
-    private storage: StorageService
+    private storage: StorageService,
+    private fotosServ: FotosService
   ) {
     this.frmProducto = this.formBuilder.group({
       nombre: ['', [Validators.required]],
@@ -44,7 +45,7 @@ export class AltaProductoPage {
     try {
       let continuarTomando = true;
       while (continuarTomando || this.fotos.length < 3) {
-        const foto = await tomarFoto();
+        const foto = await this.fotosServ.tomarFoto();
         if (foto) {
           this.fotos.push({ archivo: foto, url: URL.createObjectURL(foto) });
         }

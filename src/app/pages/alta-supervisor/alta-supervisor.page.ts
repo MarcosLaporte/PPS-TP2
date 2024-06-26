@@ -3,20 +3,18 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonButton, IonItem, IonRadioGroup, IonRadio, IonCardHeader, IonCard, IonCardTitle, IonCardContent, IonIcon, IonInputPasswordToggle } from '@ionic/angular/standalone';
-import { Camera, CameraResultType } from '@capacitor/camera';
 import { MySwal, ToastError, ToastSuccess, ToastInfo } from 'src/app/utils/alerts';
 import { AuthService } from 'src/app/services/auth.service';
 import { Colecciones, Prefijos, DatabaseService } from 'src/app/services/database.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { Jefe, TipoJefe } from 'src/app/utils/classes/usuarios/jefe';
-import { Foto } from 'src/app/utils/interfaces/interfaces';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Exception, ErrorCodes } from 'src/app/utils/classes/exception';
 import { addIcons } from 'ionicons';
 import { search, scanOutline, scanCircleOutline} from 'ionicons/icons';
 import { Barcode, BarcodeFormat } from '@capacitor-mlkit/barcode-scanning';
 import { ScannerService } from 'src/app/services/scanner.service';
-import { tomarFoto } from 'src/main';
+import { FotosService } from 'src/app/services/fotos.service';
 
 @Component({
   selector: 'app-alta-supervisor',
@@ -39,7 +37,8 @@ export class AltaSupervisorPage {
     private auth: AuthService,
     private formBuilder: FormBuilder,
     private spinner: NgxSpinnerService,
-    private scanService: ScannerService
+    private scanService: ScannerService,
+    private fotosServ: FotosService
   ) {
     this.frmSupervisor = this.formBuilder.group({
       nombre: new FormControl('', [Validators.required]),
@@ -57,7 +56,7 @@ export class AltaSupervisorPage {
   }
 
   async takePic() {
-    const foto = await tomarFoto();
+    const foto = await this.fotosServ.tomarFoto();
     if (foto)
       this.picture = foto;
       this.frmSupervisor.controls['foto'].setValue('valid');

@@ -12,10 +12,10 @@ import { NavController } from '@ionic/angular';
 import { MySwal, ToastError, ToastSuccess } from 'src/app/utils/alerts';
 import { BarcodeFormat } from '@capacitor-mlkit/barcode-scanning';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { tomarFoto } from 'src/main';
 import { ErrorCodes, Exception } from 'src/app/utils/classes/exception';
 import { addIcons } from 'ionicons';
 import { search } from 'ionicons/icons';
+import { FotosService } from 'src/app/services/fotos.service';
 
 const datePipe = new DatePipe('en-US', '-0300');
 
@@ -33,7 +33,7 @@ export class AltaClientePage {
 
   constructor(
     protected navCtrl: NavController, private auth: AuthService, private spinner: NgxSpinnerService,
-    private db: DatabaseService, private scanner: ScannerService, private storage: StorageService
+    private db: DatabaseService, private scanner: ScannerService, private storage: StorageService, private fotosServ: FotosService
   ) {
     this.frmCliente = inject(FormBuilder).group({
       nombre: [{ value: '', disabled: false }, [
@@ -153,7 +153,7 @@ export class AltaClientePage {
   }
 
   async tomarFotoCliente() {
-    const foto = await tomarFoto();
+    const foto = await this.fotosServ.tomarFoto();
     let fotoUrl = '';
 
     if (!foto) throw new Exception(ErrorCodes.FotoCancelada, 'Debe tomar una foto del cliente.');

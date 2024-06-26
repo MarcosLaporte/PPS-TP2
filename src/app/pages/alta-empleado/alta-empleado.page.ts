@@ -12,9 +12,9 @@ import { addIcons } from 'ionicons';
 import { search } from 'ionicons/icons';
 import { Empleado, TipoEmpleado } from 'src/app/utils/classes/usuarios/empleado';
 import { ScannerService } from 'src/app/services/scanner.service';
-import { tomarFoto } from 'src/main';
 import { StorageService } from 'src/app/services/storage.service';
 import { BarcodeFormat } from '@capacitor-mlkit/barcode-scanning';
+import { FotosService } from 'src/app/services/fotos.service';
 
 @Component({
   selector: 'app-alta-empleado',
@@ -26,7 +26,7 @@ import { BarcodeFormat } from '@capacitor-mlkit/barcode-scanning';
 export class AltaEmpleadoPage {
   empleadoFrm: FormGroup;
 
-  constructor(protected navCtrl: NavController, private auth: AuthService, private spinner: NgxSpinnerService, private db: DatabaseService, private scanner: ScannerService, private storage: StorageService) {
+  constructor(protected navCtrl: NavController, private auth: AuthService, private spinner: NgxSpinnerService, private db: DatabaseService, private scanner: ScannerService, private storage: StorageService, private fotosServ: FotosService) {
     this.empleadoFrm = inject(FormBuilder).group({
       tipoEmpleado: [
         null, [
@@ -237,7 +237,7 @@ export class AltaEmpleadoPage {
   }
 
   async tomarFotoEmpleado() {
-    const foto = await tomarFoto();
+    const foto = await this.fotosServ.tomarFoto();
     let fotoUrl = '';
 
     if (foto) {
