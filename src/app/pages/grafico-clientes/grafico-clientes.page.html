@@ -1,0 +1,32 @@
+<div class="container background-pri">
+  <ion-card style="width: 95%;">
+    <ion-card-header>
+      <ion-card-title>Gráficos de Clientes</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div *ngIf="!mostrarGrafico">
+        <ion-button expand="full" (click)="mostrarGraficoYGenerar('graph1')">Mostrar Gráfico 1</ion-button>
+        <ion-button expand="full" (click)="mostrarGraficoYGenerar('graph2')">Mostrar Gráfico 2</ion-button>
+        <ion-button expand="full" (click)="mostrarGraficoYGenerar('graph3')">Mostrar Gráfico 3</ion-button>
+      </div>
+
+      <div *ngIf="mostrarGrafico === 'graph1'">
+        <div style="height: 400px; width: 100%;">
+          <canvas #pipeChart></canvas>
+        </div>
+        <p>Aquí se mostraría el Gráfico 1</p>
+        <ion-button expand="full" (click)="mostrarGrafico = ''">Volver Atrás</ion-button>
+      </div>
+
+      <div *ngIf="mostrarGrafico === 'graph2'">
+        <p>Aquí se mostraría el Gráfico 2</p>
+        <ion-button expand="full" (click)="mostrarGrafico = ''">Volver Atrás</ion-button>
+      </div>
+
+      <div *ngIf="mostrarGrafico === 'graph3'">
+        <p>Aquí se mostraría el Gráfico 3</p>
+        <ion-button expand="full" (click)="mostrarGrafico = ''">Volver Atrás</ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</div>
