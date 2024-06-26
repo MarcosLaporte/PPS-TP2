@@ -91,7 +91,6 @@ export class AltaSupervisorPage {
       const supervisorDueno = this.frmSupervisor.controls['supervisorDueno'].value as TipoJefe;
 
       let jefe = new Jefe(
-        '',
         nombre,
         apellido,
         DNI,

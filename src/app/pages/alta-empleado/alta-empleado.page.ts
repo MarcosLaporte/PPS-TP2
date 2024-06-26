@@ -224,7 +224,7 @@ export class AltaEmpleadoPage {
       const contra = this.empleadoFrm.controls['contra'].value;
       const tipoEmpleado = this.empleadoFrm.controls['tipoEmpleado'].value as TipoEmpleado;
 
-      const empleado = new Empleado('', nombre, apellido, dni, cuil, correo, fotoUrl, tipoEmpleado);
+      const empleado = new Empleado(nombre, apellido, dni, cuil, correo, fotoUrl, tipoEmpleado);
       await this.auth.registrarUsuario(empleado, contra);
       this.resetForm();
 

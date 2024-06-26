@@ -111,7 +111,7 @@ export class AltaClientePage {
       const nombre = this.frmCliente.controls['nombre'].value;
 
       if (this.tipoCliente === 'anonimo') {
-        const usuarioAnonimo = new Cliente('', nombre, '', 0, '', fotoUrl, 'anonimo');
+        const usuarioAnonimo = new Cliente(nombre, '', 0, '', fotoUrl, 'anonimo');
         await this.auth.registrarUsuarioAnonimo(usuarioAnonimo);
         ToastSuccess.fire('Registrado de forma anónima!');
       } else {
@@ -119,7 +119,7 @@ export class AltaClientePage {
         const dni = Number((this.frmCliente.controls['dni'].value).replace(/[-. ]/g, ''));
         const correo = this.frmCliente.controls['correo'].value;
         const contra = this.frmCliente.controls['contra'].value;
-        const cliente = new Cliente('', nombre, apellido, dni, correo, fotoUrl, 'registrado');
+        const cliente = new Cliente(nombre, apellido, dni, correo, fotoUrl, 'registrado');
         await this.auth.registrarUsuario(cliente, contra);
         ToastSuccess.fire('Cliente creado!');
       }
