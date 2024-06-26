@@ -1,11 +1,13 @@
-import { Persona } from "../usuarios/persona";
+import { Cliente } from "../usuarios/cliente";
+import { Empleado } from "../usuarios/empleado";
+import { Jefe } from "../usuarios/jefe";
 
 export abstract class Encuesta {
   id: string;
-  autor: Persona;
+  autor: Cliente | Empleado | Jefe;
   fecha: Date;
 
-  constructor(autor: Persona) {
+  constructor(autor: Cliente | Empleado | Jefe) {
     this.id = '';
     this.autor = autor;
     this.fecha = new Date();
