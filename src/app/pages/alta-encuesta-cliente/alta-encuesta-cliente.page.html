@@ -59,7 +59,7 @@
         <div id="recomendacion" class="control">
           <ion-item>
             <ion-label>¿Recomendaría el restaurante?</ion-label>
-            <ion-checkbox slot="start" formControlName="recomendacion" required ngDefaultControl></ion-checkbox>
+            <ion-checkbox formControlName="recomendacion" (ionChange)="onRecomendacionChange($event)" required ngDefaultControl></ion-checkbox>
           </ion-item>
         </div>
 
