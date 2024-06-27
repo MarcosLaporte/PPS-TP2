@@ -53,7 +53,9 @@ export class AltaEncuestaClientePage {
   onAtencionChange(event: any) {
     this.frmEncuesta.controls['atencion'].setValue(event.detail.value);
   }
-
+  onRecomendacionChange(event: any) {
+    this.frmEncuesta.controls['recomendacion'].setValue(event.detail.checked);
+  }
   async tomarFoto(): Promise<void> {
     try {
       while (this.fotos.length < 3) {
