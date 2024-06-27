@@ -21,4 +21,5 @@ export enum ErrorCodes {
   MesaEquivocada,
   FotoCancelada,
   FotoFaltante,
+  DocInexistente,
 }

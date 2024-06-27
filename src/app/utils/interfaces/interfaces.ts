@@ -13,3 +13,8 @@ export interface Roles_Tipos {
   rol: RolUsuario,
   tipo?: TipoCliente | TipoEmpleado | TipoJefe
 };
+
+export interface Cliente_Espera {
+  id: string, 
+  idCliente: string
+}

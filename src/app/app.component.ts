@@ -20,7 +20,6 @@ export class AppComponent {
     const ssUser = sessionStorage.getItem('usuario');
     this.auth.UsuarioEnSesion = ssUser ? JSON.parse(ssUser) : null;
 
-    // navCtrl.navigateRoot('home');
-    navCtrl.navigateRoot('alta-pedido');
+    navCtrl.navigateRoot('home');
   }
 }

@@ -112,7 +112,14 @@ export const routes: Routes = [
       ]
     }
   },
-
-
-
+  {
+    path: 'clientes-espera',
+    loadComponent: () => import('./pages/clientes-espera/clientes-espera.page').then( m => m.ClientesEsperaPage),
+    canActivate: [sesionIniciadaGuard, rolTipoGuard],
+    data: {
+      roles_tipos: [
+        { rol: 'cliente' },
+      ],
+    }
+  },
 ];

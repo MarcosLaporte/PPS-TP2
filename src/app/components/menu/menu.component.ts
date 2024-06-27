@@ -114,6 +114,38 @@ export class MenuComponent {
     await alert.present();
   }
 
+  async escanearQr() {
+    // const QR: string = await this.scanner.escanear();
+    const QR = 'lista-de-espera';
+
+    switch (QR) {
+      case 'lista-de-espera':
+        this.accederListaDeEspera();
+        break;
+      default:
+
+    }
+  }
+
+  accederListaDeEspera() {
+    MySwal.fire({
+      icon: 'question',
+      title: '¿Desea ver las encuestas de los clientes o acceder a la lista de espera?',
+      showConfirmButton: true,
+      confirmButtonText: 'Acceder a la lista',
+      showDenyButton: true,
+      denyButtonText: 'Ver encuestas'
+    }).then((res) => {
+      let url = 'lista-encuestas-clientes';
+      if (res.isConfirmed) {
+        this.db.subirDoc(Colecciones.ListaDeEspera, this.auth.UsuarioEnSesion as Cliente, false);
+        url = 'cliente-espera';
+      }
+
+      this.navCtrl.navigateRoot(url);
+    });
+  }
+
   async escanearQrMesa() {
     // const QR : string = await this.scanner.escanear();
     const QR: string = "DLDy65F46o10UeAQVcyG" //esto es simulado
