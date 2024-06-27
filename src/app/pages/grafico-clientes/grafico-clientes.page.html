@@ -4,28 +4,39 @@
       <ion-card-title>Gráficos de Clientes</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <div *ngIf="!mostrarGrafico">
-        <ion-button expand="full" (click)="mostrarGraficoYGenerar('graph1')">Mostrar Gráfico 1</ion-button>
-        <ion-button expand="full" (click)="mostrarGraficoYGenerar('graph2')">Mostrar Gráfico 2</ion-button>
-        <ion-button expand="full" (click)="mostrarGraficoYGenerar('graph3')">Mostrar Gráfico 3</ion-button>
+      <div class="button-container">
+        <ion-button expand="block" fill="clear" (click)="mostrarGrafico1()">
+          <ion-icon name="bar-chart-outline"></ion-icon>
+          <ion-label>Gráfico sobre la puntuación total</ion-label>
+        </ion-button>
+
+        <ion-button expand="block" fill="clear" (click)="mostrarGrafico2()">
+          <ion-icon name="analytics"></ion-icon>
+          <ion-label>Gráfico sobre la calidad de nuestra atención  </ion-label>
+        </ion-button>
+
+        <ion-button expand="block" fill="clear" (click)="mostrarGrafico3()">
+          <ion-icon name="pie-chart-outline"></ion-icon>
+          <ion-label>Gráfico sobre la recomendación de los clientes</ion-label>
+        </ion-button>
       </div>
 
-      <div *ngIf="mostrarGrafico === 'graph1'">
-        <div style="height: 400px; width: 100%;">
-          <canvas #pipeChart></canvas>
+      <div *ngIf="mostrarGraficoBarras===true">
+        <div style="height: 500px; width: 100%;">
+          <canvas #barChart></canvas>
         </div>
-        <p>Aquí se mostraría el Gráfico 1</p>
-        <ion-button expand="full" (click)="mostrarGrafico = ''">Volver Atrás</ion-button>
       </div>
 
-      <div *ngIf="mostrarGrafico === 'graph2'">
-        <p>Aquí se mostraría el Gráfico 2</p>
-        <ion-button expand="full" (click)="mostrarGrafico = ''">Volver Atrás</ion-button>
+      <div *ngIf="mostrarGraficoLineas===true">
+        <div style="height: 500px; width: 100%;">
+          <canvas #lineChart></canvas>
+        </div>
       </div>
 
-      <div *ngIf="mostrarGrafico === 'graph3'">
-        <p>Aquí se mostraría el Gráfico 3</p>
-        <ion-button expand="full" (click)="mostrarGrafico = ''">Volver Atrás</ion-button>
+      <div *ngIf="mostrarGraficoTorta===true">
+        <div style="height: 500px; width: 100%;">
+          <canvas #doughnutChart></canvas>
+        </div>
       </div>
     </ion-card-content>
   </ion-card>
