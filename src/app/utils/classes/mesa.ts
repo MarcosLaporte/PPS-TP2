@@ -14,14 +14,28 @@ export class Mesa {
     this.tipo = tipo;
     this.fotoUrl = fotoUrl;
     this.codigoQr = codigoQr;
-    this.estado = 'disponible'
+    this.estado = EstadoMesa.Disponible;
   }
 }
-export type EstadoMesa = 
-'disponible' | 
-'cliente sin pedido' | 
-'cliente pidiendo comida' |
-'cliente esperando comida' | 
-'cliente comiendo' | 
-'cliente pagando';
 export type TipoMesa = 'VIP' | 'discapacitados' | 'estandar';
+export enum EstadoMesa {
+  Disponible,
+  SinPedido,
+  PidiendoComida,
+  EsperandoComida,
+  Comiendo,
+  Pagando
+};
+
+export const parseEstadoMesa = (estado: EstadoMesa): string => {
+  const estados = [
+    'Mesa Disponible',
+    'Cliente sin pedido',
+    'Cliente pidiendo comida',
+    'Cliente esperando comida',
+    'Cliente comiendo',
+    'Cliente pagando'
+  ];
+
+  return estados[estado];
+}

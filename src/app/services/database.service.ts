@@ -11,7 +11,9 @@ export enum Colecciones {
   EncuestasCliente = 'encuestas-cliente',
   EncuestasEmpleado = 'encuestas-empleado',
   EncuestasSupervisor = 'encuestas-supervisor',
-  ListaDeEspera = 'lista-de-espera'
+  ListaDeEspera = 'lista-de-espera',
+  PedidosPendientes = 'lista-pedidos-pendientes',
+  PedidosListos = 'lista-pedidos-listos'
 }
 
 export enum Prefijos {
