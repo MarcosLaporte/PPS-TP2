@@ -6,12 +6,6 @@
   align-items: center;
   justify-content: center;
 
-  ion-toggle {
-    &::part(label) {
-      font-size: 1.25rem;
-    }
-  }
-
   .inputs {
     display: flex;
     flex-direction: column;
@@ -36,7 +30,7 @@
 
   @media (min-width: 550px) {
     ion-card {
-      max-width: 515px
+      max-width: 515px;
     }
   }
 }

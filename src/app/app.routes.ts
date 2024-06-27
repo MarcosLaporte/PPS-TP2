@@ -95,6 +95,30 @@ export const routes: Routes = [
       ]
     }
   },
+  {
+    path: 'alta-encuesta-cliente',
+    loadComponent: () => import('./pages/alta-encuesta-cliente/alta-encuesta-cliente.page').then( m => m.AltaEncuestaClientePage),
+    canActivate: [sesionIniciadaGuard, rolTipoGuard],
+    data: {
+      roles_tipos: [
+        { rol: 'cliente' },
+      ]
+    }
+  },
+  {
+    path: 'grafico-clientes',
+    loadComponent: () => import('./pages/grafico-clientes/grafico-clientes.page').then( m => m.GraficoClientesPage),
+    canActivate: [sesionIniciadaGuard, rolTipoGuard],
+    data: {
+      roles_tipos: [
+        { rol: 'cliente' },
+      ]
+    }
+  },
+
+
+
+
 
 
 ];

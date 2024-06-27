@@ -34,6 +34,7 @@
     "@capacitor/status-bar": "6.0.0",
     "@flaticon/flaticon-uicons": "^3.2.1",
     "@ionic/angular": "^8.0.0",
+    "chart.js": "^4.4.3",
     "firebase-tools": "^13.11.2",
     "ionicons": "^7.2.1",
     "ng-qrcode": "^18.0.0",
