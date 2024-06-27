@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
-import { menuOutline, chevronDownCircle, logInOutline, logOutOutline, scan, caretDownCircle } from 'ionicons/icons';
 import { IonApp, IonRouterOutlet, IonHeader, IonToolbar, IonItem, IonTitle, IonButton, IonContent, IonFabButton, IonFab, IonIcon, IonFabList, IonModal, IonAccordionGroup, IonAccordion, IonLabel, IonTabButton } from '@ionic/angular/standalone';
+import { menuOutline, chevronDownCircle, logInOutline, logOutOutline, scan, caretDownCircle, restaurant } from 'ionicons/icons';
 import { AuthService } from 'src/app/services/auth.service';
 import { ScannerService } from 'src/app/services/scanner.service';
 import { MySwal, ToastError, ToastInfo, ToastSuccess } from 'src/app/utils/alerts';
@@ -35,11 +35,17 @@ export class MenuComponent {
         { rol: 'empleado', tipo: 'bartender' }
       ]
     },
+    {
+      titulo: 'Pedido', url: '/alta-pedido', icono: 'restaurant', rol_tipo: [
+        { rol: 'empleado', tipo: 'mozo' },
+        { rol: 'cliente', tipo: 'registrado' },
+        { rol: 'cliente', tipo: 'anonimo' }
+      ]
+    },
     { titulo: 'Supervisor', url: '/alta-supervisor', icono: 'boss', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Mesa', url: '/alta-mesa', icono: 'table-picnic', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Empleado', url: '/alta-empleado', icono: 'room-service', rol_tipo: [{ rol: 'jefe' }] },
-
-  ];
+      ];
 
   grupoAltas: Grupo = {
     nombre: 'Altas',
@@ -67,7 +73,7 @@ export class MenuComponent {
     { titulo: 'Cerrar sesión', icono: 'log-out-outline', accion: async () => await this.cerrarSesion() };
 
   constructor(protected router: Router, protected navCtrl: NavController, protected auth: AuthService, private alertCtrl: AlertController, private scanner: ScannerService, private db: DatabaseService, private spinner: NgxSpinnerService) {
-    addIcons({ menuOutline, caretDownCircle, chevronDownCircle, logInOutline, logOutOutline, scan });
+    addIcons({ menuOutline, caretDownCircle, chevronDownCircle, logInOutline, logOutOutline, scan, restaurant });
 
     auth.usuarioEnSesionObs.subscribe((usuario) => {
       this.grupoAltas.paginas = this.altas.filter((pag) => CheckRolTipo(auth, pag.rol_tipo, pag.permitirAnon));

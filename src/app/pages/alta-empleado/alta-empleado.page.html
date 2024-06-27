@@ -23,7 +23,7 @@
             <ion-input id="input-dni" label="DNI" type="text" formControlName="dni"
               name="dni" required ngDefaultControl>
               <ion-button id="btn-dni" *ngIf="empleadoFrm.controls['dni'].errors; else buscar"
-                fill="clear" slot="end" aria-label="escanear" (click)="escanearDni();">
+                fill="clear" slot="end" aria-label="escanear" (click)="escanearDni()">
                 <ion-icon slot="icon-only" name="scan" aria-hidden="true"></ion-icon>
               </ion-button>
               <ng-template #buscar>

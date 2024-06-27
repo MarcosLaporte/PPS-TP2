@@ -1,0 +1,57 @@
+@import '/src/theme/variables.scss'; 
+
+ion-card-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  #icon-container {
+    height: 50px;
+    ion-icon {
+      height: 100%;
+      width: 50px;
+    }
+  }
+}
+#menu-container {
+  height: 650px;
+  h2{
+    color: $lavander;
+    padding: 0 .5rem;
+    margin: 1rem 0;
+  }
+  #lista {
+    height: 100%;
+    overflow-y: auto;
+    // overflow-x: hidden;
+    .imgs-container {
+      display: flex;
+      flex-direction: row;
+      overflow-x: auto;
+    
+      img {
+        width: 100%;
+        height: auto;
+        display: block !important;
+        margin: 0 1rem;
+      }
+    }
+  }
+  .cont-prod {
+    display: flex;
+    align-items: center;
+
+    ion-button {
+      width: 70%;
+    }
+
+    ion-input {
+      width: 30%;
+      text-align: center;
+      font-size: 3rem;
+    }
+  }
+}
+ion-icon:active {
+  scale: 0.8;
+}

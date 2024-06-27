@@ -1,0 +1,44 @@
+<div class="container">
+  <ion-card style="width: 95%;">
+    <ion-card-header>
+      <ion-card-title>Pedido</ion-card-title>
+      <div id="icon-container">
+        <ion-icon name="receipt-outline" aria-hidden="true" (click)="mostrarProd()"></ion-icon>
+      </div>
+    </ion-card-header>
+    
+    <ion-card-content id="menu-container">
+        <ion-accordion-group id="lista">
+          @for (item of productos; track $index) {
+            <ion-accordion [value]="item.nombre">
+              <ion-item class="item" color="primary" slot="header">
+                <ion-label>{{item.nombre}}</ion-label>        
+              </ion-item>
+              <div class="content" slot="content">
+                <h2>
+                  {{item.descripcion}}
+                </h2>
+                <div class="imgs-container">
+                  @for (foto of item.fotosUrl; track $index) {
+                      <img [src]="foto" alt="">
+                    }
+                </div>
+                <div class="cont-prod">
+                  <ion-button size="large" color="danger" expand="fill" 
+                    (click)="restarProd(item.id)" [disabled]="productosElegidos[item.id] === 0">
+                    <ion-icon slot="icon-only" aria-label="hidden" name="remove-circle-outline" color="light"></ion-icon>
+                  </ion-button>
+                  <ion-input type="number" min="0" max="99" color="light" 
+                    [(ngModel)]="productosElegidos[item.id]" ngDefaultControl></ion-input>
+                  <ion-button size="large" color="success" expand="fill" 
+                    (click)="sumarProd(item.id)" [disabled]="productosElegidos[item.id] === 99">
+                    <ion-icon slot="icon-only" aria-label="hidden" name="add-circle-outline" color="light"></ion-icon>
+                  </ion-button>
+                </div>              
+              </div>
+            </ion-accordion>
+          }
+        </ion-accordion-group>
+    </ion-card-content>
+  </ion-card>
+</div>

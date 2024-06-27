@@ -1,0 +1,5 @@
+<ion-card-content id="menu-container">
+  @for (prod of pedido; track $index) {
+    <h2>{{prod.producto.nombre}} {{prod.cantidad}}</h2> 
+  }
+</ion-card-content>
