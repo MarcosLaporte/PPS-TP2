@@ -56,6 +56,7 @@ export class MenuComponent {
   paginasGenerales: Pagina[] = [
     { titulo: 'Perfil', url: '/perfil', icono: 'circle-user' },
     { titulo: 'Inicio', url: '/home', icono: 'house-chimney', permitirAnon: true },
+    { titulo: 'Clientes pendientes', url: '/lista-pendientes', icono: 'selection' },
   ];
 
   public funciones: { titulo: string, icono: string, accion: () => Promise<any> }[] = [
