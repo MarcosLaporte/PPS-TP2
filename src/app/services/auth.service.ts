@@ -79,7 +79,9 @@ export class AuthService {
       throw error;
     }
   }
-
+  async currentUser() {
+    return this.auth.currentUser;
+  }
   /**
    * Ingresa un usuario a la sesión de `Firebase Authentication` y asigna el objeto Persona a la propiedad local.
    *
