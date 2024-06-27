@@ -102,6 +102,17 @@ export const routes: Routes = [
       ]
     }
   },
+  {
+    path: 'lista-encuestas-empleados',
+    loadComponent: () => import('./pages/encuestas/lista-encuestas-empleados/lista-encuestas-empleados.page').then( m => m.ListaEncuestasEmpleadosPage),
+    canActivate: [sesionIniciadaGuard, rolTipoGuard],
+    data: {
+      roles_tipos: [
+        { rol: 'jefe' },
+      ]
+    }
+  },
+
 
 
 ];

@@ -77,3 +77,9 @@
 .invisible{
   display: none;
 }
+
+
+ion-modal#encuesta-modal {
+  --height: 50vh;
+  --width: 90%;
+}
