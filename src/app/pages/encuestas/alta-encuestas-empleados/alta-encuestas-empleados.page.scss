@@ -91,7 +91,8 @@
       font-size: 1.25rem;
     }
 
-    .input {
+    .input,
+    .input textarea {
       width: 100%;
     }
 
@@ -102,6 +103,19 @@
       ion-checkbox {
         align-self: flex-end;
       }
+    }
+  }
+
+  #aspectosBuenasCond {
+    margin-top: 0.5rem;
+
+    .label {
+      font-size: 1.25rem;
+    }
+
+    .checks ion-button {
+      --padding-start: 10px;
+      --padding-end: 10px;
     }
   }
 }

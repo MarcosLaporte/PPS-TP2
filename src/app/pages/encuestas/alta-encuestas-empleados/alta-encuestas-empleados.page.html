@@ -54,8 +54,7 @@
             <ion-label>Comentarios</ion-label>
           </div>
           <div class="input">
-            <ion-textarea [autoGrow]="true" [counter]="true" [maxlength]="255"
-              formControlName="comentarios" required ngDefaultControl></ion-textarea>
+            <textarea [maxlength]="255" formControlName="comentarios" required ngDefaultControl></textarea>
           </div>
         </div>
 
@@ -63,8 +62,10 @@
           <div class="label">
             <ion-label>¿Qué aspectos se encontraban en buena condición?</ion-label>
           </div>
-          <ion-chip button *ngFor="let asp of AspectosCheck" [color]="isChecked(asp.valor)?'success':'medium'"
-            (click)="valorCheck(asp.valor)">{{asp.label}}</ion-chip>
+          <div class="checks">
+            <ion-button *ngFor="let asp of AspectosCheck" [color]="isChecked(asp.valor)?'success':'medium'"
+              shape="round" (click)="valorCheck(asp.valor)">{{asp.label}}</ion-button>
+          </div>
         </div>
 
         <ion-button type="submit" expand="block" [disabled]="encuestaFrm.invalid">Subir</ion-button>
