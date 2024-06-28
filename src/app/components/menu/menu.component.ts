@@ -15,6 +15,7 @@ import { EstadoMesa, Mesa, parseEstadoMesa } from 'src/app/utils/classes/mesa';
 import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
 import { ClienteEnEspera, Roles_Tipos } from 'src/app/utils/interfaces/interfaces';
 import { CheckRolTipo } from 'src/app/utils/check_rol_tipo';
+import { BarcodeFormat } from '@capacitor-mlkit/barcode-scanning/dist/esm/definitions';
 
 declare interface Pagina { titulo: string, url: string, icono: string, rol_tipo?: Roles_Tipos[], permitirAnon?: boolean };
 declare interface Funcion { titulo: string, icono: string, accion: () => Promise<any> };
@@ -50,6 +51,7 @@ export class MenuComponent {
   paginasGenerales: Pagina[] = [
     { titulo: 'Perfil', url: '/perfil', icono: 'circle-user' },
     { titulo: 'Inicio', url: '/home', icono: 'house-chimney', permitirAnon: true },
+    { titulo: 'Clientes pendientes', url: '/lista-pendientes', icono: 'selection' },
     { titulo: 'Encuestas empleados', url: '/alta-encuestas-empleados', icono: 'corporate', rol_tipo: [{ rol: 'empleado' }] },
     { titulo: 'Encuestas empleados', url: '/lista-encuestas-empleados', icono: 'corporate', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Encuestas clientes', url: '/alta-encuesta-cliente', icono: 'feedback-alt', permitirAnon: true, rol_tipo: [{ rol: 'cliente' }] },
@@ -89,10 +91,7 @@ export class MenuComponent {
     accordion.value = [];
     this.navCtrl.navigateRoot(url)
   }
-  saberUsuario() {
 
-    console.log(this.auth.currentUser())
-  }
   async cerrarSesion() {
     const alert = await this.alertCtrl.create({
       header: '¿Desea cerrar sesión?',
@@ -102,7 +101,6 @@ export class MenuComponent {
           text: 'No',
           role: 'cancel',
           handler: () => ToastInfo.fire('Operación cancelada.')
-          ,
         },
         {
           text: 'Sí',
@@ -122,8 +120,8 @@ export class MenuComponent {
   async escanear() {
     if (!this.auth.UsuarioEnSesion) return;
     try {
-      // const QR: string = await this.scanner.escanear();
-      const QR = 'entrada-yourdonistas'; //FIXME: TEST
+      const QR: string = await this.scanner.escanear();
+      // const QR = 'entrada-yourdonistas'; //FIXME: TEST
       const qrSeparado = QR.split('-');
 
       switch (qrSeparado[0]) {
@@ -193,7 +191,7 @@ export class MenuComponent {
       const mesa = await this.db.traerDoc<Mesa>(Colecciones.Mesas, idMesa);
 
       if (mesa && cliente) {
-        console.log(parseEstadoMesa(mesa.estado));
+
         switch (mesa.estado) {
           case EstadoMesa.Disponible:
             ToastInfo.fire('Para acceder a esta mesa, se le debe ser asignada por el metre.');
@@ -216,7 +214,7 @@ export class MenuComponent {
               if (res.isConfirmed) {
                 mesa.estado = EstadoMesa.PidiendoComida;
                 this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.PidiendoComida });
-                this.pedirComida(mesa);
+                this.navCtrl.navigateRoot('alta-pedido');
               } else {
                 mesa.estado = EstadoMesa.SinPedido;
                 this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.SinPedido });
@@ -224,7 +222,26 @@ export class MenuComponent {
             });
             break;
           case EstadoMesa.SinPedido:
-            this.pedirComida(mesa);
+            this.spinner.hide();
+            await MySwal.fire({
+              title: `Bienvenido ${cliente.nombre}`,
+              text: '¿Qué desea hacer?',
+              allowOutsideClick: false,
+              allowEscapeKey: false,
+              showConfirmButton: true,
+              confirmButtonText: 'Pedir comida',
+              showDenyButton: true,
+              denyButtonText: 'Consultar',
+              showCancelButton: true,
+              cancelButtonText: 'nada',
+              cancelButtonColor: '#f27474',
+            }).then(async (res) => {
+              if (res.isConfirmed) {
+                this.navCtrl.navigateRoot('alta-pedido');
+              } else if(res.isDenied){
+                //ir a consultas
+              }
+            });
             break;
           /*
           case EstadoMesa.PidiendoComida:
@@ -247,10 +264,5 @@ export class MenuComponent {
       ToastError.fire('Ups...', error.message);
     }
 
-  }
-
-  private async pedirComida(mesa: Mesa) {
-    //menu con funciones de pedir comida
-    await this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.EsperandoComida });
   }
 }

@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { sesionIniciadaGuard } from './guards/sesion-iniciada.guard';
 import { rolTipoGuard } from './guards/rol-tipo.guard';
+import { clienteAceptadoGuard } from './guards/cliente-aceptado.guard';
 
 export const routes: Routes = [
   {
@@ -105,6 +106,10 @@ export const routes: Routes = [
   {
     path: 'lista-encuestas-empleados',
     loadComponent: () => import('./pages/encuestas/lista-encuestas-empleados/lista-encuestas-empleados.page').then(m => m.ListaEncuestasEmpleadosPage),
+  },
+  {
+    path: 'lista-pendientes',
+    loadComponent: () => import('./pages/lista-pendientes/lista-pendientes.page').then(m => m.ListaPendientesPage),
     canActivate: [sesionIniciadaGuard, rolTipoGuard],
     data: {
       roles_tipos: [
@@ -125,7 +130,7 @@ export const routes: Routes = [
   {
     path: 'alta-encuesta-cliente',
     loadComponent: () => import('./pages/alta-encuesta-cliente/alta-encuesta-cliente.page').then(m => m.AltaEncuestaClientePage),
-    canActivate: [sesionIniciadaGuard, rolTipoGuard],
+    canActivate: [sesionIniciadaGuard, rolTipoGuard, clienteAceptadoGuard],
     data: {
       roles_tipos: [
         { rol: 'cliente' },
@@ -156,5 +161,19 @@ export const routes: Routes = [
         { rol: 'empleado', tipo: 'metre' }
       ]
     }
+  },
+  {
+    path: 'alta-encuesta-supervisor',
+    loadComponent: () => import('./pages/alta-encuesta-supervisor/alta-encuesta-supervisor.page').then(m => m.AltaEncuestaSupervisorPage),
+    canActivate: [sesionIniciadaGuard, rolTipoGuard],
+    data: {
+      roles_tipos: [
+        { rol: 'jefe' },
+      ]
+    }
+  },
+  {
+    path: 'consulta-mozo',
+    loadComponent: () => import('./pages/consulta-mozo/consulta-mozo.page').then(m => m.ConsultaMozoPage)
   },
 ];

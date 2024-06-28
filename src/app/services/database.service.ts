@@ -13,7 +13,9 @@ export enum Colecciones {
   EncuestasSupervisor = 'encuestas-supervisor',
   ListaDeEspera = 'lista-de-espera',
   PedidosPendientes = 'lista-pedidos-pendientes',
-  PedidosListos = 'lista-pedidos-listos'
+  PedidosListos = 'lista-pedidos-listos',
+  Pedidos = "pedidos",
+  Mensajes = "mensajes",
 }
 
 export enum Prefijos {

@@ -1,0 +1,55 @@
+<div class="container background-pri">
+  <ion-card style="width: 95%">
+    <ion-card-header>
+      <ion-card-title>Consulta a los mozos</ion-card-title>
+    </ion-card-header>
+    <ion-card-content >
+      <div class="card">
+        <div id="mensajes">
+          @for (msg of mensajes; track $index) { 
+          <div
+            class="msg"
+            [ngClass]="auth.UsuarioEnSesion!.id == msg.id ? 'enviado' : 'recibido'">
+            <div *ngIf="auth.UsuarioEnSesion!.id != msg.id" id="alias">
+              <p>{{ msg.nombre }}</p>
+            </div>
+            <div id="msg-hour-container">
+              <div id="text">
+                <p>{{ msg.message }}</p>
+              </div>
+              <div id="hour">
+                {{ parsedTime(msg.time) }}
+              </div>
+            </div>
+          </div>
+        }
+        </div>
+        
+  
+        <form class="card-footer text-muted">
+          <div class="input">
+            <ion-item ngClass='input'>
+              <ion-input
+                type="text"
+                placeholder="Escriba su mensaje"
+                class="form-control"
+                [(ngModel)]="nuevoMensaje"
+                name="mensaje"
+                ngDefaultControl
+              ></ion-input>
+              <span>
+                <ion-icon
+                  name="send-outline"
+                  id="enviar"
+                  size="large"
+                  (click)="enviarMensaje()"
+                ></ion-icon>
+              </span>
+            </ion-item>
+          </div>
+        </form>
+      </div>
+      
+    </ion-card-content
+  ></ion-card>
+</div>
