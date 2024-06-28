@@ -2,17 +2,23 @@
   <ion-card style="width: 95%;">
     <ion-card-header>
       <ion-card-title>Pedido</ion-card-title>
+      <ion-card-subtitle style="font-size: xx-large;">
+        {{precio}}
+      </ion-card-subtitle>
       <div id="icon-container">
-        <ion-icon name="receipt-outline" aria-hidden="true" (click)="mostrarProd()"></ion-icon>
+        <ion-icon name="chatbox-ellipses-outline" aria-hidden="true" (click)="consultar()"></ion-icon>
+      </div>
+      <div id="icon-container">
+        <ion-icon name="receipt-outline"  aria-hidden="true" (click)="mostrarProd()"></ion-icon>
       </div>
     </ion-card-header>
-    
     <ion-card-content id="menu-container">
         <ion-accordion-group id="lista">
           @for (item of productos; track $index) {
             <ion-accordion [value]="item.nombre">
               <ion-item class="item" color="primary" slot="header">
-                <ion-label>{{item.nombre}}</ion-label>        
+                <ion-label>{{item.nombre}}</ion-label> 
+                {{productosElegidos[item.id]}}
               </ion-item>
               <div class="content" slot="content">
                 <h2>
@@ -21,8 +27,12 @@
                 <div class="imgs-container">
                   @for (foto of item.fotosUrl; track $index) {
                       <img [src]="foto" alt="">
+                      <!-- <img [ngSrc]="foto" width="400" height="400"> -->
                     }
                 </div>
+                <h2>
+                  tiempo de elaboración {{item.tiempoElab}} minutos
+                </h2>
                 <div class="cont-prod">
                   <ion-button size="large" color="danger" expand="fill" 
                     (click)="restarProd(item.id)" [disabled]="productosElegidos[item.id] === 0">

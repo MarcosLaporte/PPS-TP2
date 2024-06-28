@@ -1,13 +1,13 @@
 import { CUSTOM_ELEMENTS_SCHEMA, Component, Input, OnInit, ViewChild, inject,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonCardTitle, IonCardHeader, IonCardContent, IonItem, IonLabel, IonList, IonIcon, IonAccordion, IonAccordionGroup, IonButton } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonCardTitle, IonCardHeader, IonCardContent, IonItem, IonLabel, IonList, IonIcon, IonAccordion, IonAccordionGroup, IonButton, IonPopover, IonFooter, IonCardSubtitle } from '@ionic/angular/standalone';
 import { AuthService } from 'src/app/services/auth.service';
 import { Producto } from 'src/app/utils/classes/producto';
 import { Colecciones, DatabaseService,} from 'src/app/services/database.service';
 import { addIcons } from 'ionicons';
-import { addCircleOutline, addOutline, book, receiptOutline, removeCircleOutline, removeOutline } from 'ionicons/icons';
+import { addCircleOutline, chatboxEllipsesOutline, receiptOutline, removeCircleOutline } from 'ionicons/icons';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MySwal, ToastError, ToastSuccess } from 'src/app/utils/alerts';
 import { ModalController } from '@ionic/angular';
@@ -18,12 +18,12 @@ import { PedidoComponent } from 'src/app/components/pedido/pedido.component';
   templateUrl: './alta-pedido.page.html',
   styleUrls: ['./alta-pedido.page.scss'],
   standalone: true,
-  imports: [IonButton,  IonAccordionGroup, IonAccordion, IonIcon, IonList, IonLabel, IonItem, IonCardContent, IonCardHeader, IonCardTitle, IonCard, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule],
+  imports: [IonCardSubtitle, IonFooter, IonPopover, IonButton,  IonAccordionGroup, IonAccordion, IonIcon, IonList, IonLabel, IonItem, IonCardContent, IonCardHeader, IonCardTitle, IonCard, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, NgOptimizedImage],
   providers:[ModalController]
 })
 export class AltaPedidoPage implements OnInit {
   protected pedido: Producto[] = [];
-  
+  precio: number = 0;
   productosElegidos: { [id: string]: number } = {};
   // productos: Producto[] = [];
   readonly productos: Producto[] = [
@@ -220,7 +220,7 @@ export class AltaPedidoPage implements OnInit {
       "nombre": "Brownie con Helado"
     }
   ];
-
+  
   constructor(
     private auth: AuthService,
     private db: DatabaseService,
@@ -235,7 +235,7 @@ export class AltaPedidoPage implements OnInit {
     //   this.spinner.hide();
     // });
 
-    addIcons({ receiptOutline, addCircleOutline, removeCircleOutline });
+    addIcons({ receiptOutline, addCircleOutline, removeCircleOutline, chatboxEllipsesOutline });
   }
 
   ngOnInit() {
@@ -259,14 +259,20 @@ export class AltaPedidoPage implements OnInit {
       this.productosElegidos[prod.id] = cant;
   }
   restarProd(idProd: string) {
+    if(this.productosElegidos[idProd]) 
+      this.precio -= this.precio > 0 ? this.productos.filter( e => { return e.id == idProd })[0].precio:0; 
+    
     if (this.productosElegidos[idProd] > 1)
       this.productosElegidos[idProd]--;
     else
       delete this.productosElegidos[idProd];
+    
   }
 
   sumarProd(idProd: string) {
     this.productosElegidos[idProd] = (this.productosElegidos[idProd] || 0) + 1;
+    if(this.productosElegidos[idProd]) 
+      this.precio += this.productos.filter( e => { return e.id == idProd })[0].precio; 
   }
   async mostrarProd() {
     const modal = await this.modalCtrl.create({
@@ -276,4 +282,6 @@ export class AltaPedidoPage implements OnInit {
     });
     modal.present();
   }
+
+  consultar(){}
 }
