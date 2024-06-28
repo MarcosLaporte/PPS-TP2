@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { Colecciones, DatabaseService } from 'src/app/services/database.service';
 import { Exception, ErrorCodes } from 'src/app/utils/classes/exception';
-import { Mesa } from 'src/app/utils/classes/mesa';
+import { EstadoMesa, Mesa, parseEstadoMesa } from 'src/app/utils/classes/mesa';
 import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
 import { Roles_Tipos } from 'src/app/utils/interfaces/interfaces';
 import { CheckRolTipo } from 'src/app/utils/check_rol_tipo';
@@ -61,7 +61,7 @@ export class MenuComponent {
 
   public funciones: { titulo: string, icono: string, accion: () => Promise<any> }[] = [
     { titulo: 'Sesión', icono: 'log-in-outline', accion: async () => { } },
-    { titulo: 'Escanear', icono: 'scan', accion: async () => await this.escanearQrMesa() },
+    { titulo: 'Escanear', icono: 'scan', accion: async () => await this.escanear() },
   ];
 
   readonly funcIniciarSesion =
@@ -114,16 +114,20 @@ export class MenuComponent {
     await alert.present();
   }
 
-  async escanearQr() {
+  async escanear() {
     // const QR: string = await this.scanner.escanear();
-    const QR = 'lista-de-espera';
+    const QR = 'entrada-yourdonistas';
+    const qrSeparado = QR.split('-');
 
-    switch (QR) {
-      case 'lista-de-espera':
+    switch (qrSeparado[0]) {
+      case 'entrada': //Código de entrada
         this.accederListaDeEspera();
         break;
+      case 'mesa':
+        this.escanearQrMesa(qrSeparado[1]);
+        break;
       default:
-
+        ToastError.fire('El código escaneado no es reconocido.');
     }
   }
 
@@ -146,28 +150,21 @@ export class MenuComponent {
     });
   }
 
-  async escanearQrMesa() {
-    // const QR : string = await this.scanner.escanear();
-    const QR: string = "DLDy65F46o10UeAQVcyG" //esto es simulado
-    // const valorCrudo = await this.scanner.escanear([BarcodeFormat.Pdf417]);
+  async escanearQrMesa(idMesa: string) {
     try {
       this.spinner.show();
-      const mesa = await this.db.traerDoc<Mesa>(Colecciones.Mesas, QR);
+      const mesa = await this.db.traerDoc<Mesa>(Colecciones.Mesas, idMesa);
       const cliente = this.auth.UsuarioEnSesion as Cliente;
-      console.log(mesa);
-      console.log(cliente);
-
-      // let TEST = true;
 
       if (mesa && cliente) {
-
+        console.log(parseEstadoMesa(mesa.estado));
         switch (mesa.estado) {
-          case 'disponible':
+          case EstadoMesa.Disponible:
             this.spinner.hide();
-            if (cliente.idMesa == mesa.id) {
+            if (cliente.idMesa === mesa.id) {
               await MySwal.fire({
-                title: `Bienvenido ${cliente.nombre}`,
-                text: 'Ya desea realizar su pedido?',
+                title: `Bienvenido, ${cliente.nombre}`,
+                text: '¿Ya desea realizar su pedido?',
                 allowOutsideClick: false,
                 allowEscapeKey: false,
                 showConfirmButton: true,
@@ -178,36 +175,32 @@ export class MenuComponent {
                 denyButtonColor: '#f27474',
               }).then(async (res) => {
                 if (res.isConfirmed) {
-                  this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { 'estado': 'cliente pidiendo comida' });
+                  mesa.estado = EstadoMesa.PidiendoComida;
+                  this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.PidiendoComida });
                   this.pedirComida(mesa);
                 } else {
-                  this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { 'estado': 'cliente sin pedido' });
+                  mesa.estado = EstadoMesa.SinPedido;
+                  this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.SinPedido });
                 }
               });
             } else {
-              throw new Exception(ErrorCodes.MesaEquivocada, "esta no es tu mesa");
+              throw new Exception(ErrorCodes.MesaEquivocada, "Esta no es su mesa.");
             }
             break;
-
-          case 'cliente sin pedido':
+          case EstadoMesa.SinPedido:
             this.pedirComida(mesa);
-            console.log('cliente sin pedido');
             break;
           /*
-          case 'cliente pidiendo comida':
-            console.log('cliente pidiendo comid');
+          case EstadoMesa.PidiendoComida:
           break;
           */
-          case 'cliente esperando comida':
-            console.log('cliente esperando comida');
+          case EstadoMesa.EsperandoComida:
+            
             break;
-
-          case 'cliente comiendo':
-            console.log('cliente comiendo');
+          case EstadoMesa.Comiendo:
+            
             break;
-
-          case 'cliente pagando':
-            console.log('cliente pagando');
+          case EstadoMesa.Pagando:
             break;
         }
       }
@@ -220,6 +213,6 @@ export class MenuComponent {
   }
   pedirComida(mesa: Mesa) {
     //menu con funciones de pedir comida
-    this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { 'estado': 'cliente esperando comida' });
+    this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.EsperandoComida });
   }
 }
