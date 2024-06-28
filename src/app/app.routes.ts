@@ -119,8 +119,15 @@ export const routes: Routes = [
   },
   {
     path: 'alta-encuesta-supervisor',
-    loadComponent: () => import('./pages/alta-encuesta-supervisor/alta-encuesta-supervisor.page').then( m => m.AltaEncuestaSupervisorPage)
-  },  {
+    loadComponent: () => import('./pages/alta-encuesta-supervisor/alta-encuesta-supervisor.page').then( m => m.AltaEncuestaSupervisorPage),
+    canActivate: [sesionIniciadaGuard, rolTipoGuard],
+    data: {
+      roles_tipos: [
+        { rol: 'jefe' },
+      ]
+    }
+  },
+  {
     path: 'consulta-mozo',
     loadComponent: () => import('./pages/consulta-mozo/consulta-mozo.page').then( m => m.ConsultaMozoPage)
   },
