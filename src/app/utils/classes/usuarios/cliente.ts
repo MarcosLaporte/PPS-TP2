@@ -9,6 +9,10 @@ export class Cliente extends Persona {
     this.tipo = tipo;
     this.idMesa = null;
   }
+  
+  static crearClienteAnon(nombre: string, fotoUrl: string) {
+    return new Cliente(nombre, '', 0, '', fotoUrl, "anonimo");
+  }
 
 }
 export type TipoCliente = 'registrado' | 'anonimo';

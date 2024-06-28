@@ -4,7 +4,11 @@
       <ion-card-title>Alta de Cliente</ion-card-title>
     </ion-card-header>
     <ion-card-content>
-      <ion-toggle (ionChange)="toggleTipoCliente($event)">Registrarse como anónimo</ion-toggle>
+      <div class="ion-margin-bottom">
+        <ion-text *ngIf="!auth.UsuarioEnSesion">No quiero dar mis datos.
+          <a (click)="navCtrl.navigateRoot('alta-cliente-anon')">Registrarse de forma anónima</a>.
+        </ion-text>
+      </div>
       <form [formGroup]="frmCliente" (ngSubmit)="subirCliente()">
         <div class="inputs">
           <div id="correo" class="correo">
@@ -21,7 +25,7 @@
             </div>
           </div>
           <div id="dni" class="dni">
-            <ion-input id="input-dni" label="DNI"  type="text"
+            <ion-input id="input-dni" label="DNI"  type="number"
               formControlName="dni" name="dni" required ngDefaultControl>
               <ng-container *ngIf="frmCliente.controls['dni'].enabled">
                 <ion-button id="btn-dni" *ngIf="frmCliente.controls['dni'].errors; else buscar"

@@ -142,4 +142,8 @@ export const routes: Routes = [
       ]
     }
   },
+  {
+    path: 'alta-cliente-anon',
+    loadComponent: () => import('./pages/alta-cliente-anon/alta-cliente-anon.page').then(m => m.AltaClienteAnonPage),
+  },
 ];
