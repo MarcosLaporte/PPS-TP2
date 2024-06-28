@@ -8,7 +8,7 @@ import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
 import { NavController } from '@ionic/angular';
 import { ToastSuccess } from 'src/app/utils/alerts';
 import { Mesa } from 'src/app/utils/classes/mesa';
-import { Cliente_Espera } from 'src/app/utils/interfaces/interfaces';
+import { ClienteEnEspera } from 'src/app/utils/interfaces/interfaces';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
@@ -19,10 +19,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
   imports: [IonButton, IonCardContent, IonCardTitle, IonCardHeader, IonCard, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
 export class ClientesEsperaPage implements OnInit {
-  private auxCliente: Cliente;
-  constructor(private db: DatabaseService, private auth: AuthService, private navCtrl: NavController, private spinner: NgxSpinnerService) {
-    this.auxCliente = this.auth.UsuarioEnSesion! as Cliente;
-  }
+
+  constructor(private db: DatabaseService, private auth: AuthService, private navCtrl: NavController, private spinner: NgxSpinnerService) { }
 
   async ngOnInit() {
     //Escucha cuando se le asigna idMesa al cliente
@@ -32,15 +30,9 @@ export class ClientesEsperaPage implements OnInit {
           if (!cliente.idMesa) return;
 
           this.spinner.show();
-          const datosDb = await Promise.all([
-            this.db.traerColeccion<Cliente_Espera>(Colecciones.ListaDeEspera),
-            this.db.traerDoc<Mesa>(Colecciones.Mesas, cliente.idMesa)
-          ]);
+          const mesa = await this.db.traerDoc<Mesa>(Colecciones.Mesas, cliente.idMesa);
 
-          const idEspera = datosDb[0].find((el) => el.idCliente === cliente.id)?.id;
-          if (idEspera) await this.db.borrarDoc(Colecciones.ListaDeEspera, idEspera);
-
-          ToastSuccess.fire(`Se le ha asignado la mesa N°${datosDb[1].nroMesa}.`);
+          ToastSuccess.fire(`Se le ha asignado la mesa N°${mesa.nroMesa}.`);
           this.spinner.hide();
 
           this.navCtrl.navigateRoot('home');

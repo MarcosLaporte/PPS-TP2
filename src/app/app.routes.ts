@@ -139,11 +139,22 @@ export const routes: Routes = [
     data: {
       roles_tipos: [
         { rol: 'cliente' },
+        { rol: 'jefe' }
       ]
     }
   },
   {
     path: 'alta-cliente-anon',
     loadComponent: () => import('./pages/alta-cliente-anon/alta-cliente-anon.page').then(m => m.AltaClienteAnonPage),
+  },
+  {
+    path: 'lista-espera',
+    loadComponent: () => import('./pages/lista-espera/lista-espera.page').then(m => m.ListaEsperaPage),
+    canActivate: [sesionIniciadaGuard, rolTipoGuard],
+    data: {
+      roles_tipos: [
+        { rol: 'empleado', tipo: 'metre' }
+      ]
+    }
   },
 ];

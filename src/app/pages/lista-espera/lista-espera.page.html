@@ -1,0 +1,67 @@
+<div class="container background-ter">
+  <ion-list *ngIf="listaDeEspera.length > 0; else noClientes" class="ion-padding-vertical">
+    <ion-card *ngFor="let cliEspera of listaDeEspera" class="item-card ion-no-margin ion-margin-bottom ion-no-padding">
+      <ion-card-header class="ion-text-center">
+        <div class="img-container">
+          <img [src]="cliEspera.cliente.fotoUrl" />
+        </div>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-card-title color="tertiary">
+          {{cliEspera.cliente.nombre}} {{cliEspera.cliente.tipo === 'anonimo' ? '(Anónimo)' : cliEspera.cliente.apellido}}
+        </ion-card-title>
+        <ion-card-subtitle color="secondary" *ngIf="cliEspera.cliente.tipo !== 'anonimo'">
+          {{cliEspera.cliente.dni}}, {{cliEspera.cliente.correo}}
+        </ion-card-subtitle>
+        <ion-button expand="block" color="success" (click)="selecCliente(cliEspera)">ASIGNAR</ion-button>
+      </ion-card-content>
+    </ion-card>
+  </ion-list>
+  <ng-template #noClientes>
+    <div id="noClientes">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>No hay clientes</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p>Parece que no hay clientes en lista de espera.</p>
+          <ion-button expand="block" (click)="navCtrl.navigateRoot('home')">Ir a Inicio</ion-button>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </ng-template>
+</div>
+
+<ion-modal id="mesas-modal">
+  <div class="tabla-container">
+    <div class="tabla">
+      <table *ngIf="mesasDisp.length > 0; else sinMesas">
+        <thead>
+          <tr>
+            <th id="nroMesa">Nro Mesa</th>
+            <th id="tipo">Tipo</th>
+            <th id="cantComensales">Comensales</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let mesa of mesasDisp" (click)="selecMesa(mesa)">
+            <td style="text-align: end;">#{{mesa.nroMesa}}</td>
+            <td style="text-align: center;">{{mesa.tipo}}</td>
+            <td style="text-align: start;">{{mesa.cantComensales}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <ng-template #sinMesas>
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>No hay mesas</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p>Ahora mismo no hay mesas disponibles. Su celular le notificará cuando se libere una.</p>
+            <ion-button expand="block" (click)="modal.dismiss()">Ir a lista de espera</ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ng-template>
+    </div>
+  </div>
+</ion-modal>

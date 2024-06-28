@@ -22,4 +22,7 @@ export enum ErrorCodes {
   FotoCancelada,
   FotoFaltante,
   DocInexistente,
+  TipoUsuarioIncorrecto,
+  ClienteYaTieneMesa,
+  ClienteEnEspera,
 }

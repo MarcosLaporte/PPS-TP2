@@ -20,6 +20,7 @@ export class Mesa {
 export type TipoMesa = 'VIP' | 'discapacitados' | 'estandar';
 export enum EstadoMesa {
   Disponible,
+  Asignada,
   SinPedido,
   PidiendoComida,
   EsperandoComida,
@@ -30,6 +31,7 @@ export enum EstadoMesa {
 export const parseEstadoMesa = (estado: EstadoMesa): string => {
   const estados = [
     'Mesa Disponible',
+    'Mesa Asignada',
     'Cliente sin pedido',
     'Cliente pidiendo comida',
     'Cliente esperando comida',

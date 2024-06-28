@@ -1,0 +1,28 @@
+<div class="contenido">
+  <table *ngIf="mesas.length > 0; else sinMesas">
+    <thead>
+      <th>Nro Mesa</th>
+      <th>Tipo</th>
+      <th>Cant. Comensales</th>
+    </thead>
+    <tbody>
+      <tr *ngFor="let mesa of mesas" (click)="selecMesa(mesa)">
+        <td>{{mesa.nroMesa}}</td>
+        <td>{{mesa.tipo}}</td>
+        <td>{{mesa.cantComensales}}</td>
+      </tr>
+    </tbody>
+  </table>
+  <ng-template #sinMesas>
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Acceso Denegado</ion-card-title>
+      </ion-card-header>
+  
+      <ion-card-content>
+        <p>Ahora mismo no hay mesas disponibles. Su celular le notificará cuando se libere una.</p>
+        <ion-button expand="block" (click)="navCtrl.navigateRoot('lista-espera')">Ir a lista de espera</ion-button>
+      </ion-card-content>
+    </ion-card>
+  </ng-template>
+</div>
