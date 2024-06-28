@@ -8,7 +8,7 @@ export enum Colecciones {
   Usuarios = 'users',
   Mesas = 'mesas',
   Productos = 'productos',
-  EncuestasCliente = 'encuestas-cliente',
+  EncuestasCliente = 'encuestas-clientes',
   EncuestasEmpleado = 'encuestas-empleado',
   EncuestasSupervisor = 'encuestas-supervisor',
   ListaDeEspera = 'lista-de-espera',
@@ -33,12 +33,12 @@ export class DatabaseService {
 
   /**
    * Trae un Array de objetos guardados en la colección especificada de `Firestore`.
-   * 
+   *
    * @async
    * @param coleccion - El nombre de la colección en `Firestore`.
    * @param ordenarPorCampo - El campo (propiedad del objeto) por el cual ordenar el array.
    * @returns Una promesa con los datos pedidos.
-   * 
+   *
    * Nota: Asegurarse que el campo existe en el objeto y en todas sus instancias de la colección,
    *  si no existe, el doc se omitirá del array final.
    */
@@ -63,7 +63,7 @@ export class DatabaseService {
 
   /**
    * Trae un único objeto guardado en el documento especificado de la colección de `Firestore`.
-   * 
+   *
    * @async
    * @param coleccion - El nombre de la colección en `Firestore`.
    * @param docId - El ID del documento a traer en la colección en `Firestore`.
@@ -78,13 +78,13 @@ export class DatabaseService {
 
   /**
    * Sube un objeto a la colección de `Firestore` y asigna el ID del documento al campo ID del objeto (si se indica).
-   * 
+   *
    * @async
    * @param coleccion - El nombre de la colección en `Firestore`.
    * @param data - El objeto o dato a subir.
    * @param docIdAutom - Indica si la función debe o no asignar el ID del documento al objeto .
    * @returns El ID del documento en `Firestore`.
-   * 
+   *
    * @throws y elimina el documento si se encuentra con algún error a la hora de subir.
    */
   async subirDoc(coleccion: string, data: any, docIdAutom: boolean = true): Promise<string> {
@@ -106,7 +106,7 @@ export class DatabaseService {
 
   /**
    * Actualiza un doc en la colección de `Firestore`.
-   * 
+   *
    * @param coleccion - El nombre de la colección en `Firestore`.
    * @param docId - El ID del documento a traer en la colección en `Firestore`.
    * @param data - Los datos a actualizar (puede ser un campo solo).
@@ -121,13 +121,13 @@ export class DatabaseService {
   /**
    * Escucha los cambios en una colección en `Firestore` y guarda los datos en un Array que
    *  recibe por parámetro y que funcionará como puntero para mantenerse actualizado.
-   * 
+   *
    * @param coleccion - El nombre de la colección en `Firestore`.
    * @param arrayRef - El Array que guardará los objetos.
    * @param filtroFunc - Función que se encarga de filtrar los datos cada vez que se actualizan.
    * @param ordenFunc - Función que se encarga de ordenar los datos cada vez que se actualizan.
    * @param transformar - Función que se encarga de transformar los datos cada vez que se actualizan.
-   * 
+   *
    * Nota: El tipo de dato u objeto debe tener un campo `id: string`.
    */
   escucharColeccion<T extends { id: string }>(
@@ -196,11 +196,11 @@ export class DatabaseService {
   /**
    * Busca el usuario que tenga registrado su correo con el parámetro de búsqueda.
    * Por predeterminado busca en la colección `users`.
-   * 
+   *
    * @async
    * @param correo - Correo a buscar.
    * @returns Si lo encuentra, el usuario con el correo indicado.
-   * 
+   *
    * @throws Si no se encuentra el correo.
    */
   async buscarUsuarioPorCorreo(correo: string): Promise<Persona> {
@@ -214,11 +214,11 @@ export class DatabaseService {
   /**
    * Busca el usuario que tenga registrado su DNI con el parámetro de búsqueda.
    * Por predeterminado busca en la colección `users`.
-   * 
+   *
    * @async
    * @param dni - DNI a buscar.
    * @returns Si lo encuentra, el usuario con el DNI indicado.
-   * 
+   *
    * @throws Si no se encuentra el DNI.
    */
   async buscarUsuarioPorDni(dni: number): Promise<Persona> {

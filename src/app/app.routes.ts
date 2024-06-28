@@ -104,7 +104,7 @@ export const routes: Routes = [
   },
   {
     path: 'lista-encuestas-empleados',
-    loadComponent: () => import('./pages/encuestas/lista-encuestas-empleados/lista-encuestas-empleados.page').then( m => m.ListaEncuestasEmpleadosPage),
+    loadComponent: () => import('./pages/encuestas/lista-encuestas-empleados/lista-encuestas-empleados.page').then(m => m.ListaEncuestasEmpleadosPage),
     canActivate: [sesionIniciadaGuard, rolTipoGuard],
     data: {
       roles_tipos: [
@@ -114,12 +114,32 @@ export const routes: Routes = [
   },
   {
     path: 'clientes-espera',
-    loadComponent: () => import('./pages/clientes-espera/clientes-espera.page').then( m => m.ClientesEsperaPage),
+    loadComponent: () => import('./pages/clientes-espera/clientes-espera.page').then(m => m.ClientesEsperaPage),
     canActivate: [sesionIniciadaGuard, rolTipoGuard],
     data: {
       roles_tipos: [
         { rol: 'cliente' },
       ],
+    }
+  },
+  {
+    path: 'alta-encuesta-cliente',
+    loadComponent: () => import('./pages/alta-encuesta-cliente/alta-encuesta-cliente.page').then(m => m.AltaEncuestaClientePage),
+    canActivate: [sesionIniciadaGuard, rolTipoGuard],
+    data: {
+      roles_tipos: [
+        { rol: 'cliente' },
+      ]
+    }
+  },
+  {
+    path: 'grafico-clientes',
+    loadComponent: () => import('./pages/grafico-clientes/grafico-clientes.page').then(m => m.GraficoClientesPage),
+    canActivate: [sesionIniciadaGuard, rolTipoGuard],
+    data: {
+      roles_tipos: [
+        { rol: 'cliente' },
+      ]
     }
   },
 ];

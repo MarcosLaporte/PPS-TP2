@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
+import { IonApp, IonRouterOutlet, IonHeader, IonToolbar, IonItem, IonTitle, IonButton, IonContent, IonFabButton, IonFab, IonIcon, IonFabList, IonModal, IonAccordionGroup, IonAccordion, IonLabel, IonTabButton } from '@ionic/angular/standalone';
 import { menuOutline, chevronDownCircle, logInOutline, logOutOutline, scan, caretDownCircle, restaurant } from 'ionicons/icons';
-import { IonApp, IonRouterOutlet, IonHeader, IonToolbar, IonItem, IonTitle, IonButton, IonContent, IonFabButton, IonFab, IonIcon, IonFabList, IonModal, IonAccordionGroup, IonAccordion, IonLabel } from '@ionic/angular/standalone';
 import { AuthService } from 'src/app/services/auth.service';
 import { ScannerService } from 'src/app/services/scanner.service';
 import { MySwal, ToastError, ToastInfo, ToastSuccess } from 'src/app/utils/alerts';
@@ -23,7 +23,7 @@ declare interface Funcion { titulo: string, icono: string, accion: () => Promise
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.scss'],
   standalone: true,
-  imports: [IonLabel, IonAccordion, IonAccordionGroup, IonModal, IonFabList, IonIcon, IonFab, IonFabButton, IonContent, IonButton, IonTitle, IonItem, IonToolbar, IonHeader, IonApp, IonRouterOutlet, CommonModule, NgxSpinnerModule],
+  imports: [IonTabButton, IonLabel, IonAccordion, IonAccordionGroup, IonModal, IonFabList, IonIcon, IonFab, IonFabButton, IonContent, IonButton, IonTitle, IonItem, IonToolbar, IonHeader, IonApp, IonRouterOutlet, CommonModule, NgxSpinnerModule],
 })
 export class MenuComponent {
   readonly CheckRolTipo = CheckRolTipo;
@@ -44,7 +44,6 @@ export class MenuComponent {
     { titulo: 'Supervisor', url: '/alta-supervisor', icono: 'boss', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Mesa', url: '/alta-mesa', icono: 'table-picnic', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Empleado', url: '/alta-empleado', icono: 'room-service', rol_tipo: [{ rol: 'jefe' }] },
-
   ];
 
   pagsAltas: Pagina[] = [];
@@ -53,8 +52,17 @@ export class MenuComponent {
     { titulo: 'Inicio', url: '/home', icono: 'house-chimney', permitirAnon: true },
     { titulo: 'Encuestas empleados', url: '/alta-encuestas-empleados', icono: 'corporate', rol_tipo: [{ rol: 'empleado' }] },
     { titulo: 'Encuestas empleados', url: '/lista-encuestas-empleados', icono: 'corporate', rol_tipo: [{ rol: 'jefe' }] },
+    {
+      titulo: 'Encuestas clientes', url: '/alta-encuesta-cliente', icono: 'corporate', permitirAnon: true, rol_tipo: [
+        { rol: 'cliente' }, { rol: 'jefe' }
+      ]
+    },
+    {
+      titulo: 'Graficos Clientes', url: '/grafico-clientes', icono: 'bar-chart-outline', rol_tipo: [
+        { rol: 'cliente' }, { rol: 'jefe' }
+      ]
+    },
   ];
-
   funciones: Funcion[] = [];
 
   constructor(protected router: Router, protected navCtrl: NavController, protected auth: AuthService, private alertCtrl: AlertController, private scanner: ScannerService, private db: DatabaseService, private spinner: NgxSpinnerService) {
@@ -88,7 +96,10 @@ export class MenuComponent {
     accordion.value = [];
     this.navCtrl.navigateRoot(url)
   }
+  saberUsuario() {
 
+    console.log(this.auth.currentUser())
+  }
   async cerrarSesion() {
     const alert = await this.alertCtrl.create({
       header: '¿Desea cerrar sesión?',
@@ -196,10 +207,10 @@ export class MenuComponent {
           break;
           */
           case EstadoMesa.EsperandoComida:
-            
+
             break;
           case EstadoMesa.Comiendo:
-            
+
             break;
           case EstadoMesa.Pagando:
             break;
