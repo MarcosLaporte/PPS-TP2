@@ -6,15 +6,13 @@ import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Colecciones, DatabaseService } from 'src/app/services/database.service';
 import { StorageService } from 'src/app/services/storage.service';
-import { addIcons } from 'ionicons';
-import { helpCircleOutline } from 'ionicons/icons';
-import { tomarFoto } from 'src/main';
 import {  MySwal, ToastError, ToastSuccess } from 'src/app/utils/alerts';
 import { EncuestaCliente } from 'src/app/utils/classes/EncuestaCliente';
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit, inject } from '@angular/core';
 import { RangeEstrellasComponent } from 'src/app/components/range-estrellas/range-estrellas.component';
 import { ErrorCodes, Exception } from 'src/app/utils/classes/exception';
 import { NavController } from '@ionic/angular'
+import { FotosService } from 'src/app/services/fotos.service';
 
 @Component({
   selector: 'app-alta-encuesta-cliente',
@@ -23,7 +21,6 @@ import { NavController } from '@ionic/angular'
   standalone: true,
   imports: [IonButton, IonRadio, IonLabel, IonItem, IonCardContent, IonCardTitle, IonCardHeader, IonCard, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule,ReactiveFormsModule,RangeEstrellasComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
-
 })
 export class AltaEncuestaClientePage {
   frmEncuesta: FormGroup;
@@ -35,7 +32,8 @@ export class AltaEncuestaClientePage {
     private db: DatabaseService,
     private storage: StorageService,
     private formBuilder: FormBuilder,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private fotosServ: FotosService
   ) {
     this.frmEncuesta = this.formBuilder.group({
       puntuacionGeneral: [5, [Validators.required, Validators.min(1), Validators.max(5)]],
@@ -59,7 +57,7 @@ export class AltaEncuestaClientePage {
   async tomarFoto(): Promise<void> {
     try {
       while (this.fotos.length < 3) {
-        const foto: any = await tomarFoto();
+        const foto: any = await this.fotosServ.tomarFoto();
         if (!foto) throw new Exception(ErrorCodes.FotoCancelada, 'Debe tomar por lo menos una foto.');
 
         if (foto) {

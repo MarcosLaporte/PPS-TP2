@@ -4,9 +4,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { AuthService } from './services/auth.service';
 import { NavController } from '@ionic/angular';
 import { MenuComponent } from './components/menu/menu.component';
-import { register } from 'swiper/element/bundle';
 
-register();
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
