@@ -15,6 +15,7 @@ import { Mesa } from 'src/app/utils/classes/mesa';
 import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
 import { Roles_Tipos } from 'src/app/utils/interfaces/interfaces';
 import { CheckRolTipo } from 'src/app/utils/check_rol_tipo';
+import { BarcodeFormat } from '@capacitor-mlkit/barcode-scanning/dist/esm/definitions';
 
 declare interface Grupo { nombre: string, paginas: Pagina[] };
 declare interface Pagina { titulo: string, url: string, icono: string, rol_tipo?: Roles_Tipos[], permitirAnon?: boolean };
@@ -91,10 +92,9 @@ export class MenuComponent {
     accordion.value = [];
     this.navCtrl.navigateRoot(url)
   }
-saberUsuario(){
-
-  console.log(this.auth.currentUser())
-}
+  saberUsuario(){
+    console.log(this.auth.currentUser())
+  }
   async cerrarSesion() {
     const alert = await this.alertCtrl.create({
       header: '¿Desea cerrar sesión?',
@@ -123,19 +123,17 @@ saberUsuario(){
 
   async escanearQrMesa() {
     // const QR : string = await this.scanner.escanear();
+    // const valorCrudo = await this.scanner.escanear([BarcodeFormat.QrCode]);
+    // const QR = valorCrudo.split('-')[1];
     const QR: string = "DLDy65F46o10UeAQVcyG" //esto es simulado
-    // const valorCrudo = await this.scanner.escanear([BarcodeFormat.Pdf417]);
     try {
       this.spinner.show();
       const mesa = await this.db.traerDoc<Mesa>(Colecciones.Mesas, QR);
       const cliente = this.auth.UsuarioEnSesion as Cliente;
-      console.log(mesa);
-      console.log(cliente);
 
       // let TEST = true;
 
       if (mesa && cliente) {
-
         switch (mesa.estado) {
           case 'disponible':
             this.spinner.hide();
@@ -153,7 +151,6 @@ saberUsuario(){
                 denyButtonColor: '#f27474',
               }).then(async (res) => {
                 if (res.isConfirmed) {
-                  this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { 'estado': 'cliente pidiendo comida' });
                   this.pedirComida(mesa);
                 } else {
                   this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { 'estado': 'cliente sin pedido' });
@@ -165,7 +162,26 @@ saberUsuario(){
             break;
 
           case 'cliente sin pedido':
-            this.pedirComida(mesa);
+            this.spinner.hide();
+            await MySwal.fire({
+              title: `Bienvenido ${cliente.nombre}`,
+              text: 'que desea hacer?',
+              allowOutsideClick: false,
+              allowEscapeKey: false,
+              showConfirmButton: true,
+              confirmButtonText: 'Pedir comida',
+              showDenyButton: true,
+              denyButtonText: 'Consultar',
+              showCancelButton: true,
+              cancelButtonText: 'nada',
+              cancelButtonColor: '#f27474',
+            }).then(async (res) => {
+              if (res.isConfirmed) {
+                this.pedirComida(mesa);
+              } else if(res.isDenied){
+                //ir a consultas
+              }
+            });
             console.log('cliente sin pedido');
             break;
           /*
@@ -175,6 +191,7 @@ saberUsuario(){
           */
           case 'cliente esperando comida':
             console.log('cliente esperando comida');
+            //aca van los juegos
             break;
 
           case 'cliente comiendo':
@@ -195,6 +212,7 @@ saberUsuario(){
   }
   pedirComida(mesa: Mesa) {
     //menu con funciones de pedir comida
-    this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { 'estado': 'cliente esperando comida' });
+    // this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { 'estado': 'cliente esperando comida' });
+    this.navCtrl.navigateRoot('alta-pedido');
   }
 }

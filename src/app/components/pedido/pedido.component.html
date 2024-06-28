@@ -1,5 +1,23 @@
 <ion-card-content id="menu-container">
-  @for (prod of pedido; track $index) {
-    <h2>{{prod.producto.nombre}} {{prod.cantidad}}</h2> 
+  @if(pedido.length >0 ){
+    <ion-list id="list">
+      @for (prod of pedido; track $index) {
+      <ion-item>
+        <ion-label>{{prod.producto.nombre}} {{prod.cantidad}} {{prod.producto.precio * prod.cantidad}}</ion-label>
+      </ion-item>
+      }
+      <ion-item>
+        <ion-label>Tiempo de elaboración {{tiempoEst}} minutos</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>Monto total {{precio}}</ion-label>
+      </ion-item>
+    </ion-list>
+
+    <ion-button size="light" color="tertiary" expand="block" (click)="hacerPedido()">
+      Hacer pedido
+    </ion-button>
+  }@else {
+    <h2>Todavia no cargó ningun pedido a su pedido</h2>
   }
 </ion-card-content>

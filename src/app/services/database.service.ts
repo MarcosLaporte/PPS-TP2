@@ -9,6 +9,7 @@ export enum Colecciones {
   Productos = 'productos',
   Encuestas = 'encuestas',
   EncuestasCliente = "encuestas-clientes",
+  Pedidos = "pedidos",
 }
 
 export enum Prefijos {

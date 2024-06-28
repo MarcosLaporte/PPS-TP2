@@ -19,6 +19,6 @@ export class AppComponent {
     this.auth.UsuarioEnSesion = ssUser ? JSON.parse(ssUser) : null;
 
     // navCtrl.navigateRoot('home');
-    navCtrl.navigateRoot('lista-pendientes');
+    navCtrl.navigateRoot('alta-pedido');
   }
 }
