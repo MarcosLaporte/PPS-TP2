@@ -52,13 +52,9 @@ export class MenuComponent {
     { titulo: 'Inicio', url: '/home', icono: 'house-chimney', permitirAnon: true },
     { titulo: 'Encuestas empleados', url: '/alta-encuestas-empleados', icono: 'corporate', rol_tipo: [{ rol: 'empleado' }] },
     { titulo: 'Encuestas empleados', url: '/lista-encuestas-empleados', icono: 'corporate', rol_tipo: [{ rol: 'jefe' }] },
+    { titulo: 'Encuestas clientes', url: '/alta-encuesta-cliente', icono: 'feedback-alt', permitirAnon: true, rol_tipo: [{ rol: 'cliente' }] },
     {
-      titulo: 'Encuestas clientes', url: '/alta-encuesta-cliente', icono: 'corporate', permitirAnon: true, rol_tipo: [
-        { rol: 'cliente' }, { rol: 'jefe' }
-      ]
-    },
-    {
-      titulo: 'Graficos Clientes', url: '/grafico-clientes', icono: 'bar-chart-outline', rol_tipo: [
+      titulo: 'Graficos Clientes', url: '/grafico-clientes', icono: 'chart-pie-alt', rol_tipo: [
         { rol: 'cliente' }, { rol: 'jefe' }
       ]
     },
