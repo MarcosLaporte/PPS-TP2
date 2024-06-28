@@ -13,7 +13,7 @@ import { Colecciones, DatabaseService } from 'src/app/services/database.service'
 import { Exception, ErrorCodes } from 'src/app/utils/classes/exception';
 import { EstadoMesa, Mesa, parseEstadoMesa } from 'src/app/utils/classes/mesa';
 import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
-import { Roles_Tipos } from 'src/app/utils/interfaces/interfaces';
+import { ClienteEnEspera, Roles_Tipos } from 'src/app/utils/interfaces/interfaces';
 import { CheckRolTipo } from 'src/app/utils/check_rol_tipo';
 
 declare interface Pagina { titulo: string, url: string, icono: string, rol_tipo?: Roles_Tipos[], permitirAnon?: boolean };
@@ -53,11 +53,8 @@ export class MenuComponent {
     { titulo: 'Encuestas empleados', url: '/alta-encuestas-empleados', icono: 'corporate', rol_tipo: [{ rol: 'empleado' }] },
     { titulo: 'Encuestas empleados', url: '/lista-encuestas-empleados', icono: 'corporate', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Encuestas clientes', url: '/alta-encuesta-cliente', icono: 'feedback-alt', permitirAnon: true, rol_tipo: [{ rol: 'cliente' }] },
-    {
-      titulo: 'Graficos Clientes', url: '/grafico-clientes', icono: 'chart-pie-alt', rol_tipo: [
-        { rol: 'cliente' }, { rol: 'jefe' }
-      ]
-    },
+    { titulo: 'Graficos Clientes', url: '/grafico-clientes', icono: 'chart-pie-alt', rol_tipo: [{ rol: 'cliente' }, { rol: 'jefe' }] },
+    { titulo: 'Lista de espera', url: '/lista-espera', icono: 'skill', rol_tipo: [{ rol: 'empleado', tipo: 'metre' }] },
   ];
   funciones: Funcion[] = [];
 
@@ -123,19 +120,33 @@ export class MenuComponent {
   }
 
   async escanear() {
-    // const QR: string = await this.scanner.escanear();
-    const QR = 'entrada-yourdonistas';
-    const qrSeparado = QR.split('-');
+    if (!this.auth.UsuarioEnSesion) return;
+    try {
+      // const QR: string = await this.scanner.escanear();
+      const QR = 'entrada-yourdonistas'; //FIXME: TEST
+      const qrSeparado = QR.split('-');
 
-    switch (qrSeparado[0]) {
-      case 'entrada': //Código de entrada
-        this.accederListaDeEspera();
-        break;
-      case 'mesa':
-        this.escanearQrMesa(qrSeparado[1]);
-        break;
-      default:
-        ToastError.fire('El código escaneado no es reconocido.');
+      switch (qrSeparado[0]) {
+        case 'entrada': //Código de entrada
+          if (this.auth.UsuarioEnSesion.rol !== 'cliente')
+            throw new Exception(ErrorCodes.TipoUsuarioIncorrecto, 'Solo los clientes pueden acceder a la lista de espera.');
+
+          if ((this.auth.UsuarioEnSesion as Cliente).idMesa !== null)
+            throw new Exception(ErrorCodes.ClienteYaTieneMesa, 'No puede entrar a la lista de espera, ya tiene una mesa asignada!');
+
+          this.accederListaDeEspera();
+          break;
+        case 'mesa':
+          if (this.auth.UsuarioEnSesion?.rol !== 'cliente')
+            throw new Exception(ErrorCodes.TipoUsuarioIncorrecto, 'Solo los clientes pueden acceder a la lista de espera.');
+
+          this.escanearQrMesa(qrSeparado[1]);
+          break;
+        default:
+          throw new Exception(ErrorCodes.QrInvalido, 'El código escaneado no es reconocido.');
+      }
+    } catch (error: any) {
+      ToastError.fire('Ups...', error.message);
     }
   }
 
@@ -147,53 +158,70 @@ export class MenuComponent {
       confirmButtonText: 'Acceder a la lista',
       showDenyButton: true,
       denyButtonText: 'Ver encuestas'
-    }).then((res) => {
+    }).then(async (res) => {
       let url = 'lista-encuestas-clientes';
       if (res.isConfirmed) {
-        this.db.subirDoc(Colecciones.ListaDeEspera, this.auth.UsuarioEnSesion as Cliente, false);
-        url = 'cliente-espera';
+        if (await this.clienteEstaEnEspera(this.auth.UsuarioEnSesion!.id))
+          throw new Exception(ErrorCodes.ClienteEnEspera, 'Ya se encuentra en la lista de espera!');
+
+        const clienteEnEspera: ClienteEnEspera = { id: '', fecha: new Date(), cliente: this.auth.UsuarioEnSesion as Cliente };
+        this.db.subirDoc(Colecciones.ListaDeEspera, clienteEnEspera, true);
+        url = 'clientes-espera';
       }
 
       this.navCtrl.navigateRoot(url);
     });
   }
 
+  private async clienteEstaEnEspera(idCliente: string): Promise<boolean> {
+    this.spinner.show();
+
+    const col = await this.db.traerColeccion<ClienteEnEspera>(Colecciones.ListaDeEspera);
+    const existe = col.find((v) => v.cliente.id === idCliente) !== undefined;
+
+    this.spinner.hide();
+    return existe;
+  }
+
   async escanearQrMesa(idMesa: string) {
     try {
+      const cliente = this.auth.UsuarioEnSesion as Cliente;
+      if (idMesa !== cliente.idMesa)
+        throw new Exception(ErrorCodes.MesaEquivocada, "Esta no es su mesa.");
+
       this.spinner.show();
       const mesa = await this.db.traerDoc<Mesa>(Colecciones.Mesas, idMesa);
-      const cliente = this.auth.UsuarioEnSesion as Cliente;
 
       if (mesa && cliente) {
         console.log(parseEstadoMesa(mesa.estado));
         switch (mesa.estado) {
           case EstadoMesa.Disponible:
+            ToastInfo.fire('Para acceder a esta mesa, se le debe ser asignada por el metre.');
+            break;
+          case EstadoMesa.Asignada:
             this.spinner.hide();
-            if (cliente.idMesa === mesa.id) {
-              await MySwal.fire({
-                title: `Bienvenido, ${cliente.nombre}`,
-                text: '¿Ya desea realizar su pedido?',
-                allowOutsideClick: false,
-                allowEscapeKey: false,
-                showConfirmButton: true,
-                confirmButtonText: 'Sí',
-                confirmButtonColor: '#a5dc86',
-                showDenyButton: true,
-                denyButtonText: 'No',
-                denyButtonColor: '#f27474',
-              }).then(async (res) => {
-                if (res.isConfirmed) {
-                  mesa.estado = EstadoMesa.PidiendoComida;
-                  this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.PidiendoComida });
-                  this.pedirComida(mesa);
-                } else {
-                  mesa.estado = EstadoMesa.SinPedido;
-                  this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.SinPedido });
-                }
-              });
-            } else {
-              throw new Exception(ErrorCodes.MesaEquivocada, "Esta no es su mesa.");
-            }
+            await MySwal.fire({
+              title: `Bienvenido, ${cliente.nombre}`,
+              text: '¿Ya desea realizar su pedido?',
+              allowOutsideClick: false,
+              allowEscapeKey: false,
+              showConfirmButton: true,
+              confirmButtonText: 'Sí',
+              confirmButtonColor: '#a5dc86',
+              showDenyButton: true,
+              denyButtonText: 'No',
+              denyButtonColor: '#f27474',
+            }).then(async (res) => {
+              this.spinner.show();
+              if (res.isConfirmed) {
+                mesa.estado = EstadoMesa.PidiendoComida;
+                this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.PidiendoComida });
+                this.pedirComida(mesa);
+              } else {
+                mesa.estado = EstadoMesa.SinPedido;
+                this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.SinPedido });
+              }
+            });
             break;
           case EstadoMesa.SinPedido:
             this.pedirComida(mesa);
@@ -212,6 +240,7 @@ export class MenuComponent {
             break;
         }
       }
+
       this.spinner.hide();
     } catch (error: any) {
       this.spinner.hide();
@@ -219,8 +248,9 @@ export class MenuComponent {
     }
 
   }
-  pedirComida(mesa: Mesa) {
+
+  private async pedirComida(mesa: Mesa) {
     //menu con funciones de pedir comida
-    this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.EsperandoComida });
+    await this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.EsperandoComida });
   }
 }
