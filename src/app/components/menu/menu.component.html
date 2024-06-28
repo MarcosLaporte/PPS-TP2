@@ -11,25 +11,24 @@
           </ion-item>
           <div slot="content">
             <ng-container *ngFor="let pag of paginasGenerales">
-              <ion-item *ngIf="CheckRolTipo(auth, pag.rol_tipo, pag.permitirAnon)"
-                button (click)="itemClick(pag.url)">
+              <ion-item *ngIf="CheckRolTipo(auth, pag.rol_tipo, pag.permitirAnon)" button (click)="itemClick(pag.url)">
                 <i [class]="'fi fi-tr-'+pag.icono"></i>
                 {{pag.titulo}}
               </ion-item>
             </ng-container>
-            <ion-accordion *ngIf="grupoAltas.paginas.length > 1; else unicaAlta" [value]="grupoAltas.nombre">
+            <ion-accordion *ngIf="pagsAltas.length > 1; else unicaAlta" value="Altas">
               <ion-item slot="header" color="light">
-                <ion-label>{{grupoAltas.nombre}}</ion-label>
+                <ion-label>Altas</ion-label>
               </ion-item>
               <div slot="content">
-                <ion-item button *ngFor="let pag of grupoAltas.paginas" (click)="itemClick(pag.url)">
+                <ion-item button *ngFor="let pag of pagsAltas" (click)="itemClick(pag.url)">
                   <i [class]="'fi fi-tr-'+pag.icono"></i>
                   {{pag.titulo}}
                 </ion-item>
               </div>
             </ion-accordion>
             <ng-template #unicaAlta>
-              <ion-item *ngIf="grupoAltas.paginas[0] as alta" button (click)="itemClick(alta.url)">
+              <ion-item *ngIf="pagsAltas[0] as alta" button (click)="itemClick(alta.url)">
                 <i [class]="'fi fi-tr-'+alta.icono"></i>
                 Alta {{alta.titulo}}
               </ion-item>

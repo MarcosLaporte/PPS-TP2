@@ -16,8 +16,8 @@ import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
 import { Roles_Tipos } from 'src/app/utils/interfaces/interfaces';
 import { CheckRolTipo } from 'src/app/utils/check_rol_tipo';
 
-declare interface Grupo { nombre: string, paginas: Pagina[] };
 declare interface Pagina { titulo: string, url: string, icono: string, rol_tipo?: Roles_Tipos[], permitirAnon?: boolean };
+declare interface Funcion { titulo: string, icono: string, accion: () => Promise<any> };
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
@@ -47,11 +47,7 @@ export class MenuComponent {
 
   ];
 
-  grupoAltas: Grupo = {
-    nombre: 'Altas',
-    paginas: []
-  };
-
+  pagsAltas: Pagina[] = [];
   paginasGenerales: Pagina[] = [
     { titulo: 'Perfil', url: '/perfil', icono: 'circle-user' },
     { titulo: 'Inicio', url: '/home', icono: 'house-chimney', permitirAnon: true },
@@ -59,23 +55,28 @@ export class MenuComponent {
     { titulo: 'Encuestas empleados', url: '/lista-encuestas-empleados', icono: 'corporate', rol_tipo: [{ rol: 'jefe' }] },
   ];
 
-  public funciones: { titulo: string, icono: string, accion: () => Promise<any> }[] = [
-    { titulo: 'Sesión', icono: 'log-in-outline', accion: async () => { } },
-    { titulo: 'Escanear', icono: 'scan', accion: async () => await this.escanear() },
-  ];
-
-  readonly funcIniciarSesion =
-    { titulo: 'Iniciar sesión', icono: 'log-in-outline', accion: async () => this.navCtrl.navigateRoot('login') };
-  readonly funcCerrarSesion =
-    { titulo: 'Cerrar sesión', icono: 'log-out-outline', accion: async () => await this.cerrarSesion() };
+  funciones: Funcion[] = [];
 
   constructor(protected router: Router, protected navCtrl: NavController, protected auth: AuthService, private alertCtrl: AlertController, private scanner: ScannerService, private db: DatabaseService, private spinner: NgxSpinnerService) {
     addIcons({ menuOutline, caretDownCircle, chevronDownCircle, logInOutline, logOutOutline, scan, restaurant });
 
-    auth.usuarioEnSesionObs.subscribe((usuario) => {
-      this.grupoAltas.paginas = this.altas.filter((pag) => CheckRolTipo(auth, pag.rol_tipo, pag.permitirAnon));
+    const funcEscanear =
+      { titulo: 'Escanear', icono: 'scan', accion: async () => await this.escanear() };
+    const funcIniciarSesion =
+      { titulo: 'Iniciar sesión', icono: 'log-in-outline', accion: async () => this.navCtrl.navigateRoot('login') };
+    const funcCerrarSesion =
+      { titulo: 'Cerrar sesión', icono: 'log-out-outline', accion: async () => await this.cerrarSesion() };
 
-      this.funciones[0] = usuario ? this.funcCerrarSesion : this.funcIniciarSesion;
+    auth.usuarioEnSesionObs.subscribe((usuario) => {
+      this.pagsAltas = this.altas.filter((pag) => CheckRolTipo(auth, pag.rol_tipo, pag.permitirAnon));
+
+      if (!usuario) {
+        this.funciones[0] = funcIniciarSesion;
+        this.funciones.splice(1, 1);
+      } else {
+        this.funciones[0] = funcCerrarSesion;
+        this.funciones[1] = funcEscanear;
+      }
     });
 
     const ssUser = sessionStorage.getItem('usuario');
