@@ -81,9 +81,6 @@ export class MenuComponent {
         this.funciones[1] = funcEscanear;
       }
     });
-
-    const ssUser = sessionStorage.getItem('usuario');
-    this.auth.UsuarioEnSesion = ssUser ? JSON.parse(ssUser) : null;
   }
 
   itemClick(url: string) {
@@ -108,7 +105,6 @@ export class MenuComponent {
           handler: async () => {
             this.auth.signOut();
             ToastSuccess.fire('Sesión cerrada!');
-            this.navCtrl.navigateRoot('login');
           },
         }
       ],
