@@ -122,8 +122,9 @@ export class MenuComponent {
 
       switch (qrSeparado[0]) {
         case 'entrada': //Código de entrada
-          if (this.auth.UsuarioEnSesion.rol !== 'cliente')
-            throw new Exception(ErrorCodes.TipoUsuarioIncorrecto, 'Solo los clientes pueden acceder a la lista de espera.');
+          if (this.auth.UsuarioEnSesion.rol !== 'cliente' ||
+            !['aceptado', 'no necesita'].includes((this.auth.UsuarioEnSesion as Cliente).estadoCliente))
+            throw new Exception(ErrorCodes.TipoUsuarioIncorrecto, 'Solo los clientes aceptados pueden acceder a la lista de espera.');
 
           if ((this.auth.UsuarioEnSesion as Cliente).idMesa !== null)
             throw new Exception(ErrorCodes.ClienteYaTieneMesa, 'No puede entrar a la lista de espera, ya tiene una mesa asignada!');
@@ -234,7 +235,7 @@ export class MenuComponent {
             }).then(async (res) => {
               if (res.isConfirmed) {
                 this.navCtrl.navigateRoot('alta-pedido');
-              } else if(res.isDenied){
+              } else if (res.isDenied) {
                 //ir a consultas
               }
             });

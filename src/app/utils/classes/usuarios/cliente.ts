@@ -3,7 +3,7 @@ import { Persona } from "./persona";
 export class Cliente extends Persona {
   tipo: TipoCliente;
   idMesa: string | null;
-  estadoCliente: estadoCliente;
+  estadoCliente: EstadoCliente;
 
   constructor(nombre: string, apellido: string, dni: number, correo: string, fotoUrl: string, tipo: TipoCliente) {
     super('cliente', nombre, apellido, dni, fotoUrl, correo);
@@ -18,4 +18,4 @@ export class Cliente extends Persona {
 
 }
 export type TipoCliente = 'registrado' | 'anonimo';
-export type estadoCliente = 'no necesita' | 'pendiente' | 'aceptado' | 'rechazado';
+export type EstadoCliente = 'no necesita' | 'pendiente' | 'aceptado' | 'rechazado';
