@@ -85,7 +85,7 @@ export const routes: Routes = [
   {
     path: 'alta-pedido',
     loadComponent: () => import('./pages/alta-pedido/alta-pedido.page').then(m => m.AltaPedidoPage),
-    canActivate: [sesionIniciadaGuard, rolTipoGuard],
+    canActivate: [sesionIniciadaGuard, rolTipoGuard, clienteAceptadoGuard],
     data: {
       roles_tipos: [
         { rol: 'empleado', tipo: 'mozo' },
@@ -108,8 +108,8 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/encuestas/lista-encuestas-empleados/lista-encuestas-empleados.page').then(m => m.ListaEncuestasEmpleadosPage),
   },
   {
-    path: 'lista-pendientes',
-    loadComponent: () => import('./pages/lista-pendientes/lista-pendientes.page').then(m => m.ListaPendientesPage),
+    path: 'lista-clientes-pendientes',
+    loadComponent: () => import('./pages/lista-clientes-pendientes/lista-clientes-pendientes.page').then(m => m.ListaClientesPendientesPage),
     canActivate: [sesionIniciadaGuard, rolTipoGuard],
     data: {
       roles_tipos: [
