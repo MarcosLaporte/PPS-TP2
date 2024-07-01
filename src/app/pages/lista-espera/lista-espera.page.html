@@ -31,37 +31,3 @@
     </div>
   </ng-template>
 </div>
-
-<ion-modal id="mesas-modal">
-  <div class="tabla-container">
-    <div class="tabla">
-      <table *ngIf="mesasDisp.length > 0; else sinMesas">
-        <thead>
-          <tr>
-            <th id="nroMesa">Nro Mesa</th>
-            <th id="tipo">Tipo</th>
-            <th id="cantComensales">Comensales</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let mesa of mesasDisp" (click)="selecMesa(mesa)">
-            <td style="text-align: end;">#{{mesa.nroMesa}}</td>
-            <td style="text-align: center;">{{mesa.tipo}}</td>
-            <td style="text-align: start;">{{mesa.cantComensales}}</td>
-          </tr>
-        </tbody>
-      </table>
-      <ng-template #sinMesas>
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title>No hay mesas</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <p>Ahora mismo no hay mesas disponibles. Su celular le notificará cuando se libere una.</p>
-            <ion-button expand="block" (click)="modal.dismiss()">Ir a lista de espera</ion-button>
-          </ion-card-content>
-        </ion-card>
-      </ng-template>
-    </div>
-  </div>
-</ion-modal>

@@ -4,9 +4,9 @@ import { Colecciones, DatabaseService } from 'src/app/services/database.service'
 import { EstadoMesa, Mesa } from 'src/app/utils/classes/mesa';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonRadio, IonRadioGroup, IonCardContent, IonButton } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
-import { NavController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { MySwal } from 'src/app/utils/alerts';
-import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
+import { ClienteEnEspera } from 'src/app/utils/interfaces/interfaces';
 @Component({
   selector: 'app-mesas-disponibles',
   templateUrl: './mesas-disponibles.component.html',
@@ -15,31 +15,38 @@ import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
   imports: [IonButton, IonCardContent, IonRadioGroup, IonRadio, IonCardSubtitle, IonCardTitle, IonCardHeader, IonCard, IonList, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule],
 })
 export class MesasDisponiblesComponent implements OnInit {
-  mesas: Mesa[] = [];
-  @Input({ required: true }) cliente!: Cliente;
-  constructor(private db: DatabaseService, private spinner: NgxSpinnerService, protected navCtrl: NavController) { }
+  @Input({ required: true }) mesas!: Mesa[];
+  @Input({ required: true }) clienteEspera!: ClienteEnEspera;
+  constructor(private db: DatabaseService, private spinner: NgxSpinnerService, protected modalCtrl: ModalController) { }
 
   async ngOnInit() {
-    this.spinner.show();
-    if (!this.cliente) throw new Error('Campo `cliente` no existe.');
-    this.mesas = (await this.db.traerColeccion<Mesa>(Colecciones.Mesas)).filter((mesa) => mesa.estado === EstadoMesa.Disponible);
-    this.spinner.hide();
+    if (!this.mesas) throw new Error('Campo `mesasDisp` no existe.');
+    if (!this.clienteEspera) throw new Error('Campo `cliente` no existe.');
   }
 
   selecMesa(mesa: Mesa) {
     MySwal.fire({
-      title: `¿Confirmar mesa nro${mesa.nroMesa} para ${this.cliente.nombre}?`,
+      title: `¿Confirmar mesa #${mesa.nroMesa} para ${this.clienteEspera.cliente.nombre}?`,
       imageUrl: mesa.fotoUrl,
       showConfirmButton: true,
       confirmButtonText: 'Confirmar',
       showCancelButton: true,
-      cancelButtonText: 'Cancelar'
-    }).then((res) => {
+      cancelButtonText: 'Cancelar',
+    }).then(async (res) => {
       if (res.isConfirmed) {
-        this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.Asignada });
-        this.db.actualizarDoc(Colecciones.Usuarios, this.cliente.id, { idMesa: mesa.id });
-        this.navCtrl.navigateRoot('lista-espera');
-      }
+        this.spinner.show();
+        await Promise.all([
+          this.db.borrarDoc(Colecciones.ListaDeEspera, this.clienteEspera!.id),
+          this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.Asignada }),
+          this.db.actualizarDoc(Colecciones.Usuarios, this.clienteEspera!.cliente!.id, { idMesa: mesa.id })
+        ]);
+        this.modalCtrl.dismiss({}, 'success');
+        this.spinner.hide();
+      } else
+        this.modalCtrl.dismiss({}, 'cancel');
+    }).catch((error: any) => {
+      console.error(error);
+      this.modalCtrl.dismiss(error, 'error');
     });
   }
 
