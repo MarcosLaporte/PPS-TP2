@@ -1,57 +1,90 @@
-@import '/src/theme/variables.scss'; 
+@import '/src/theme/variables.scss';
+@import url('https://fonts.cdnfonts.com/css/cash-currency');
 
-ion-card-header {
+.container {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
   align-items: center;
-  #icon-container {
-    height: 50px;
-    ion-icon {
-      height: 100%;
-      width: 50px;
+
+  ion-card-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    ion-card-subtitle {
+      font-family: 'Cash Currency', sans-serif;
+      font-size: xx-large;
+    }
+
+    #btn-container ion-icon {
+      font-size: 3.5rem;
     }
   }
-}
-#menu-container {
-  height: 650px;
-  h2{
-    color: $lavander;
-    padding: 0 .5rem;
-    margin: 1rem 0;
-  }
-  #lista {
-    height: 100%;
-    overflow-y: auto;
-    // overflow-x: hidden;
-    .imgs-container {
-      display: flex;
-      flex-direction: row;
-      overflow-x: auto;
-    
-      img {
-        width: 100%;
-        height: auto;
-        display: block !important;
-        margin: 0 1rem;
+
+  ion-card-content#menu-container {
+    h2 {
+      color: $lavander;
+      padding: 0.5rem;
+      margin: 1rem 0;
+    }
+
+    ion-accordion-group#lista-productos {
+      max-height: 62.5vh;
+      overflow-y: auto;
+
+      ion-accordion {
+        &:nth-child(odd) ion-item {
+          --ion-color-base: #{$lavander} !important;
+        }
+
+        &:nth-child(even) ion-item {
+          --ion-color-base: #{$cool-grey} !important;
+        }
+
+        ion-item {
+          ion-badge {
+            margin-inline-end: 0.25rem;
+            width: 2.125rem;
+            font-size: 1.25rem;
+          }
+
+          .precio-prod {
+            color: #000000;
+            font-family: 'Cash Currency', sans-serif;
+          }
+        }
+
+        .content {
+          .imgs-container {
+            display: flex;
+            flex-direction: row;
+            overflow-x: auto;
+
+            img {
+              width: 100%;
+              height: auto;
+              display: block !important;
+              margin: 0 1rem;
+            }
+          }
+
+          .cont-prod {
+            display: flex;
+            align-items: center;
+
+            ion-button {
+              width: 70%;
+            }
+
+            ion-input {
+              width: 30%;
+              text-align: center;
+              font-size: 3rem;
+              font-family: Baskerville, Baskerville Old Face;
+            }
+          }
+        }
       }
     }
   }
-  .cont-prod {
-    display: flex;
-    align-items: center;
-
-    ion-button {
-      width: 70%;
-    }
-
-    ion-input {
-      width: 30%;
-      text-align: center;
-      font-size: 3rem;
-    }
-  }
-}
-ion-icon:active {
-  scale: 0.8;
 }

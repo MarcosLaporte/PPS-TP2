@@ -1,23 +1,37 @@
-<ion-card-content id="menu-container">
-  @if(pedido.length >0 ){
-    <ion-list id="list">
-      @for (prod of pedido; track $index) {
-      <ion-item>
-        <ion-label>{{prod.producto.nombre}} {{prod.cantidad}} {{prod.producto.precio * prod.cantidad}}</ion-label>
-      </ion-item>
+<div id="pedido-container">
+  @if(pedido.length > 0){
+  <table id="tabla-pedido">
+    <thead>
+      <tr>
+        <th id="cant">U</th>
+        <th id="nombre">Producto</th>
+        <!-- <th id="tiempo">Mins.</th> -->
+        <!-- <th id="precio">Valor Un.</th> -->
+      </tr>
+    </thead>
+    <tbody>
+      @for(prodCant of pedido; track $index) {
+      <tr>
+        <td class="prod-cant">{{prodCant.cantidad}}</td>
+        <td class="prod-nombre">{{prodCant.producto.nombre}}</td>
+        <!-- <td class="prod-tiempo">{{prodCant.producto.tiempoElab}}'</td> -->
+        <!-- <td class="prod-precio">{{prodCant.producto.precio | currency}}</td> -->
+      </tr>
       }
-      <ion-item>
-        <ion-label>Tiempo de elaboración {{tiempoEst}} minutos</ion-label>
-      </ion-item>
-      <ion-item>
-        <ion-label>Monto total {{precio}}</ion-label>
-      </ion-item>
-    </ion-list>
+    </tbody>
+    <!-- <tfoot>
+      <tr>
+        <td colspan="2" class="total-label">Total</td>
+        <td class="total-tiempo">{{ tiempoEst }}'</td>
+        <td class="total-precio">{{ valorTotal | currency }}</td>
+      </tr>
+    </tfoot> -->
+  </table>
 
-    <ion-button size="light" color="tertiary" expand="block" (click)="hacerPedido()">
-      Hacer pedido
-    </ion-button>
+  <ion-button size="light" color="tertiary" expand="block" (click)="hacerPedido()">
+    Confirmar pedido
+  </ion-button>
   }@else {
-    <h2>Todavia no cargó ningun pedido a su pedido</h2>
+  <h2>Todavia no cargó ningun producto a su pedido</h2>
   }
-</ion-card-content>
+</div>

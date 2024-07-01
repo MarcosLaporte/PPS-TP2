@@ -79,14 +79,20 @@
 }
 
 ion-modal {
-  &#encuesta-modal,
-  &#pedido-modal {
+  &#encuesta-modal {
     --height: 50vh;
     --width: 90%;
   }
 
-  &#mesas-modal {
+  &#mesas-modal,
+  &#pedido-modal {
     --height: auto;
     --width: 90%;
+  }
+}
+
+ion-accordion-group#lista-productos {
+  .ion-accordion-toggle-icon {
+    margin-right: 1rem;
   }
 }
