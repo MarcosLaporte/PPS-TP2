@@ -7,8 +7,8 @@ export abstract class Persona {
   fotoUrl: string;
   correo: string;
 
-  constructor(id: string, rol: RolUsuario, nombre: string, apellido: string, dni: number, fotoUrl: string, correo: string) {
-    this.id = id;
+  constructor(rol: RolUsuario, nombre: string, apellido: string, dni: number, fotoUrl: string, correo: string) {
+    this.id = '';
     this.rol = rol;
     this.nombre = nombre;
     this.apellido = apellido;

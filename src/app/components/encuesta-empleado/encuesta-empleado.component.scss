@@ -1,0 +1,65 @@
+@import '/src/theme/variables.scss';
+
+.encuesta-container {
+  max-height: 75vh;
+  overflow-y: auto;
+
+  ion-card {
+    border-radius: 8px;
+  }
+
+  ion-card-header {
+    font-weight: bold;
+    padding: 12px;
+    font-size: 18px;
+  }
+
+  ion-card-header ion-text {
+    display: block;
+    font-size: 14px;
+    color: #757575;
+    margin-top: 4px;
+  }
+
+  ion-card-content {
+    font-size: 1.15rem;
+    line-height: 1.5;
+  }
+
+  .fotos-container {
+    margin-top: 12px;
+
+    img {
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+      margin-top: 8px;
+    }
+  }
+
+  .buenosAspectos {
+    margin-top: 1rem;
+
+    .aspectos {
+      display: flex;
+      flex-wrap: wrap;
+
+      span {
+        padding: 2px 10px;
+        border-radius: 20px;
+        color: #1f1f1f;
+        background-color: $mint;
+      }
+    }
+  }
+
+  .comentarios {
+    margin-top: 1rem;
+
+    p {
+      margin: 0;
+      padding: 8px;
+      border-radius: 4px;
+    }
+  }
+}

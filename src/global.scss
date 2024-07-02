@@ -78,7 +78,17 @@
   display: none;
 }
 
-ion-modal#pedido-modal {
-  --height: 50vh;
-  --width: 90%;
+ion-modal {
+  &#encuesta-modal,
+  &#mesas-modal,
+  &#pedido-modal {
+    --height: auto;
+    --width: 90%;
+  }
+}
+
+ion-accordion-group#lista-productos {
+  .ion-accordion-toggle-icon {
+    margin-right: 1rem;
+  }
 }
