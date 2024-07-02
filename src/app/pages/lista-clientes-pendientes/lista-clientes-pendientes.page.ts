@@ -3,22 +3,25 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonAccordionGroup, IonAccordion, IonItem, IonLabel, IonButton, IonIcon, IonAvatar, IonList } from '@ionic/angular/standalone';
 import { Colecciones, DatabaseService } from 'src/app/services/database.service';
-import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
+import { Cliente, EstadoCliente } from 'src/app/utils/classes/usuarios/cliente';
 import { addIcons } from 'ionicons';
 import { addCircleOutline, checkmarkCircleOutline, removeCircleOutline } from 'ionicons/icons';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { delay } from 'src/main';
+import { ToastSuccess } from 'src/app/utils/alerts';
 
 @Component({
-  selector: 'app-lista-pendientes',
-  templateUrl: './lista-pendientes.page.html',
-  styleUrls: ['./lista-pendientes.page.scss'],
+  selector: 'app-lista-clientes-pendientes',
+  templateUrl: './lista-clientes-pendientes.page.html',
+  styleUrls: ['./lista-clientes-pendientes.page.scss'],
   standalone: true,
   imports: [IonList, IonAvatar, IonIcon, IonButton, IonLabel, IonItem, IonAccordion, IonAccordionGroup, IonCardContent, IonCardTitle, IonCardHeader, IonCard, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
 })
-export class ListaPendientesPage implements OnInit {
+export class ListaClientesPendientesPage implements OnInit {
 
-  // protected clientes: Cliente[] = [];
-  protected clientes: Cliente[] =
+  protected clientes: Cliente[] = [];
+  //FIXME: TEST
+  /* protected clientes: Cliente[] =
   [
     {
         "apellido": "Carlos",
@@ -45,32 +48,27 @@ export class ListaPendientesPage implements OnInit {
         "dni": 32453888
     }
   ];
-
-  constructor(protected db : DatabaseService, 
-    private spinner: NgxSpinnerService) {
+ */
+  constructor(protected db: DatabaseService, private spinner: NgxSpinnerService) {
     addIcons({ checkmarkCircleOutline, removeCircleOutline });
   }
 
-  ngOnInit() {
-    // this.spinner.show();
-    // this.spinner.hide();  
-    // this.db.escucharColeccion<Cliente>(Colecciones.Usuarios, this.clientes, ( c => {
-    //   if (c.estadoCliente == 'pendiente')
-    //     return true;
-    //   else
-    //     return false
-    // }))
+  async ngOnInit() {
+    this.spinner.show();
+    this.db.escucharColeccion<Cliente>(
+      Colecciones.Usuarios,
+      this.clientes,
+      c => c.estadoCliente === 'pendiente' //FIXME: Cliente no se borra
+    );
 
-    console.log(this.clientes);
+    await delay(2500);
+    this.spinner.hide();
   }
-  aceptarCliente(id: string){
-    this.db.actualizarDoc(Colecciones.Usuarios, id, {'estadoCliente':'aceptado'}).then(() => {
-      
-    })
-  }
-  
-  rechazarCliente(id: string){
-    this.db.actualizarDoc(Colecciones.Usuarios, id, {'estadoCliente':'rechazado'})
-    
+
+  async manejarCliente(idCliente: string, estado: 'aceptado' | 'rechazado') {
+    this.spinner.show();
+    await this.db.actualizarDoc(Colecciones.Usuarios, idCliente, { 'estadoCliente': estado });
+    ToastSuccess.fire(`Cliente ${estado}!`);
+    this.spinner.hide();
   }
 }

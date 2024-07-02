@@ -1,55 +1,39 @@
 <div class="container background-pri">
   <ion-card style="width: 95%">
     <ion-card-header>
-      <ion-card-title>Consulta a los mozos</ion-card-title>
+      <ion-button fill="clear" (click)="navCtrl.back()">
+        <ion-icon slot="start" name="chevron-back-circle-outline" size="large"></ion-icon>
+        Volver
+      </ion-button>
     </ion-card-header>
-    <ion-card-content >
-      <div class="card">
-        <div id="mensajes">
-          @for (msg of mensajes; track $index) { 
-          <div
-            class="msg"
-            [ngClass]="auth.UsuarioEnSesion!.id == msg.id ? 'enviado' : 'recibido'">
-            <div *ngIf="auth.UsuarioEnSesion!.id != msg.id" id="alias">
-              <p>{{ msg.nombre }}</p>
-            </div>
-            <div id="msg-hour-container">
-              <div id="text">
-                <p>{{ msg.message }}</p>
-              </div>
-              <div id="hour">
-                {{ parsedTime(msg.time) }}
-              </div>
-            </div>
+    <ion-card-content>
+      <div id="mensajes">
+        @for (msg of mensajes; track $index) {
+        <div class="msg" [ngClass]="usuario.id === msg.autor.id ? 'enviado' : 'recibido'">
+          <div *ngIf="usuario.id !== msg.autor.id" class="alias">
+            <ion-text>{{ msg.autor.rol === 'cliente' ? 'Mesa '+msg.nroMesa : 'Mozo '+msg.autor.nombre }}</ion-text>
           </div>
-        }
+          <ion-text class="texto">{{msg.mensaje}}</ion-text>
+          <ion-text class="fecha">{{msg.fecha | date:'dd/MM | HH:mm'}}</ion-text>
         </div>
-        
-  
-        <form class="card-footer text-muted">
-          <div class="input">
-            <ion-item ngClass='input'>
-              <ion-input
-                type="text"
-                placeholder="Escriba su mensaje"
-                class="form-control"
-                [(ngModel)]="nuevoMensaje"
-                name="mensaje"
-                ngDefaultControl
-              ></ion-input>
-              <span>
-                <ion-icon
-                  name="send-outline"
-                  id="enviar"
-                  size="large"
-                  (click)="enviarMensaje()"
-                ></ion-icon>
-              </span>
-            </ion-item>
-          </div>
-        </form>
+        }
       </div>
-      
-    </ion-card-content
-  ></ion-card>
+
+      <form class="card-footer text-muted">
+        <div class="input">
+          <ion-item ngClass='input'>
+            <ion-input type="text" placeholder="Escriba su mensaje" class="form-control" name="mensaje"
+              [(ngModel)]="nuevoMensaje" ngDefaultControl
+              (keyup.enter)="enviarMensaje()"></ion-input>
+            <span>
+              <ion-button fill="clear" [color]="nuevoMensaje.trim() === '' ? 'medium' : 'success'"
+                [disabled]="nuevoMensaje.trim() === ''" (click)="enviarMensaje()">
+                <ion-icon slot="icon-only" name="send-outline" id="enviar" size="large"></ion-icon>
+              </ion-button>
+            </span>
+          </ion-item>
+        </div>
+      </form>
+    </ion-card-content>
+  </ion-card>
 </div>

@@ -6,16 +6,16 @@ import { ToastError } from 'src/app/utils/alerts';
 
 export const clienteAceptadoGuard: CanActivateFn = (route, state) => {
   const auth = inject(AuthService);
-  
-  let cliente : Cliente= <Cliente>auth.UsuarioEnSesion;
-  
-  if(cliente.estadoCliente == 'aceptado' || 'no necesita'){
-    console.log("A");
+
+  if (auth.UsuarioEnSesion?.rol !== 'cliente') return false;
+
+  let cliente: Cliente = <Cliente>auth.UsuarioEnSesion;
+  if (cliente.estadoCliente === 'aceptado' || cliente.estadoCliente === 'no necesita') {
     return true;
-  }else{
-    ToastError.fire(
-    `Acceso denegado su registro ${(cliente.estadoCliente == 'rechazado')?'fue denegado':'todavia no fue aceptado'}`)
-    return false;  
+  } else {
+    ToastError.fire(`Acceso denegado su registro 
+      ${(cliente.estadoCliente == 'rechazado') ? 'fue denegado' : 'todavia no fue aceptado'}`);
+    return false;
   }
 
 };

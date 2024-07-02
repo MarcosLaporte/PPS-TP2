@@ -5,59 +5,44 @@ import { Colecciones, DatabaseService } from 'src/app/services/database.service'
 import { ToastSuccess } from 'src/app/utils/alerts';
 import { Pedido, PedidoArmado, PedidoProd } from 'src/app/utils/classes/pedido';
 import { Producto } from 'src/app/utils/classes/producto';
-import { NavController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-pedido',
   templateUrl: './pedido.component.html',
-  imports: [IonButton, IonLabel, IonItem, IonList, IonCardContent, IonContent],
+  imports: [IonButton, IonLabel, IonItem, IonList, IonCardContent, IonContent, CommonModule],
   standalone: true,
   styleUrls: ['./pedido.component.scss'],
 })
-export class PedidoComponent  implements OnInit {
-
-  prodCant: { [id: string]: number } = {};
-  productos: Producto[] = [];
-  protected precio: number = 0; 
+export class PedidoComponent implements OnInit {
+  pedido: PedidoProd[] = [];
+  protected valorTotal: number = 0;
   protected tiempoEst: number = 0;
-  protected pedido: PedidoProd[] = []; 
-  protected pedidoHecho!: Pedido; 
 
-  constructor(private spinner: NgxSpinnerService, private db: DatabaseService, private navCtrl: NavController) {
-  }
+  constructor(protected modalCtrl: ModalController) { }
 
   ngOnInit() {
-    this.productos.forEach(prod => {
-      const cant: number | undefined = this.prodCant[prod.id];
-      if(cant){
-        this.pedido.push({producto : prod, cantidad: cant});
-      }
-    });
-    
-    this.pedido.forEach( item => {
-      this.precio += item.producto.precio * item.cantidad;
-      if(item.producto.tiempoElab > this.tiempoEst){
+    this.pedido.forEach(item => {
+      this.valorTotal += item.producto.precio * item.cantidad;
+      if (item.producto.tiempoElab > this.tiempoEst) {
         this.tiempoEst = item.producto.tiempoElab;
       }
-    })
+    });
   }
-  hacerPedido(){
-    this.spinner.show();
 
-    let pedidoArmado : PedidoArmado[] = [];
-    this.pedido.forEach( pedido=> {
-      let pedidoArmadoItem : PedidoArmado= {
-        nombre : pedido.producto.nombre, 
-        cantidad : pedido.cantidad, 
-        tiempoEstimado : pedido.producto.tiempoElab,
-      }
+  hacerPedido() {
+    let pedidoArmado: PedidoArmado[] = [];
+    this.pedido.forEach(pedido => {
+      let pedidoArmadoItem: PedidoArmado = {
+        nombre: pedido.producto.nombre,
+        cantidad: pedido.cantidad,
+        tiempoEstimado: pedido.producto.tiempoElab,
+      };
       pedidoArmado.push(pedidoArmadoItem);
     });
-    this.pedidoHecho = new Pedido('', pedidoArmado, this.precio, this.tiempoEst);
-    this.db.subirDoc(Colecciones.Pedidos, this.pedidoHecho, true).then( () => {
-      this.spinner.hide();
-      ToastSuccess.fire('En instantes un mozo le confirmará su pedido');
-      this.navCtrl.navigateRoot('home');
-    });
+
+    const pedidoHecho = new Pedido(pedidoArmado, this.valorTotal, this.tiempoEst);
+    this.modalCtrl.dismiss(pedidoHecho, 'confirm');
   }
 }

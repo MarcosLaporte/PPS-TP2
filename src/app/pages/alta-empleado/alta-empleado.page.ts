@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { NavController } from '@ionic/angular';
+import { NavController } from '@ionic/angular/standalone';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { AuthService } from 'src/app/services/auth.service';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonFab, IonFabButton, IonFabList, IonIcon, IonCard, IonCardContent, IonButton, IonItem, IonInputPasswordToggle, IonCardHeader, IonCardTitle, IonRadioGroup, IonRadio, IonText } from '@ionic/angular/standalone';
@@ -12,9 +12,9 @@ import { addIcons } from 'ionicons';
 import { search } from 'ionicons/icons';
 import { Empleado, TipoEmpleado } from 'src/app/utils/classes/usuarios/empleado';
 import { ScannerService } from 'src/app/services/scanner.service';
-import { tomarFoto } from 'src/main';
 import { StorageService } from 'src/app/services/storage.service';
 import { BarcodeFormat } from '@capacitor-mlkit/barcode-scanning';
+import { FotosService } from 'src/app/services/fotos.service';
 
 @Component({
   selector: 'app-alta-empleado',
@@ -26,7 +26,7 @@ import { BarcodeFormat } from '@capacitor-mlkit/barcode-scanning';
 export class AltaEmpleadoPage {
   empleadoFrm: FormGroup;
 
-  constructor(protected navCtrl: NavController, private auth: AuthService, private spinner: NgxSpinnerService, private db: DatabaseService, private scanner: ScannerService, private storage: StorageService) {
+  constructor(protected navCtrl: NavController, private auth: AuthService, private spinner: NgxSpinnerService, private db: DatabaseService, private scanner: ScannerService, private storage: StorageService, private fotosServ: FotosService) {
     this.empleadoFrm = inject(FormBuilder).group({
       tipoEmpleado: [
         null, [
@@ -106,6 +106,17 @@ export class AltaEmpleadoPage {
     }
 
     return null;
+  }
+
+  filtrarInputDoc($ev: any) {
+    console.log($ev);
+    
+    const patron = /^[0-9 .\-\ ]*$/gm;
+    const inputChar = String.fromCharCode($ev.charCode);
+    if (!patron.test(inputChar)) {
+      $ev.preventDefault();
+    }
+    return true;
   }
 
   selecTipo($ev: CustomEvent) {
@@ -224,7 +235,7 @@ export class AltaEmpleadoPage {
       const contra = this.empleadoFrm.controls['contra'].value;
       const tipoEmpleado = this.empleadoFrm.controls['tipoEmpleado'].value as TipoEmpleado;
 
-      const empleado = new Empleado('', nombre, apellido, dni, cuil, correo, fotoUrl, tipoEmpleado);
+      const empleado = new Empleado(nombre, apellido, dni, cuil, correo, fotoUrl, tipoEmpleado);
       await this.auth.registrarUsuario(empleado, contra);
       this.resetForm();
 
@@ -237,7 +248,7 @@ export class AltaEmpleadoPage {
   }
 
   async tomarFotoEmpleado() {
-    const foto = await tomarFoto();
+    const foto = await this.fotosServ.tomarFoto();
     let fotoUrl = '';
 
     if (foto) {

@@ -30,35 +30,56 @@
               <small *ngIf="frmProducto.controls['descripcion'].errors['required']">Debe rellenar este campo.</small>
             </div>
           </div>
-          <div class="tiempo">
-            <ion-input
-              label="Minutos"
-              type="number"
-              formControlName="minutos"
-              min="0"
-              required
-              ngDefaultControl>
-            </ion-input>
-            <div class="errores" *ngIf="frmProducto.controls['minutos'].dirty && frmProducto.controls['minutos'].errors">
-              <small *ngIf="frmProducto.controls['minutos'].errors['required']">Debe rellenar este campo.</small>
-              <small *ngIf="frmProducto.controls['minutos'].errors['min']">El valor debe ser mayor o igual a 0.</small>
+          <div class="tiempo_precio">
+            <div class="tiempo">
+              <ion-input
+                label="Minutos"
+                type="number"
+                formControlName="minutos"
+                min="0"
+                required
+                ngDefaultControl>
+              </ion-input>
+              <div class="errores" *ngIf="frmProducto.controls['minutos'].dirty && frmProducto.controls['minutos'].errors">
+                <small *ngIf="frmProducto.controls['minutos'].errors['required']">Debe rellenar este campo.</small>
+                <small *ngIf="frmProducto.controls['minutos'].errors['min']">El valor debe ser mayor o igual a 0.</small>
+              </div>
             </div>
-          </div>
-          <div class="precio">
-            <ion-input
-              label="Precio"
-              type="number"
-              formControlName="precio"
-              min="0.01"
-              required
-              ngDefaultControl>
-            </ion-input>
-            <div class="errores" *ngIf="frmProducto.controls['precio'].dirty && frmProducto.controls['precio'].errors">
-              <small *ngIf="frmProducto.controls['precio'].errors['required']">Debe rellenar este campo.</small>
-              <small *ngIf="frmProducto.controls['precio'].errors['min']">El valor debe ser mayor o igual a 0.01.</small>
+            <div class="precio">
+              <ion-input
+                label="Precio"
+                type="number"
+                formControlName="precio"
+                min="0.01"
+                required
+                ngDefaultControl>
+              </ion-input>
+              <div class="errores" *ngIf="frmProducto.controls['precio'].dirty && frmProducto.controls['precio'].errors">
+                <small *ngIf="frmProducto.controls['precio'].errors['required']">Debe rellenar este campo.</small>
+                <small *ngIf="frmProducto.controls['precio'].errors['min']">El valor debe ser mayor o igual a 0.01.</small>
+              </div>
             </div>
           </div>
         </div>
+        <ion-label>Seleccione el sector correspondiente:</ion-label>
+        <ion-radio-group id="sector-radio" class="sector-producto" name="sector" required (ionChange)="selecSector($event)">
+          <ion-item>
+            <ion-radio alignment="center" value='barra'>
+              <div>
+                <label>Barra</label>
+                <img src="../../../assets/empleados/bartender.png" width="auto">
+              </div>
+            </ion-radio>
+          </ion-item>
+          <ion-item>
+            <ion-radio alignment="center" value='cocina'>
+              <div>
+                <label>Cocina</label>
+                <img src="../../../assets/empleados/cocinero.png" width="auto">
+              </div>
+            </ion-radio>
+          </ion-item>
+        </ion-radio-group>
         <ion-button type="submit" expand="block" color="tertiary" [disabled]="frmProducto.invalid">
           Agregar producto
         </ion-button>
