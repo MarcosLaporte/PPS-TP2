@@ -2,17 +2,18 @@ export class Producto {
   id: string;
   nombre: string;
   descripcion: string;
-  tiempoElab: number; // Combined time in seconds
+  tiempoElab: number;
   precio: number;
+  sector: 'cocina' | 'barra';
   fotosUrl: string[];
 
-  constructor(id: string, nombre: string, descripcion: string, tiempoElab: number, precio: number,
-      fotosUrl: string[]) {
-    this.id = id;
+  constructor(nombre: string, descripcion: string, tiempoElab: number, precio: number, sector: 'cocina' | 'barra', fotosUrl: string[]) {
+    this.id = '';
     this.nombre = nombre;
     this.descripcion = descripcion;
     this.tiempoElab = tiempoElab;
     this.precio = precio;
+    this.sector = sector;
     this.fotosUrl = fotosUrl;
   }
 }
