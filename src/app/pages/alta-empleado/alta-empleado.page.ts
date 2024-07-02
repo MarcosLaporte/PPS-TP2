@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { NavController } from '@ionic/angular';
+import { NavController } from '@ionic/angular/standalone';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { AuthService } from 'src/app/services/auth.service';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonFab, IonFabButton, IonFabList, IonIcon, IonCard, IonCardContent, IonButton, IonItem, IonInputPasswordToggle, IonCardHeader, IonCardTitle, IonRadioGroup, IonRadio, IonText } from '@ionic/angular/standalone';

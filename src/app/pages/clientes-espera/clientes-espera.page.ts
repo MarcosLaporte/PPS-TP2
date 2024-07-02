@@ -5,7 +5,7 @@ import { IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonCardHeader, Io
 import { Colecciones, DatabaseService } from 'src/app/services/database.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
-import { NavController } from '@ionic/angular';
+import { NavController } from '@ionic/angular/standalone';
 import { ToastSuccess } from 'src/app/utils/alerts';
 import { Mesa } from 'src/app/utils/classes/mesa';
 import { ClienteEnEspera } from 'src/app/utils/interfaces/interfaces';

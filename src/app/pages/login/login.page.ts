@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonFab, IonInput, IonInputPasswordToggle, IonFabButton, IonFabList, IonIcon, IonCard, IonCardContent, IonButton, IonItem, IonText, IonRow, IonCol } from '@ionic/angular/standalone';
-import { NavController } from '@ionic/angular';
+import { NavController } from '@ionic/angular/standalone';
 import { AuthService } from 'src/app/services/auth.service';
 import { ToastError, ToastInfo, ToastQuestion, ToastSuccess } from 'src/app/utils/alerts';
 import { NgxSpinnerService } from 'ngx-spinner';

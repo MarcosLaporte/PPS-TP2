@@ -11,7 +11,7 @@ import { EncuestaCliente } from 'src/app/utils/classes/EncuestaCliente';
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit, inject } from '@angular/core';
 import { RangeEstrellasComponent } from 'src/app/components/range-estrellas/range-estrellas.component';
 import { ErrorCodes, Exception } from 'src/app/utils/classes/exception';
-import { NavController } from '@ionic/angular'
+import { NavController } from '@ionic/angular/standalone'
 import { FotosService } from 'src/app/services/fotos.service';
 
 @Component({

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular/standalone';
 import { EncuestaEmpleado } from 'src/app/utils/classes/encuestas/encuesta-empleado';
 import { IonApp, IonRouterOutlet, IonHeader, IonToolbar, IonItem, IonTitle, IonButton, IonContent, IonFabButton, IonFab, IonIcon, IonFabList, IonModal, IonAccordionGroup, IonAccordion, IonLabel, IonList, IonText, IonInput, IonAvatar } from '@ionic/angular/standalone';
 import { RangeEstrellasComponent } from 'src/app/components/range-estrellas/range-estrellas.component';

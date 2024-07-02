@@ -7,7 +7,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { Colecciones, DatabaseService } from 'src/app/services/database.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { ScannerService } from 'src/app/services/scanner.service';
-import { NavController } from '@ionic/angular';
+import { NavController } from '@ionic/angular/standalone';
 import { MySwal, ToastError, ToastSuccess } from 'src/app/utils/alerts';
 import { BarcodeFormat } from '@capacitor-mlkit/barcode-scanning';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -106,6 +106,7 @@ export class AltaClientePage {
       this.spinner.hide();
     } catch (error: any) {
       this.spinner.hide();
+      console.error(error);
       ToastError.fire('Ocurrió un error', error.message);
     }
   }

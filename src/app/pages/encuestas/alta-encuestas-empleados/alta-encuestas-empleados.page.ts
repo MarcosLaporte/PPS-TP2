@@ -12,7 +12,7 @@ import { Colecciones, DatabaseService } from 'src/app/services/database.service'
 import { ErrorCodes, Exception } from 'src/app/utils/classes/exception';
 import { ToastError, ToastSuccess } from 'src/app/utils/alerts';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { NavController } from '@ionic/angular'
+import { NavController } from '@ionic/angular/standalone'
 
 @Component({
   selector: 'app-alta-encuestas-empleados',
