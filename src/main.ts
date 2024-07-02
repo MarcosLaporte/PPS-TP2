@@ -14,6 +14,7 @@ import { firebaseConfig } from './firebaseConfig';
 import { QrCodeModule } from 'ng-qrcode';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideHttpClient } from '@angular/common/http';
 
 if (environment.production) {
   enableProdMode();
@@ -23,6 +24,7 @@ bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy, },
     QrCodeModule,
+    provideHttpClient(),
     provideIonicAngular(),
     provideRouter(routes, withPreloading(PreloadAllModules)),
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
@@ -45,7 +47,7 @@ export const formatosDeImagen = ['jpg', 'jpeg', 'png', 'avif'];
 export async function tomarFoto(): Promise<File | undefined> {
   let archivoImagen: File | undefined;
   let tomarOtra: boolean;
-  
+
   try {
     do {
       archivoImagen = undefined;
