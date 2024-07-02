@@ -19,15 +19,15 @@
       </tr>
       }
     </tbody>
-    <!-- <tfoot>
+    <tfoot>
       <tr>
-        <td colspan="2" class="total-label">Total</td>
+        <!-- <td colspan="2" class="total-label">Tiempo estimado</td> -->
+        <td class="total-label">Tiempo</td>
         <td class="total-tiempo">{{ tiempoEst }}'</td>
-        <td class="total-precio">{{ valorTotal | currency }}</td>
+        <!-- <td class="total-precio">{{ valorTotal | currency }}</td> -->
       </tr>
-    </tfoot> -->
+    </tfoot>
   </table>
-
   <ion-button size="light" color="tertiary" expand="block" (click)="hacerPedido()">
     Confirmar pedido
   </ion-button>

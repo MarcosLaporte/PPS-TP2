@@ -14,6 +14,7 @@ import { firebaseConfig } from './firebaseConfig';
 import { QrCodeModule } from 'ng-qrcode';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideHttpClient } from '@angular/common/http';
 
 if (environment.production) {
   enableProdMode();
@@ -31,6 +32,7 @@ bootstrapApplication(AppComponent, {
     provideStorage(() => getStorage()),
     importProvidersFrom(NgxSpinnerModule.forRoot({ type: 'ball-scale-multiple' })),
     provideAnimations(),
+    provideHttpClient(),
   ],
 });
 

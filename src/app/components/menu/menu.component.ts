@@ -38,11 +38,7 @@ export class MenuComponent {
     },
     {
       titulo: 'Pedido', url: '/alta-pedido', icono: 'restaurant', rol_tipo: [
-<<<<<<< HEAD
-        // { rol: 'empleado', tipo: 'mozo' },
-=======
         { rol: 'empleado', tipo: 'mozo' },
->>>>>>> 800725e5a8c8b6911f8b03665c03c48ffd5579af
         { rol: 'cliente' }
       ]
     },
@@ -58,31 +54,9 @@ export class MenuComponent {
   paginasGenerales: Pagina[] = [
     { titulo: 'Perfil', url: '/perfil', icono: 'circle-user' },
     { titulo: 'Inicio', url: '/home', icono: 'house-chimney', permitirAnon: true },
-<<<<<<< HEAD
-    { titulo: 'Clientes pendientes', url: '/lista-pendientes', icono: 'selection', rol_tipo: [
-      { rol: 'jefe' }
-    ] },
-    { titulo: 'Encuestas clientes', url: '/alta-encuesta-cliente', icono: 'corporate', rol_tipo: [
-      { rol: 'cliente' },
-    ] },
-    { titulo: 'Graficos Clientes', url: '/grafico-clientes', icono: 'bar-chart-outline', rol_tipo: [
-      { rol: 'cliente' },
-    ] },
-    { titulo: 'Pedidos pendientes', url: '/lista-pedidos-pendiente', icono: 'plate-utensils', rol_tipo: [
-      { rol: 'empleado', tipo: 'mozo' },
-    ] },
-    { titulo: 'Consultas', url: '/consulta-mozo', icono: 'messages-question', rol_tipo: [
-      { rol: 'empleado', tipo: 'mozo' },
-    ] },
-  ];
-  public funciones: { titulo: string, icono: string, accion: () => Promise<any> }[] = [
-    { titulo: 'Sesión', icono: 'log-in-outline', accion: async () => { } },
-    { titulo: 'Escanear', icono: 'scan', accion: async () => await this.escanearQrMesa() },
-=======
-    { titulo: 'Clientes pendientes', url: '/lista-clientes-pendientes', icono: 'selection' },
+    { titulo: 'Clientes pendientes', url: '/lista-clientes-pendientes', icono: 'selection', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Encuestas empleados', url: '/lista-encuestas-empleados', icono: 'corporate', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Lista de espera', url: '/lista-espera', icono: 'skill', rol_tipo: [{ rol: 'empleado', tipo: 'metre' }] },
->>>>>>> 800725e5a8c8b6911f8b03665c03c48ffd5579af
   ];
   funciones: Funcion[] = [];
 
