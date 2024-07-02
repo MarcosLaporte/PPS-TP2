@@ -1,0 +1,22 @@
+<div class="container background-ter">
+  <ion-text color="primary"><h1 class="ion-padding">Encuesta de empleados</h1></ion-text>
+  <ion-list class="encuestas" [inset]="true">
+    <ion-item *ngFor="let enc of lista" lines="full">
+      <div class="encuesta">
+        <div class="autor">
+            <ion-avatar slot="start">
+              <img alt="{{enc.autor.nombre}}_{{enc.autor.apellido}}" [src]="enc.autor.fotoUrl" />
+            </ion-avatar>
+            <ion-text>
+              {{enc.autor.nombre}} {{enc.autor.apellido}}
+            </ion-text>
+        </div>
+        <div class="puntuacion">
+          <app-range-estrellas [idEstrellas]="enc.id" [readonly]="true" [valor]="enc.condEspacio"
+            [max]="maxEstrellas(enc.condEspacio)"></app-range-estrellas>
+        </div>
+      </div>
+      <div class="cover" (click)="mostrarEncuesta(enc)"></div>
+    </ion-item>
+  </ion-list>
+</div>

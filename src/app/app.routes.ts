@@ -75,21 +75,42 @@ export const routes: Routes = [
   },
   {
     path: 'acceso-denegado',
-    loadComponent: () => import('./pages/acceso-denegado/acceso-denegado.page').then( m => m.AccesoDenegadoPage)
+    loadComponent: () => import('./pages/acceso-denegado/acceso-denegado.page').then(m => m.AccesoDenegadoPage)
   },
   {
     path: 'perfil',
-    loadComponent: () => import('./pages/perfil/perfil.page').then( m => m.PerfilPage),
+    loadComponent: () => import('./pages/perfil/perfil.page').then(m => m.PerfilPage),
     canActivate: [sesionIniciadaGuard]
   },
   {
     path: 'alta-pedido',
-    loadComponent: () => import('./pages/alta-pedido/alta-pedido.page').then( m => m.AltaPedidoPage),
-    canActivate: [clienteAceptadoGuard]
+    loadComponent: () => import('./pages/alta-pedido/alta-pedido.page').then(m => m.AltaPedidoPage),
+    // canActivate: [sesionIniciadaGuard, rolTipoGuard, clienteAceptadoGuard],
+    canActivate: [sesionIniciadaGuard, rolTipoGuard], //El mozo puede hacer pedido también
+    data: {
+      roles_tipos: [
+        { rol: 'empleado', tipo: 'mozo' },
+        { rol: 'cliente' },
+      ]
+    }
   },
   {
-    path: 'lista-pendientes',
-    loadComponent: () => import('./pages/lista-pendientes/lista-pendientes.page').then( m => m.ListaPendientesPage),
+    path: 'alta-encuesta-empleado',
+    loadComponent: () => import('./pages/encuestas/alta-encuestas-empleados/alta-encuestas-empleados.page').then(m => m.AltaEncuestasEmpleadosPage),
+    canActivate: [sesionIniciadaGuard, rolTipoGuard],
+    data: {
+      roles_tipos: [
+        { rol: 'empleado' },
+      ]
+    }
+  },
+  {
+    path: 'lista-encuestas-empleados',
+    loadComponent: () => import('./pages/encuestas/lista-encuestas-empleados/lista-encuestas-empleados.page').then(m => m.ListaEncuestasEmpleadosPage),
+  },
+  {
+    path: 'lista-clientes-pendientes',
+    loadComponent: () => import('./pages/lista-clientes-pendientes/lista-clientes-pendientes.page').then(m => m.ListaClientesPendientesPage),
     canActivate: [sesionIniciadaGuard, rolTipoGuard],
     data: {
       roles_tipos: [
@@ -98,8 +119,18 @@ export const routes: Routes = [
     }
   },
   {
+    path: 'clientes-espera',
+    loadComponent: () => import('./pages/clientes-espera/clientes-espera.page').then(m => m.ClientesEsperaPage),
+    canActivate: [sesionIniciadaGuard, rolTipoGuard],
+    data: {
+      roles_tipos: [
+        { rol: 'cliente' },
+      ],
+    }
+  },
+  {
     path: 'alta-encuesta-cliente',
-    loadComponent: () => import('./pages/alta-encuesta-cliente/alta-encuesta-cliente.page').then( m => m.AltaEncuestaClientePage),
+    loadComponent: () => import('./pages/encuestas/alta-encuesta-cliente/alta-encuesta-cliente.page').then(m => m.AltaEncuestaClientePage),
     canActivate: [sesionIniciadaGuard, rolTipoGuard, clienteAceptadoGuard],
     data: {
       roles_tipos: [
@@ -109,17 +140,32 @@ export const routes: Routes = [
   },
   {
     path: 'grafico-clientes',
-    loadComponent: () => import('./pages/grafico-clientes/grafico-clientes.page').then( m => m.GraficoClientesPage),
+    loadComponent: () => import('./pages/grafico-clientes/grafico-clientes.page').then(m => m.GraficoClientesPage),
     canActivate: [sesionIniciadaGuard, rolTipoGuard],
     data: {
       roles_tipos: [
         { rol: 'cliente' },
+        { rol: 'jefe' }
+      ]
+    }
+  },
+  {
+    path: 'alta-cliente-anon',
+    loadComponent: () => import('./pages/alta-cliente-anon/alta-cliente-anon.page').then(m => m.AltaClienteAnonPage),
+  },
+  {
+    path: 'lista-espera',
+    loadComponent: () => import('./pages/lista-espera/lista-espera.page').then(m => m.ListaEsperaPage),
+    canActivate: [sesionIniciadaGuard, rolTipoGuard],
+    data: {
+      roles_tipos: [
+        { rol: 'empleado', tipo: 'metre' }
       ]
     }
   },
   {
     path: 'alta-encuesta-supervisor',
-    loadComponent: () => import('./pages/alta-encuesta-supervisor/alta-encuesta-supervisor.page').then( m => m.AltaEncuestaSupervisorPage),
+    loadComponent: () => import('./pages/encuestas/alta-encuesta-supervisor/alta-encuesta-supervisor.page').then(m => m.AltaEncuestaSupervisorPage),
     canActivate: [sesionIniciadaGuard, rolTipoGuard],
     data: {
       roles_tipos: [

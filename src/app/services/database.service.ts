@@ -2,13 +2,18 @@ import { Injectable } from '@angular/core';
 import { Firestore, collection, doc, getDocs, setDoc, deleteDoc, updateDoc, onSnapshot, query, QuerySnapshot, orderBy, Query, limit, DocumentSnapshot, getDoc, FieldPath } from '@angular/fire/firestore';
 import { Persona } from '../utils/classes/usuarios/persona';
 import { ErrorCodes, Exception } from '../utils/classes/exception';
+import { Observable } from 'rxjs';
 
 export enum Colecciones {
   Usuarios = 'users',
   Mesas = 'mesas',
   Productos = 'productos',
-  Encuestas = 'encuestas',
-  EncuestasCliente = "encuestas-clientes",
+  EncuestasCliente = 'encuestas-clientes',
+  EncuestasEmpleado = 'encuestas-empleado',
+  EncuestasSupervisor = 'encuestas-supervisor',
+  ListaDeEspera = 'lista-de-espera',
+  PedidosPendientes = 'lista-pedidos-pendientes',
+  PedidosListos = 'lista-pedidos-listos',
   Pedidos = "pedidos",
   Mensajes = "mensajes",
 }
@@ -120,7 +125,7 @@ export class DatabaseService {
    *  recibe por parámetro y que funcionará como puntero para mantenerse actualizado.
    *
    * @param coleccion - El nombre de la colección en `Firestore`.
-   * @param arrayPointer - El Array que guardará los objetos.
+   * @param arrayRef - El Array que guardará los objetos.
    * @param filtroFunc - Función que se encarga de filtrar los datos cada vez que se actualizan.
    * @param ordenFunc - Función que se encarga de ordenar los datos cada vez que se actualizan.
    * @param transformar - Función que se encarga de transformar los datos cada vez que se actualizan.
@@ -129,7 +134,7 @@ export class DatabaseService {
    */
   escucharColeccion<T extends { id: string }>(
     coleccion: string,
-    arrayPointer: Array<T>,
+    arrayRef: Array<T>,
     filtroFunc?: (item: T) => boolean,
     ordenFunc?: (a: any, b: any) => number,
     transformar?: (item: T) => Promise<T>
@@ -143,21 +148,52 @@ export class DatabaseService {
         const newData = transformar ? await transformar(data as T) : data as T;
         if (!filtroFunc || filtroFunc(newData)) {
           if (cambio.type === 'added') {
-            arrayPointer.push(newData);
+            arrayRef.push(newData);
           } else {
-            const index = arrayPointer.findIndex(t => t.id === newData.id);
+            const index = arrayRef.findIndex(t => t.id === newData.id);
             if (cambio.type === 'modified')
-              arrayPointer[index] = newData;
+              arrayRef[index] = newData;
             else
-              arrayPointer.splice(index, 1);
+              arrayRef.splice(index, 1);
           }
         }
       }
 
       if (ordenFunc)
-        arrayPointer.sort(ordenFunc);
+        arrayRef.sort(ordenFunc);
     });
   }
+
+  /**
+   * Escucha los cambios en un documento en `Firestore` y devuelve un Observable que
+   * emite los datos del documento cada vez que se actualizan.
+   * 
+   * @param coleccion - El nombre de la colección en `Firestore`.
+   * @param docId - El ID del documento en `Firestore`.
+   * @returns Un Observable que emite los datos del documento.
+   */
+  escucharDocumento<T>(coleccion: string, docId: string): Observable<T> {
+    return new Observable<T>((obs) => {
+      const docRef = doc(this.firestore, `${coleccion}/${docId}`);
+
+      const unsubscribe = onSnapshot(docRef, async (docSnap: DocumentSnapshot) => {
+        if (docSnap.exists()) {
+          let data = docSnap.data() as T;
+          obs.next(data);
+        } else {
+          obs.error('El documento no existe.');
+        }
+      });
+
+      return () => unsubscribe();
+    });
+  }
+
+  borrarDoc(coleccion: string, docId: string) {
+		const docRef = doc(this.firestore, coleccion, docId);
+
+		return deleteDoc(docRef);
+	}
 
   /**
    * Busca el usuario que tenga registrado su correo con el parámetro de búsqueda.

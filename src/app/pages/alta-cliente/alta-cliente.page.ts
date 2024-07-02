@@ -1,21 +1,20 @@
-import { TipoCliente } from './../../utils/classes/usuarios/cliente';
 import { Component, inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonFab, IonIcon, IonFabButton, IonFabList, IonGrid, IonRow, IonCol, IonLabel, IonItem, IonButton, IonImg, IonRadioGroup, IonRadio, IonCard, IonCardHeader, IonCardTitle, IonCardContent,IonInputPasswordToggle, IonToggle } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonFab, IonIcon, IonFabButton, IonFabList, IonGrid, IonRow, IonCol, IonLabel, IonItem, IonButton, IonImg, IonRadioGroup, IonRadio, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonInputPasswordToggle, IonToggle, IonText } from '@ionic/angular/standalone';
 import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
 import { AuthService } from 'src/app/services/auth.service';
 import { Colecciones, DatabaseService } from 'src/app/services/database.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { ScannerService } from 'src/app/services/scanner.service';
-import { NavController } from '@ionic/angular';
+import { NavController } from '@ionic/angular/standalone';
 import { MySwal, ToastError, ToastSuccess } from 'src/app/utils/alerts';
 import { BarcodeFormat } from '@capacitor-mlkit/barcode-scanning';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { tomarFoto } from 'src/main';
 import { ErrorCodes, Exception } from 'src/app/utils/classes/exception';
 import { addIcons } from 'ionicons';
 import { search } from 'ionicons/icons';
+import { FotosService } from 'src/app/services/fotos.service';
 
 const datePipe = new DatePipe('en-US', '-0300');
 
@@ -24,31 +23,29 @@ const datePipe = new DatePipe('en-US', '-0300');
   templateUrl: './alta-cliente.page.html',
   styleUrls: ['./alta-cliente.page.scss'],
   standalone: true,
-  imports: [IonToggle, IonCardContent, IonCardTitle, IonCardHeader, IonCard, IonRadio, IonRadioGroup, IonImg, IonButton, IonItem, IonLabel, IonCol, IonRow, IonGrid, IonFabList, IonFabButton, IonIcon, IonFab, IonInput, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, ReactiveFormsModule,IonInputPasswordToggle]
+  imports: [IonText, IonToggle, IonCardContent, IonCardTitle, IonCardHeader, IonCard, IonRadio, IonRadioGroup, IonImg, IonButton, IonItem, IonLabel, IonCol, IonRow, IonGrid, IonFabList, IonFabButton, IonIcon, IonFab, IonInput, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, ReactiveFormsModule, IonInputPasswordToggle]
 })
 export class AltaClientePage {
   frmCliente: FormGroup;
-  tipoCliente: TipoCliente = 'registrado';
-  picture!: File;
 
   constructor(
-    protected navCtrl: NavController, private auth: AuthService, private spinner: NgxSpinnerService,
-    private db: DatabaseService, private scanner: ScannerService, private storage: StorageService
+    protected navCtrl: NavController, protected auth: AuthService, private spinner: NgxSpinnerService,
+    private db: DatabaseService, private scanner: ScannerService, private storage: StorageService, private fotosServ: FotosService
   ) {
     this.frmCliente = inject(FormBuilder).group({
-      nombre: [{ value: '', disabled: false }, [
+      nombre: ['', [
         Validators.required,
         Validators.pattern(/[\p{L}\p{M}]+/u),
       ]],
-      apellido: [{ value: '', disabled: false }, [
+      apellido: ['', [
         Validators.required,
         Validators.pattern(/[\p{L}\p{M}]+/u),
       ]],
-      dni: [{ value: '', disabled: false }, [
+      dni: ['', [
         Validators.required,
         Validators.pattern(/^\b[\d]{1,3}(\.|\-|\/| )?[\d]{3}(\.|\-|\/| )?[\d]{3}$/),
       ]],
-      correo: [{ value: '', disabled: false }, [
+      correo: ['', [
         Validators.required,
         Validators.pattern(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/),
       ]],
@@ -60,22 +57,6 @@ export class AltaClientePage {
     });
 
     addIcons({ search });
-  }
-
-  toggleTipoCliente(event: any) {
-    const { checked } = event.detail;
-    this.tipoCliente = checked ? 'anonimo' : 'registrado';
-
-    document.getElementById('dni')!
-      .classList.toggle('deshabilitado', !checked);
-    document.getElementById('datos-personales')!
-      .classList.toggle('deshabilitado', !checked);
-    
-  
-    const controles = ['apellido', 'dni', 'correo', 'contra', 'reContra'];
-    controles.forEach(ctrl => {
-      this.frmCliente.controls[ctrl][checked ? 'disable' : 'enable']();
-    });
   }
 
   private contraseñasCoinciden = (control: AbstractControl): ValidationErrors | null => {
@@ -103,31 +84,40 @@ export class AltaClientePage {
     }
   }
 
+  filtrarInputDoc($ev: any) {
+    console.log($ev);
+
+    const patron = /^[0-9 .\-\ ]*$/gm;
+    const inputChar = String.fromCharCode($ev.charCode);
+    if (!patron.test(inputChar)) {
+      $ev.preventDefault();
+    }
+    return true;
+  }
+
   async subirCliente() {
     try {
       let fotoUrl = await this.tomarFotoCliente();
 
       this.spinner.show();
       const nombre = this.frmCliente.controls['nombre'].value;
+      const apellido = this.frmCliente.controls['apellido'].value;
+      const dni = Number((this.frmCliente.controls['dni'].value).replace(/[-. ]/g, ''));
+      const correo = this.frmCliente.controls['correo'].value;
+      const contra = this.frmCliente.controls['contra'].value;
 
-      if (this.tipoCliente === 'anonimo') {
-        const usuarioAnonimo = new Cliente('', nombre, '', 0, '', fotoUrl, 'anonimo');
-        await this.auth.registrarUsuarioAnonimo(usuarioAnonimo);
-        ToastSuccess.fire('Registrado de forma anónima!');
-      } else {
-        const apellido = this.frmCliente.controls['apellido'].value;
-        const dni = Number((this.frmCliente.controls['dni'].value).replace(/[-. ]/g, ''));
-        const correo = this.frmCliente.controls['correo'].value;
-        const contra = this.frmCliente.controls['contra'].value;
-        const cliente = new Cliente('', nombre, apellido, dni, correo, fotoUrl, 'registrado');
-        await this.auth.registrarUsuario(cliente, contra);
-        ToastSuccess.fire('Cliente creado!');
-      }
+      const cliente = new Cliente(nombre, apellido, dni, correo, fotoUrl, 'registrado');
+      await this.auth.registrarUsuario(cliente, contra);
+      ToastSuccess.fire('Cliente creado!');
 
       this.resetForm();
+      if (this.auth.UsuarioEnSesion!.rol === 'cliente')
+        this.navCtrl.navigateRoot('home');
+
       this.spinner.hide();
     } catch (error: any) {
       this.spinner.hide();
+      console.error(error);
       ToastError.fire('Ocurrió un error', error.message);
     }
   }
@@ -153,24 +143,18 @@ export class AltaClientePage {
   }
 
   async tomarFotoCliente() {
-    const foto = await tomarFoto();
+    const foto = await this.fotosServ.tomarFoto();
     let fotoUrl = '';
 
     if (!foto) throw new Exception(ErrorCodes.FotoCancelada, 'Debe tomar una foto del cliente.');
 
     this.spinner.show();
     const dni = <string>this.frmCliente.controls['dni'].value;
-    const nombre=this.frmCliente.controls['nombre'].value;
-    if(this.tipoCliente==='registrado'){
-      fotoUrl = await this.storage.subirArchivo(foto, `${Colecciones.Usuarios}/cliente-${dni}`);
-    }else{
-      fotoUrl = await this.storage.subirArchivo(foto, `${Colecciones.Usuarios}/cliente-${nombre}`);
-    }
+    fotoUrl = await this.storage.subirArchivo(foto, `${Colecciones.Usuarios}/cliente-${dni}`);
     this.spinner.hide();
 
     return fotoUrl;
   }
-
 
   async buscarCorreo() {
     this.spinner.show();
