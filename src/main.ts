@@ -14,6 +14,7 @@ import { firebaseConfig } from './firebaseConfig';
 import { QrCodeModule } from 'ng-qrcode';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideHttpClient } from '@angular/common/http';
 
 if (environment.production) {
   enableProdMode();
@@ -23,6 +24,7 @@ bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy, },
     QrCodeModule,
+    provideHttpClient(),
     provideIonicAngular(),
     provideRouter(routes, withPreloading(PreloadAllModules)),
     provideFirebaseApp(() => initializeApp(firebaseConfig)),
@@ -36,4 +38,5 @@ bootstrapApplication(AppComponent, {
 
 export function delay(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
+
 }
