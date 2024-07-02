@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonAccordionGroup, IonAccordion, IonItem, IonLabel, IonButton, IonIcon, IonAvatar, IonList } from '@ionic/angular/standalone';
+import { NavController } from '@ionic/angular/standalone';
 import { Colecciones, DatabaseService } from 'src/app/services/database.service';
-import { Cliente, EstadoCliente } from 'src/app/utils/classes/usuarios/cliente';
+import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
 import { addIcons } from 'ionicons';
-import { addCircleOutline, checkmarkCircleOutline, removeCircleOutline } from 'ionicons/icons';
+import { checkmarkCircleOutline, removeCircleOutline } from 'ionicons/icons';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { delay } from 'src/main';
 import { ToastSuccess } from 'src/app/utils/alerts';
@@ -49,7 +50,7 @@ export class ListaClientesPendientesPage implements OnInit {
     }
   ];
  */
-  constructor(protected db: DatabaseService, private spinner: NgxSpinnerService) {
+  constructor(protected db: DatabaseService, private spinner: NgxSpinnerService, protected navCtrl: NavController) {
     addIcons({ checkmarkCircleOutline, removeCircleOutline });
   }
 
@@ -58,7 +59,7 @@ export class ListaClientesPendientesPage implements OnInit {
     this.db.escucharColeccion<Cliente>(
       Colecciones.Usuarios,
       this.clientes,
-      c => c.estadoCliente === 'pendiente' //FIXME: Cliente no se borra
+      (c) => c.estadoCliente === 'pendiente'
     );
 
     await delay(2500);
