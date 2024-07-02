@@ -128,7 +128,6 @@ export class AltaMesaPage {
             const tipoMesaControl = this.frmMesa.controls['tipoMesaControl'].value;
   
             let mesa = new Mesa(
-              '',
               nroMesa,
               cantComensales,
               tipoMesaControl,
@@ -164,7 +163,6 @@ export class AltaMesaPage {
     // const QRPropina3;
     this.QRs.push(QRid);
     this.db.actualizarDoc(Colecciones.Mesas, mesaId, {'codigoQr':this.QRs})
-    //TODO: El QR tiene que ser el ID del producto en firebase.
   }
 
   selectOption(event: CustomEvent){

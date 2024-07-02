@@ -7,8 +7,8 @@ export class Mesa {
   codigoQr: string[];
   estado: EstadoMesa;
 
-  constructor(id: string, nroMesa: number, cantComensales: number, tipo: TipoMesa, fotoUrl: string | undefined, codigoQr: string[]) {
-    this.id = id;
+  constructor(nroMesa: number, cantComensales: number, tipo: TipoMesa, fotoUrl: string | undefined, codigoQr: string[]) {
+    this.id = '';
     this.nroMesa = nroMesa;
     this.cantComensales = cantComensales;
     this.tipo = tipo;
