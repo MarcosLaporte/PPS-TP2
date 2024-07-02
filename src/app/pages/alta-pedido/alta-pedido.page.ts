@@ -9,6 +9,8 @@ import { addCircleOutline, caretDownOutline, chatboxEllipsesOutline, receiptOutl
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ModalController, NavController } from '@ionic/angular/standalone';
 import { PedidoComponent } from 'src/app/components/pedido/pedido.component';
+import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
+import { Mesa } from 'src/app/utils/classes/mesa';
 import { Pedido } from 'src/app/utils/classes/pedido';
 import { ToastSuccess } from 'src/app/utils/alerts';
 
@@ -223,6 +225,14 @@ export class AltaPedidoPage {
       else
         delete this.productosElegidos[prod.id];
     }
+  }
+  
+  manejarProdCant(prod: Producto, inputEv: CustomEvent) {
+    const cant: number = Number(inputEv.detail.value ?? '');
+    if (cant === 0)
+      delete this.productosElegidos[prod.id];
+    else
+      this.productosElegidos[prod.id] = cant;
   }
 
   sumarProd(prod: Producto) {

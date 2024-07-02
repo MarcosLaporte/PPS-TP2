@@ -175,6 +175,26 @@ export const routes: Routes = [
   },
   {
     path: 'consulta-mozo',
-    loadComponent: () => import('./pages/consulta-mozo/consulta-mozo.page').then(m => m.ConsultaMozoPage)
+    loadComponent: () => import('./pages/consulta-mozo/consulta-mozo.page').then( m => m.ConsultaMozoPage),
+    canActivate: [sesionIniciadaGuard],
   },
+  {
+    path: 'lista-pedidos-pendiente',
+    loadComponent: () => import('./pages/lista-pedidos-pendiente/lista-pedidos-pendiente.page').then( m => m.ListaPedidosPendientePage),
+    canActivate: [sesionIniciadaGuard, rolTipoGuard],
+    data: {
+      roles_tipos: [
+        { rol: 'empleado', tipo: 'mozo'},
+      ]
+    }
+  },
+
+
+
+
+
+
+
+
+
 ];

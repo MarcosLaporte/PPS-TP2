@@ -5,6 +5,9 @@ import { Colecciones, DatabaseService } from 'src/app/services/database.service'
 import { ToastSuccess } from 'src/app/utils/alerts';
 import { Pedido, PedidoArmado, PedidoProd } from 'src/app/utils/classes/pedido';
 import { Producto } from 'src/app/utils/classes/producto';
+import { NavController } from '@ionic/angular';
+import { AuthService } from 'src/app/services/auth.service';
+import { Mesa } from 'src/app/utils/classes/mesa';
 import { ModalController } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 

@@ -33,6 +33,7 @@ bootstrapApplication(AppComponent, {
     provideStorage(() => getStorage()),
     importProvidersFrom(NgxSpinnerModule.forRoot({ type: 'ball-scale-multiple' })),
     provideAnimations(),
+    provideHttpClient(),
   ],
 });
 

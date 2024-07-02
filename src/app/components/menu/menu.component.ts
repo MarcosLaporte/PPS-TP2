@@ -54,7 +54,7 @@ export class MenuComponent {
   paginasGenerales: Pagina[] = [
     { titulo: 'Perfil', url: '/perfil', icono: 'circle-user' },
     { titulo: 'Inicio', url: '/home', icono: 'house-chimney', permitirAnon: true },
-    { titulo: 'Clientes pendientes', url: '/lista-clientes-pendientes', icono: 'selection' },
+    { titulo: 'Clientes pendientes', url: '/lista-clientes-pendientes', icono: 'selection', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Encuestas empleados', url: '/lista-encuestas-empleados', icono: 'corporate', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Lista de espera', url: '/lista-espera', icono: 'skill', rol_tipo: [{ rol: 'empleado', tipo: 'metre' }] },
   ];
