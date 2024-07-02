@@ -5,7 +5,7 @@
         {{precio | currency}}
       </ion-card-subtitle>
       <div id="btn-container">
-        <ion-button fill="clear" size="large" (click)="navCtrl.navigateRoot('consulta-mozo')">
+        <ion-button fill="clear" size="large" (click)="navCtrl.navigateForward('consulta-mozo')">
           <ion-icon slot="icon-only" name="chatbox-ellipses-outline" color="medium"></ion-icon>
         </ion-button>
         <ion-button fill="clear" size="large" (click)="mostrarPedido()"
