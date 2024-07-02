@@ -1,0 +1,31 @@
+<div class="container background-pri">
+  <ion-card style="width: 95%">
+    <ion-card-header>
+      <ion-card-title>Clientes pendientes</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+        <ion-list id="lista">
+        @for (cliente of clientes; track $index) {
+          <ion-item id="item">
+            <ion-avatar class="ion-margin-horizontal">
+              <img alt="avatar" [src]="cliente.fotoUrl"/>
+            </ion-avatar>
+            <ion-label>{{cliente.nombre}} {{cliente.apellido}}</ion-label>        
+            
+            <div part="content" class="content" >
+              <div class="cont-prod">
+                <ion-button size="large" color="danger" expand="fill" (click)="manejarCliente(cliente.id, 'rechazado')">
+                  <ion-icon slot="icon-only" aria-label="hidden" name="remove-circle-outline" color="light"></ion-icon>
+                </ion-button>
+                <ion-button size="large" color="success" expand="fill" (click)="manejarCliente(cliente.id, 'aceptado')">
+                  <ion-icon slot="icon-only" aria-label="hidden" name="checkmark-circle-outline" color="light"></ion-icon>
+                </ion-button>
+              </div>
+            </div>
+          </ion-item>
+        }
+      </ion-list>
+  </ion-card-content>
+  </ion-card>
+</div>

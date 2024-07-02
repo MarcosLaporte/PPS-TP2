@@ -21,9 +21,9 @@
           </div>
           <div id="dni" class="dni deshabilitado">
             <ion-input id="input-dni" label="DNI" type="text" formControlName="dni"
-              name="dni" required ngDefaultControl>
+              name="dni" required ngDefaultControl (keypress)="filtrarInputDoc($event)">
               <ion-button id="btn-dni" *ngIf="empleadoFrm.controls['dni'].errors; else buscar"
-                fill="clear" slot="end" aria-label="escanear" (click)="escanearDni();">
+                fill="clear" slot="end" aria-label="escanear" (click)="escanearDni()">
                 <ion-icon slot="icon-only" name="scan" aria-hidden="true"></ion-icon>
               </ion-button>
               <ng-template #buscar>
@@ -40,7 +40,7 @@
           <div id="datos-personales" class="deshabilitado">
             <div class="cuil">
               <ion-input label="CUIL" type="text" formControlName="cuil" 
-                name="cuil" required ngDefaultControl>
+                name="cuil" required ngDefaultControl (keypress)="filtrarInputDoc($event)">
               </ion-input>
               <div class="errores" *ngIf="empleadoFrm.controls['cuil'].dirty && empleadoFrm.controls['cuil'].errors">
                 <small *ngIf="empleadoFrm.controls['cuil'].errors['required']">Debe rellenar este campo.</small>

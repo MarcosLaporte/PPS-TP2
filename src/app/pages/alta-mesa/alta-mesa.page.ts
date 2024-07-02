@@ -2,18 +2,16 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonRadioGroup, IonButton, IonSelectOption, IonInput, IonCardHeader, IonCard, IonCardTitle, IonCardContent, IonIcon, IonRadio, IonSelect } from '@ionic/angular/standalone';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators, } from '@angular/forms';
-import { AuthService } from 'src/app/services/auth.service';
 import { Colecciones, Prefijos, DatabaseService, } from 'src/app/services/database.service';
 import { StorageService } from 'src/app/services/storage.service';
-import { Camera, CameraResultType } from '@capacitor/camera';
 import { MySwal, ToastError, ToastSuccess, ToastInfo } from 'src/app/utils/alerts';
-import { Foto } from 'src/app/utils/interfaces/interfaces';
 import { Mesa, TipoMesa } from 'src/app/utils/classes/mesa';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { addIcons } from 'ionicons';
 import { search } from 'ionicons/icons';
 import { QrCodeModule } from 'ng-qrcode';
 import { Router } from '@angular/router';
+import { FotosService } from 'src/app/services/fotos.service';
 
 /*
 QR de la mesa
@@ -25,7 +23,6 @@ QR de la mesa
 ● Para acceder a la encuesta de satisfacción.
 ● Para acceder a los juegos.
 */
-import { tomarFoto } from 'src/main';
 
 @Component({
   selector: 'app-alta-mesa',
@@ -45,7 +42,7 @@ export class AltaMesaPage {
   constructor(
     private db: DatabaseService,
     private storage: StorageService,
-    private auth: AuthService,
+    private fotosServ: FotosService,
     private formBuilder: FormBuilder,
     private spinner: NgxSpinnerService,
     private router: Router,
@@ -61,7 +58,7 @@ export class AltaMesaPage {
   }
 
   async takePic() {
-    const foto = await tomarFoto();
+    const foto = await this.fotosServ.tomarFoto();
     if (foto) {
       this.picture = foto;
       this.frmMesa.controls['foto'].setValue('valid');
@@ -131,7 +128,6 @@ export class AltaMesaPage {
             const tipoMesaControl = this.frmMesa.controls['tipoMesaControl'].value;
   
             let mesa = new Mesa(
-              '',
               nroMesa,
               cantComensales,
               tipoMesaControl,
@@ -160,14 +156,13 @@ export class AltaMesaPage {
   }
 
   private generateQRData(mesaId:string) {
-    const QRid = `${mesaId}`;
+    const QRid = `mesa-${mesaId}`;
     // const QRMenu;
     // const QRPropina1;
     // const QRPropina2;
     // const QRPropina3;
     this.QRs.push(QRid);
     this.db.actualizarDoc(Colecciones.Mesas, mesaId, {'codigoQr':this.QRs})
-    //TODO: El QR tiene que ser el ID del producto en firebase.
   }
 
   selectOption(event: CustomEvent){

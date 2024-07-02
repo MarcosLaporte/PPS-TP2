@@ -34,8 +34,8 @@
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
-@import './theme/variables.scss';
+@import "@ionic/angular/css/palettes/dark.system.css";
+@import "./theme/variables.scss";
 @import "@flaticon/flaticon-uicons/css/all/all.css";
 
 .container {
@@ -74,6 +74,21 @@
   opacity: 0.5;
 }
 
-.invisible{
+.invisible {
   display: none;
+}
+
+ion-modal {
+  &#encuesta-modal,
+  &#mesas-modal,
+  &#pedido-modal {
+    --height: auto;
+    --width: 90%;
+  }
+}
+
+ion-accordion-group#lista-productos {
+  .ion-accordion-toggle-icon {
+    margin-right: 1rem;
+  }
 }

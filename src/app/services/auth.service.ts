@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { Auth, User as FireUser, createUserWithEmailAndPassword, getAuth, signInAnonymously, signInWithEmailAndPassword } from '@angular/fire/auth';
 import { BehaviorSubject } from 'rxjs';
 import { Colecciones, DatabaseService } from './database.service';
@@ -34,10 +34,14 @@ export class AuthService {
       sessionStorage.removeItem('fireUser');
       if (this.auth.currentUser)
         this.auth.signOut();
+
+      this.sesionEventEmitter.emit({ sesionAbierta: false });
     }
 
     this._usuarioEnSesionSub.next(value);
   }
+
+  readonly sesionEventEmitter = new EventEmitter<{ sesionAbierta: boolean }>();
   //#endregion
 
   constructor(private auth: Auth, private db: DatabaseService) { }
@@ -73,15 +77,13 @@ export class AuthService {
       if (!fireUserViejo)
         this.UsuarioEnSesion = usuario;
 
+      this.sesionEventEmitter.emit({ sesionAbierta: true });
       return docId;
     } catch (error: any) {
-      error.message = this.parsearError(error);
-      throw error;
+      throw new Error(this.parsearError(error));
     }
   }
-  async currentUser() {
-    return this.auth.currentUser;
-  }
+
   /**
    * Ingresa un usuario a la sesión de `Firebase Authentication` y asigna el objeto Persona a la propiedad local.
    *
@@ -97,9 +99,9 @@ export class AuthService {
       const objUsuario = await this.db.buscarUsuarioPorCorreo(this.auth.currentUser?.email!)
 
       this.UsuarioEnSesion = objUsuario;
+      this.sesionEventEmitter.emit({ sesionAbierta: true });
     } catch (error: any) {
-      error.message = this.parsearError(error);
-      throw error;
+      throw new Error(this.parsearError(error));
     }
   }
 
@@ -127,6 +129,7 @@ export class AuthService {
       if (!fireUserViejo)
         this.UsuarioEnSesion = usuarioAnonimo;
 
+      this.sesionEventEmitter.emit({ sesionAbierta: true });
       return docId;
     } catch (error: any) {
       throw new Error(this.parsearError(error));
