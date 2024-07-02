@@ -85,7 +85,8 @@ export const routes: Routes = [
   {
     path: 'alta-pedido',
     loadComponent: () => import('./pages/alta-pedido/alta-pedido.page').then(m => m.AltaPedidoPage),
-    canActivate: [sesionIniciadaGuard, rolTipoGuard, clienteAceptadoGuard],
+    // canActivate: [sesionIniciadaGuard, rolTipoGuard, clienteAceptadoGuard],
+    canActivate: [sesionIniciadaGuard, rolTipoGuard], //El mozo puede hacer pedido también
     data: {
       roles_tipos: [
         { rol: 'empleado', tipo: 'mozo' },
