@@ -1,0 +1,34 @@
+<div class="encuesta-container">
+  <ion-card>
+    <ion-card-header>
+      {{empleado.tipo | uppercase}} {{empleado.nombre}} {{empleado.apellido}}
+      <ion-text>{{encuesta.accion | uppercase}} - Turno {{encuesta.turno}}</ion-text>
+    </ion-card-header>
+    <ion-card-content>
+      Las condiciones del espacio de trabajo eran de
+      <app-range-estrellas [idEstrellas]="'aux'+encuesta.id" [readonly]="true"
+        [valor]="encuesta.condEspacio"></app-range-estrellas>
+
+      <div *ngIf="encuesta.fotoUrl" class="fotos-container">
+        Foto adjunta:
+        <img [src]="encuesta.fotoUrl">
+      </div>
+
+      <div *ngIf="encuesta.aspectosBuenasCond.length > 0; else ningunAspecto" class="buenosAspectos">
+        <ion-text>Los siguientes aspectos se encontraban en buenas condiciones:</ion-text>
+        <div class="aspectos">
+          <span *ngFor="let aspBuenaCond of encuesta.aspectosBuenasCond">
+            {{aspBuenaCond | uppercase}}</span>
+        </div>
+      </div>
+      <ng-template #ningunAspecto>
+        Ningún aspecto se encontraba en buenas condiciones.
+      </ng-template>
+
+      <div class="comentarios">
+        Comentarios del empleado:
+        <p>{{encuesta.comentarios}}</p>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</div>

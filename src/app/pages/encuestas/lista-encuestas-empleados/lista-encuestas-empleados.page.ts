@@ -4,7 +4,7 @@ import { ModalController } from '@ionic/angular/standalone';
 import { EncuestaEmpleado } from 'src/app/utils/classes/encuestas/encuesta-empleado';
 import { IonApp, IonRouterOutlet, IonHeader, IonToolbar, IonItem, IonTitle, IonButton, IonContent, IonFabButton, IonFab, IonIcon, IonFabList, IonModal, IonAccordionGroup, IonAccordion, IonLabel, IonList, IonText, IonInput, IonAvatar } from '@ionic/angular/standalone';
 import { RangeEstrellasComponent } from 'src/app/components/range-estrellas/range-estrellas.component';
-import { EncuestaComponent } from 'src/app/components/encuesta/encuesta.component';
+import { EncuestaEmpleadoComponent } from 'src/app/components/encuesta-empleado/encuesta-empleado.component';
 import { Colecciones, DatabaseService } from 'src/app/services/database.service';
 import { Timestamp } from '@angular/fire/firestore';
 
@@ -38,7 +38,7 @@ export class ListaEncuestasEmpleadosPage {
 
   async mostrarEncuesta(encuesta: EncuestaEmpleado) {
     const modal = await this.modalCtrl.create({
-      component: EncuestaComponent,
+      component: EncuestaEmpleadoComponent,
       id: 'encuesta-modal',
       componentProps: { encuesta: encuesta },
     });

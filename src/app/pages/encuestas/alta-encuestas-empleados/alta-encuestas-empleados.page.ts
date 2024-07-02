@@ -71,8 +71,8 @@ export class AltaEncuestasEmpleadosPage {
   }
 
   readonly AspectosCheck: { valor: AspectosRest, label: string }[] = [
-    { valor: 'iluminacion', label: 'Iluminación' },
-    { valor: 'ventilacion', label: 'Ventilación' },
+    { valor: 'iluminación', label: 'Iluminación' },
+    { valor: 'ventilación', label: 'Ventilación' },
     { valor: 'temperatura', label: 'Temperatura' },
     { valor: 'ruido', label: 'Ruido' },
     { valor: 'seguridad', label: 'Seguridad' }

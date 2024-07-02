@@ -79,11 +79,7 @@
 }
 
 ion-modal {
-  &#encuesta-modal {
-    --height: 50vh;
-    --width: 90%;
-  }
-
+  &#encuesta-modal,
   &#mesas-modal,
   &#pedido-modal {
     --height: auto;

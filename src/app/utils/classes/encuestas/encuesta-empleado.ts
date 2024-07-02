@@ -19,4 +19,4 @@ export class EncuestaEmpleado extends Encuesta {
     this.aspectosBuenasCond = aspectosBuenasCond;
   }
 }
-export type AspectosRest = 'iluminacion' | 'ventilacion' | 'temperatura' | 'ruido' | 'seguridad';
+export type AspectosRest = 'iluminación' | 'ventilación' | 'temperatura' | 'ruido' | 'seguridad';
