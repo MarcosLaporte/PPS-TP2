@@ -146,16 +146,14 @@ export class DatabaseService {
       for (const cambio of addSnap.docChanges()) {
         const data = cambio.doc.data();
         const newData = transformar ? await transformar(data as T) : data as T;
-        if (!filtroFunc || filtroFunc(newData)) {
-          if (cambio.type === 'added') {
-            arrayRef.push(newData);
-          } else {
-            const index = arrayRef.findIndex(t => t.id === newData.id);
-            if (cambio.type === 'modified')
-              arrayRef[index] = newData;
-            else
-              arrayRef.splice(index, 1);
-          }
+        if (cambio.type === 'added') {
+          if (!filtroFunc || filtroFunc(newData)) arrayRef.push(newData);
+        } else {
+          const index = arrayRef.findIndex(t => t.id === newData.id);
+          if (cambio.type === 'modified' && (!filtroFunc || filtroFunc(newData)))
+            arrayRef[index] = newData;
+          else
+            arrayRef.splice(index, 1);
         }
       }
 
@@ -190,10 +188,10 @@ export class DatabaseService {
   }
 
   borrarDoc(coleccion: string, docId: string) {
-		const docRef = doc(this.firestore, coleccion, docId);
+    const docRef = doc(this.firestore, coleccion, docId);
 
-		return deleteDoc(docRef);
-	}
+    return deleteDoc(docRef);
+  }
 
   /**
    * Busca el usuario que tenga registrado su correo con el parámetro de búsqueda.

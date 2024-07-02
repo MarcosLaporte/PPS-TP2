@@ -1,3 +1,4 @@
+
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnDestroy, inject } from '@angular/core';
 import { IonApp, IonRouterOutlet, IonHeader, IonToolbar, IonItem, IonTitle } from '@ionic/angular/standalone';
 import { NgxSpinnerModule } from 'ngx-spinner';
@@ -16,6 +17,7 @@ import { Subscription } from 'rxjs';
   imports: [IonTitle, IonItem, IonToolbar, IonHeader, IonApp, IonRouterOutlet, NgxSpinnerModule, MenuComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
+
 export class AppComponent implements OnDestroy {
   private usuarioDocSub?: Subscription;
   constructor(protected navCtrl: NavController, protected auth: AuthService, private db: DatabaseService) {
@@ -36,7 +38,7 @@ export class AppComponent implements OnDestroy {
     });
 
     if (ssUser) auth.sesionEventEmitter.emit({ sesionAbierta: true });
-    navCtrl.navigateRoot('home') //TODO: Splash
+    navCtrl.navigateRoot('home'); //TODO: Splash
   }
 
   ngOnDestroy(): void {
