@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonFab, IonIcon, IonFabButton, IonFabList, IonGrid, IonRow, IonCol, IonLabel, IonItem, IonButton, IonImg, IonRadioGroup, IonRadio, IonCard, IonCardHeader, IonCardTitle, IonCardContent,IonInputPasswordToggle, IonToggle, IonText } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonFab, IonIcon, IonFabButton, IonFabList, IonGrid, IonRow, IonCol, IonLabel, IonItem, IonButton, IonImg, IonRadioGroup, IonRadio, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonInputPasswordToggle, IonToggle, IonText } from '@ionic/angular/standalone';
 import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
 import { AuthService } from 'src/app/services/auth.service';
 import { Colecciones, DatabaseService } from 'src/app/services/database.service';
@@ -23,7 +23,7 @@ const datePipe = new DatePipe('en-US', '-0300');
   templateUrl: './alta-cliente.page.html',
   styleUrls: ['./alta-cliente.page.scss'],
   standalone: true,
-  imports: [IonText, IonToggle, IonCardContent, IonCardTitle, IonCardHeader, IonCard, IonRadio, IonRadioGroup, IonImg, IonButton, IonItem, IonLabel, IonCol, IonRow, IonGrid, IonFabList, IonFabButton, IonIcon, IonFab, IonInput, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, ReactiveFormsModule,IonInputPasswordToggle]
+  imports: [IonText, IonToggle, IonCardContent, IonCardTitle, IonCardHeader, IonCard, IonRadio, IonRadioGroup, IonImg, IonButton, IonItem, IonLabel, IonCol, IonRow, IonGrid, IonFabList, IonFabButton, IonIcon, IonFab, IonInput, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, ReactiveFormsModule, IonInputPasswordToggle]
 })
 export class AltaClientePage {
   frmCliente: FormGroup;
@@ -82,6 +82,17 @@ export class AltaClientePage {
       else
         reContraCtrl.setErrors(null);
     }
+  }
+
+  filtrarInputDoc($ev: any) {
+    console.log($ev);
+
+    const patron = /^[0-9 .\-\ ]*$/gm;
+    const inputChar = String.fromCharCode($ev.charCode);
+    if (!patron.test(inputChar)) {
+      $ev.preventDefault();
+    }
+    return true;
   }
 
   async subirCliente() {

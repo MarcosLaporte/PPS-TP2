@@ -108,6 +108,17 @@ export class AltaEmpleadoPage {
     return null;
   }
 
+  filtrarInputDoc($ev: any) {
+    console.log($ev);
+    
+    const patron = /^[0-9 .\-\ ]*$/gm;
+    const inputChar = String.fromCharCode($ev.charCode);
+    if (!patron.test(inputChar)) {
+      $ev.preventDefault();
+    }
+    return true;
+  }
+
   selecTipo($ev: CustomEvent) {
     this.empleadoFrm.controls['tipoEmpleado'].setValue($ev.detail.value);
   }

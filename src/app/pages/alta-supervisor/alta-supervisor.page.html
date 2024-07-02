@@ -61,7 +61,8 @@
               name="DNI"
               required
               ngDefaultControl
-            >
+              (keypress)="filtrarInputDoc($event)"
+             >
               <ion-button
                 id="btn-scan-DNI"
                 fill="clear"
@@ -115,7 +116,8 @@
                 name="CUIL"
                 required
                 ngDefaultControl
-              >
+                (keypress)="filtrarInputDoc($event)"
+               >
               </ion-input>
               @if (frmSupervisor.controls['CUIL'].dirty &&
               frmSupervisor.controls['CUIL'].errors) {
