@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonLabel, IonItem, IonRadio, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { Colecciones, DatabaseService } from 'src/app/services/database.service';
-import { EncuestaCliente } from 'src/app/utils/classes/EncuestaCliente';
+import { EncuestaCliente } from 'src/app/utils/classes/encuestas/encuesta-cliente';
 import { Chart  } from 'chart.js/auto';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastError } from 'src/app/utils/alerts';
