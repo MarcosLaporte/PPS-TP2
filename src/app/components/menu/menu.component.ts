@@ -54,11 +54,8 @@ export class MenuComponent {
   paginasGenerales: Pagina[] = [
     { titulo: 'Perfil', url: '/perfil', icono: 'circle-user' },
     { titulo: 'Inicio', url: '/home', icono: 'house-chimney', permitirAnon: true },
-    { titulo: 'Clientes pendientes', url: '/lista-pendientes', icono: 'selection' },
-    { titulo: 'Encuestas empleados', url: '/alta-encuestas-empleados', icono: 'corporate', rol_tipo: [{ rol: 'empleado' }] },
+    { titulo: 'Clientes pendientes', url: '/lista-clientes-pendientes', icono: 'selection' },
     { titulo: 'Encuestas empleados', url: '/lista-encuestas-empleados', icono: 'corporate', rol_tipo: [{ rol: 'jefe' }] },
-    { titulo: 'Encuestas clientes', url: '/alta-encuesta-cliente', icono: 'feedback-alt', permitirAnon: true, rol_tipo: [{ rol: 'cliente' }] },
-    { titulo: 'Graficos Clientes', url: '/grafico-clientes', icono: 'chart-pie-alt', rol_tipo: [{ rol: 'cliente' }, { rol: 'jefe' }] },
     { titulo: 'Lista de espera', url: '/lista-espera', icono: 'skill', rol_tipo: [{ rol: 'empleado', tipo: 'metre' }] },
   ];
   funciones: Funcion[] = [];
