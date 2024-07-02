@@ -7,13 +7,18 @@ export class Pedido {
     precio: number;
     tiempoEstimado: number;
     estado: EstadoPedido;
+    idCliente: string;
+    nroMesa: number;
 
-    constructor( id : string, pedidoProd : PedidoArmado[], precio : number, tiempoEstimado : number){
+    constructor( 
+        id: string, pedidoProd: PedidoArmado[], precio: number, tiempoEstimado: number, idCliente: string, nroMesa: number){
         this.id = id;
         this.pedidoProd = pedidoProd;
         this.precio = precio;
         this.tiempoEstimado = tiempoEstimado;
+        this.idCliente = idCliente;
         this.estado = 'pendiente';
+        this.nroMesa = nroMesa;
     }
 }
 

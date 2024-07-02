@@ -6,6 +6,8 @@ import { ToastSuccess } from 'src/app/utils/alerts';
 import { Pedido, PedidoArmado, PedidoProd } from 'src/app/utils/classes/pedido';
 import { Producto } from 'src/app/utils/classes/producto';
 import { NavController } from '@ionic/angular';
+import { AuthService } from 'src/app/services/auth.service';
+import { Mesa } from 'src/app/utils/classes/mesa';
 
 @Component({
   selector: 'app-pedido',
@@ -18,12 +20,14 @@ export class PedidoComponent  implements OnInit {
 
   prodCant: { [id: string]: number } = {};
   productos: Producto[] = [];
+  mesa!: Mesa;
   protected precio: number = 0; 
   protected tiempoEst: number = 0;
   protected pedido: PedidoProd[] = []; 
-  protected pedidoHecho!: Pedido; 
+  protected pedidoHecho!: Pedido;
 
-  constructor(private spinner: NgxSpinnerService, private db: DatabaseService, private navCtrl: NavController) {
+  constructor(private spinner: NgxSpinnerService, private db: DatabaseService, private navCtrl: NavController, 
+    private auth: AuthService) {
   }
 
   ngOnInit() {
@@ -53,7 +57,8 @@ export class PedidoComponent  implements OnInit {
       }
       pedidoArmado.push(pedidoArmadoItem);
     });
-    this.pedidoHecho = new Pedido('', pedidoArmado, this.precio, this.tiempoEst);
+    
+    this.pedidoHecho = new Pedido('', pedidoArmado, this.precio, this.tiempoEst, this.auth.UsuarioEnSesion!.id, this.mesa.nroMesa);
     this.db.subirDoc(Colecciones.Pedidos, this.pedidoHecho, true).then( () => {
       this.spinner.hide();
       ToastSuccess.fire('En instantes un mozo le confirmará su pedido');

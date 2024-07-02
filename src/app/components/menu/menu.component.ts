@@ -38,9 +38,8 @@ export class MenuComponent {
     },
     {
       titulo: 'Pedido', url: '/alta-pedido', icono: 'restaurant', rol_tipo: [
-        { rol: 'empleado', tipo: 'mozo' },
-        { rol: 'cliente', tipo: 'registrado' },
-        { rol: 'cliente', tipo: 'anonimo' }
+        // { rol: 'empleado', tipo: 'mozo' },
+        { rol: 'cliente' }
       ]
     },
     { titulo: 'Supervisor', url: '/alta-supervisor', icono: 'boss', rol_tipo: [{ rol: 'jefe' }] },
@@ -56,12 +55,20 @@ export class MenuComponent {
   paginasGenerales: Pagina[] = [
     { titulo: 'Perfil', url: '/perfil', icono: 'circle-user' },
     { titulo: 'Inicio', url: '/home', icono: 'house-chimney', permitirAnon: true },
-    { titulo: 'Clientes pendientes', url: '/lista-pendientes', icono: 'selection' },
+    { titulo: 'Clientes pendientes', url: '/lista-pendientes', icono: 'selection', rol_tipo: [
+      { rol: 'jefe' }
+    ] },
     { titulo: 'Encuestas clientes', url: '/alta-encuesta-cliente', icono: 'corporate', rol_tipo: [
       { rol: 'cliente' },
     ] },
     { titulo: 'Graficos Clientes', url: '/grafico-clientes', icono: 'bar-chart-outline', rol_tipo: [
       { rol: 'cliente' },
+    ] },
+    { titulo: 'Pedidos pendientes', url: '/lista-pedidos-pendiente', icono: 'plate-utensils', rol_tipo: [
+      { rol: 'empleado', tipo: 'mozo' },
+    ] },
+    { titulo: 'Consultas', url: '/consulta-mozo', icono: 'messages-question', rol_tipo: [
+      { rol: 'empleado', tipo: 'mozo' },
     ] },
   ];
   public funciones: { titulo: string, icono: string, accion: () => Promise<any> }[] = [

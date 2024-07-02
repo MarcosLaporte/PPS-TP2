@@ -12,6 +12,8 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { MySwal, ToastError, ToastSuccess } from 'src/app/utils/alerts';
 import { ModalController } from '@ionic/angular';
 import { PedidoComponent } from 'src/app/components/pedido/pedido.component';
+import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
+import { Mesa } from 'src/app/utils/classes/mesa';
 
 @Component({
   selector: 'app-alta-pedido',
@@ -25,6 +27,8 @@ export class AltaPedidoPage implements OnInit {
   protected pedido: Producto[] = [];
   precio: number = 0;
   productosElegidos: { [id: string]: number } = {};
+  cliente!: Cliente;
+  mesa!:Mesa;
   // productos: Producto[] = [];
   readonly productos: Producto[] = [
     {
@@ -234,7 +238,12 @@ export class AltaPedidoPage implements OnInit {
     //   this.productos = prods;
     //   this.spinner.hide();
     // });
-
+    if(this.auth.UsuarioEnSesion?.rol == 'cliente'){
+      this.cliente = this.auth.UsuarioEnSesion as Cliente;
+      db.traerDoc<Mesa>(Colecciones.Mesas, this.cliente.idMesa!).then( mesa => {
+        this.mesa = mesa;
+      });
+    }
     addIcons({ receiptOutline, addCircleOutline, removeCircleOutline, chatboxEllipsesOutline });
   }
 
@@ -248,7 +257,6 @@ export class AltaPedidoPage implements OnInit {
     }else{
       ToastError.fire("Cantidad inválida!")
     }
-    
   }
   
   manejarProdCant(prod: Producto, inputEv: CustomEvent) {
@@ -278,7 +286,7 @@ export class AltaPedidoPage implements OnInit {
     const modal = await this.modalCtrl.create({
       component: PedidoComponent,
       id: 'pedido-modal',
-      componentProps: { productos: this.productos, prodCant: this.productosElegidos},
+      componentProps: { productos: this.productos, prodCant: this.productosElegidos, mesa: this.mesa},
     });
     modal.present();
   }

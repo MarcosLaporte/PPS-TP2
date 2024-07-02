@@ -1,0 +1,28 @@
+<div class="container background-pri">
+  <ion-card style="width: 95%">
+    <ion-card-header>
+      <ion-card-title>Pedidos pendientes</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+        <ion-list id="lista">
+        @for (pedido of pedidos; track $index) {
+          <ion-item id="item">
+            <!-- <ion-label>{{pedido.}} {{cliente.apellido}}</ion-label>         -->
+            
+            <div part="content" class="content" >
+              <div class="cont-prod">
+                <ion-button size="large" color="danger" expand="fill" (click)="aceptarPedido(pedido.id)">
+                  <ion-icon slot="icon-only" aria-label="hidden" name="remove-circle-outline" color="light"></ion-icon>
+                </ion-button>
+                <ion-button size="large" color="success" expand="fill" (click)="rechazarRevisar(pedido.id)">
+                  <ion-icon slot="icon-only" aria-label="hidden" name="checkmark-circle-outline" color="light"></ion-icon>
+                </ion-button>
+              </div>
+            </div>
+          </ion-item>
+        }
+      </ion-list>
+  </ion-card-content>
+  </ion-card>
+</div>
