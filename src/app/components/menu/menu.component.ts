@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
 import { IonApp, IonRouterOutlet, IonHeader, IonToolbar, IonItem, IonTitle, IonButton, IonContent, IonFabButton, IonFab, IonIcon, IonFabList, IonModal, IonAccordionGroup, IonAccordion, IonLabel, IonTabButton } from '@ionic/angular/standalone';
-import { menuOutline, chevronDownCircle, logInOutline, logOutOutline, scan, caretDownCircle, restaurant } from 'ionicons/icons';
+import { menuOutline, chevronDownCircle, logInOutline, logOutOutline, scan, caretDownCircle, restaurant, chatbubblesOutline } from 'ionicons/icons';
 import { AuthService } from 'src/app/services/auth.service';
 import { ScannerService } from 'src/app/services/scanner.service';
 import { MySwal, ToastError, ToastInfo, ToastSuccess } from 'src/app/utils/alerts';
-import { AlertController, NavController } from '@ionic/angular';
+import { AlertController, NavController } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { Colecciones, DatabaseService } from 'src/app/services/database.service';
@@ -15,7 +15,7 @@ import { EstadoMesa, Mesa, parseEstadoMesa } from 'src/app/utils/classes/mesa';
 import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
 import { ClienteEnEspera, Roles_Tipos } from 'src/app/utils/interfaces/interfaces';
 import { CheckRolTipo } from 'src/app/utils/check_rol_tipo';
-import { BarcodeFormat } from '@capacitor-mlkit/barcode-scanning/dist/esm/definitions';
+import { Empleado } from 'src/app/utils/classes/usuarios/empleado';
 
 declare interface Pagina { titulo: string, url: string, icono: string, rol_tipo?: Roles_Tipos[], permitirAnon?: boolean };
 declare interface Funcion { titulo: string, icono: string, accion: () => Promise<any> };
@@ -63,27 +63,45 @@ export class MenuComponent {
   ];
   funciones: Funcion[] = [];
 
-  constructor(protected router: Router, protected navCtrl: NavController, protected auth: AuthService, private alertCtrl: AlertController, private scanner: ScannerService, private db: DatabaseService, private spinner: NgxSpinnerService) {
-    addIcons({ menuOutline, caretDownCircle, chevronDownCircle, logInOutline, logOutOutline, scan, restaurant });
+  constructor(
+    protected router: Router,
+    protected navCtrl: NavController,
+    protected auth: AuthService,
+    private alertCtrl: AlertController,
+    private scanner: ScannerService,
+    private db: DatabaseService,
+    private spinner: NgxSpinnerService,
+  ) {
+    addIcons({ menuOutline, caretDownCircle, chevronDownCircle, logInOutline, logOutOutline, scan, restaurant, chatbubblesOutline });
 
     const funcEscanear =
-      { titulo: 'Escanear', icono: 'scan', accion: async () => await this.escanear() };
+      { titulo: 'Escanear', icono: 'scan', accion: this.escanear };
     const funcIniciarSesion =
-      { titulo: 'Iniciar sesión', icono: 'log-in-outline', accion: async () => this.navCtrl.navigateRoot('login') };
+      { titulo: 'Iniciar sesión', icono: 'log-in-outline', accion: () => navCtrl.navigateRoot('login') };
     const funcCerrarSesion =
-      { titulo: 'Cerrar sesión', icono: 'log-out-outline', accion: async () => await this.cerrarSesion() };
+      { titulo: 'Cerrar sesión', icono: 'log-out-outline', accion: () => this.cerrarSesion() };
+    const funcChatMozos =
+      { titulo: 'Chat', icono: 'chatbubbles-outline', accion: () => navCtrl.navigateForward('consulta-mozo') };
 
     auth.usuarioEnSesionObs.subscribe((usuario) => {
       this.pagsAltas = this.altas.filter((pag) => CheckRolTipo(auth, pag.rol_tipo, pag.permitirAnon));
 
       if (!usuario) {
         this.funciones[0] = funcIniciarSesion;
-        this.funciones.splice(1, 1);
+        this.funciones.splice(1, 2);
       } else {
         this.funciones[0] = funcCerrarSesion;
         this.funciones[1] = funcEscanear;
+        if (this.usuarioChatPermitido())
+          this.funciones[2] = funcChatMozos;
       }
     });
+  }
+
+  private usuarioChatPermitido = () => {
+    const usuario = this.auth.UsuarioEnSesion;
+    return usuario && ((usuario.rol === 'cliente' && (usuario as Cliente).idMesa !== null) ||
+      (usuario.rol === 'empleado' && (usuario as Empleado).tipo === 'mozo'));
   }
 
   itemClick(url: string) {
