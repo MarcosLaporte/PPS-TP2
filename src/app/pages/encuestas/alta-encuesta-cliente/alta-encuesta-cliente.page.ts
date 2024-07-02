@@ -7,7 +7,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { Colecciones, DatabaseService } from 'src/app/services/database.service';
 import { StorageService } from 'src/app/services/storage.service';
 import {  MySwal, ToastError, ToastSuccess } from 'src/app/utils/alerts';
-import { EncuestaCliente } from 'src/app/utils/classes/EncuestaCliente';
+import { EncuestaCliente } from 'src/app/utils/classes/encuestas/encuesta-cliente';
 import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit, inject } from '@angular/core';
 import { RangeEstrellasComponent } from 'src/app/components/range-estrellas/range-estrellas.component';
 import { ErrorCodes, Exception } from 'src/app/utils/classes/exception';
@@ -117,7 +117,6 @@ export class AltaEncuestaClientePage {
         this.frmEncuesta.value.recomendacion,
         this.fotos.map(f => f.url as string),
         this.frmEncuesta.value.comentarios,
-        new Date()
       );
       await this.db.subirDoc(Colecciones.EncuestasCliente, nuevaEncuesta);
       this.navCtrl.navigateRoot('home');

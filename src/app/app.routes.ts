@@ -94,7 +94,7 @@ export const routes: Routes = [
     }
   },
   {
-    path: 'alta-encuestas-empleados',
+    path: 'alta-encuesta-empleado',
     loadComponent: () => import('./pages/encuestas/alta-encuestas-empleados/alta-encuestas-empleados.page').then(m => m.AltaEncuestasEmpleadosPage),
     canActivate: [sesionIniciadaGuard, rolTipoGuard],
     data: {
@@ -129,7 +129,7 @@ export const routes: Routes = [
   },
   {
     path: 'alta-encuesta-cliente',
-    loadComponent: () => import('./pages/alta-encuesta-cliente/alta-encuesta-cliente.page').then(m => m.AltaEncuestaClientePage),
+    loadComponent: () => import('./pages/encuestas/alta-encuesta-cliente/alta-encuesta-cliente.page').then(m => m.AltaEncuestaClientePage),
     canActivate: [sesionIniciadaGuard, rolTipoGuard, clienteAceptadoGuard],
     data: {
       roles_tipos: [
@@ -164,7 +164,7 @@ export const routes: Routes = [
   },
   {
     path: 'alta-encuesta-supervisor',
-    loadComponent: () => import('./pages/alta-encuesta-supervisor/alta-encuesta-supervisor.page').then(m => m.AltaEncuestaSupervisorPage),
+    loadComponent: () => import('./pages/encuestas/alta-encuesta-supervisor/alta-encuesta-supervisor.page').then(m => m.AltaEncuestaSupervisorPage),
     canActivate: [sesionIniciadaGuard, rolTipoGuard],
     data: {
       roles_tipos: [
