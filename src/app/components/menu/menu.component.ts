@@ -16,6 +16,7 @@ import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
 import { ClienteEnEspera, Roles_Tipos } from 'src/app/utils/interfaces/interfaces';
 import { CheckRolTipo } from 'src/app/utils/check_rol_tipo';
 import { Empleado } from 'src/app/utils/classes/usuarios/empleado';
+import { Pedido } from 'src/app/utils/classes/pedido';
 
 declare interface Pagina { titulo: string, url: string, icono: string, rol_tipo?: Roles_Tipos[], permitirAnon?: boolean };
 declare interface Funcion { titulo: string, icono: string, accion: () => Promise<any> };
@@ -201,9 +202,8 @@ export class MenuComponent {
         throw new Exception(ErrorCodes.MesaEquivocada, `Su mesa es la Nro${mesaCliente.nroMesa}`);
       }
       
-      const mesa = await this.db.traerDoc<Mesa>(Colecciones.Mesas, idMesa)
+      const mesa = await this.db.traerDoc<Mesa>(Colecciones.Mesas, idMesa);
       if (mesa && cliente) {
-
         switch (mesa.estado) {
           case EstadoMesa.Disponible:
             ToastInfo.fire('Para acceder a esta mesa, se le debe ser asignada por el metre.');
@@ -248,24 +248,25 @@ export class MenuComponent {
               cancelButtonText: 'nada',
               cancelButtonColor: '#f27474',
             }).then(async (res) => {
-              if (res.isConfirmed) {
+              if (res.isConfirmed)
                 this.navCtrl.navigateRoot('alta-pedido');
-              } else if (res.isDenied) {
-                //ir a consultas
-              }
+              else if (res.isDenied)
+                this.navCtrl.navigateForward('consulta-mozo');
             });
             break;
-          /*
-          case EstadoMesa.PidiendoComida:
-          break;
-          */
           case EstadoMesa.EsperandoComida:
-
+            const pedido = (await this.db.traerCoincidencias<Pedido>(Colecciones.Pedidos, {
+              campo: 'idCliente', operacion: '==', valor: cliente.id
+            }))[0];
+            
+            this.spinner.hide();
+            ToastInfo.fire(`Su pedido se encuentra ${pedido.estado}.`);
             break;
           case EstadoMesa.Comiendo:
-
+            //TODO:
             break;
           case EstadoMesa.Pagando:
+            //TODO:
             break;
         }
       }
