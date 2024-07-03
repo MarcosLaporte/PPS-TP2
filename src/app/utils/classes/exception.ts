@@ -25,4 +25,5 @@ export enum ErrorCodes {
   TipoUsuarioIncorrecto,
   ClienteYaTieneMesa,
   ClienteEnEspera,
+  ClienteSinMesa,
 }

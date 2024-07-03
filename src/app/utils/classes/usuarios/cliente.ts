@@ -13,7 +13,9 @@ export class Cliente extends Persona {
   }
   
   static crearClienteAnon(nombre: string, fotoUrl: string) {
-    return new Cliente(nombre, '', 0, '', fotoUrl, "anonimo");
+    const anon = new Cliente(nombre, '', 0, '', fotoUrl, "anonimo");
+    anon.estadoCliente = 'no necesita';
+    return anon;
   }
 
 }
