@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, doc, getDocs, setDoc, deleteDoc, updateDoc, onSnapshot, query, QuerySnapshot, orderBy, Query, limit, DocumentSnapshot, getDoc, FieldPath } from '@angular/fire/firestore';
+import { Firestore, collection, doc, getDocs, setDoc, deleteDoc, updateDoc, onSnapshot, query, QuerySnapshot, orderBy, Query, limit, DocumentSnapshot, getDoc, FieldPath, where, WhereFilterOp } from '@angular/fire/firestore';
 import { Persona } from '../utils/classes/usuarios/persona';
 import { ErrorCodes, Exception } from '../utils/classes/exception';
 import { Observable } from 'rxjs';
@@ -25,7 +25,8 @@ export enum Prefijos {
   Encuesta = 'encuesta',
   Supervisor = 'supervisor',
   duenio = 'dueño'
-}
+};
+declare type Constraint = { campo: string | FieldPath, operacion: WhereFilterOp, valor: unknown };
 @Injectable({
   providedIn: 'root'
 })
@@ -76,6 +77,29 @@ export class DatabaseService {
 
     const data = (await getDoc(docRef)).data();
     return data as T;
+  }
+
+  /**
+   * Trae un Array de objetos que cumplan con la condición `constraint` guardados en
+   *  la colección especificada de `Firestore`.
+   *
+   * @async
+   * @param coleccion - El nombre de la colección en `Firestore`.
+   * @param constraint - Objeto que contiene los tre parámetros de búsqueda.
+   * @returns Una promesa con los datos pedidos.
+   */
+  async traerCoincidencias<T>(coleccion: string, constraint: Constraint): Promise<Array<T>> {
+    const col = collection(this.firestore, coleccion);
+    const q = query(col, where(constraint.campo, constraint.operacion, constraint.valor));
+
+    const querySnapshot = (await getDocs(q));
+    const arrAux: Array<T> = [];
+
+    querySnapshot.forEach((doc) => {
+      arrAux.push(doc.data() as T);
+    });
+
+    return arrAux;
   }
 
   /**
