@@ -12,20 +12,10 @@ export enum Colecciones {
   EncuestasEmpleado = 'encuestas-empleado',
   EncuestasSupervisor = 'encuestas-supervisor',
   ListaDeEspera = 'lista-de-espera',
-  PedidosPendientes = 'lista-pedidos-pendientes',
-  PedidosListos = 'lista-pedidos-listos',
   Pedidos = "pedidos",
   Mensajes = "mensajes",
 }
 
-export enum Prefijos {
-  Usuario = 'usuario',
-  Mesa = 'mesa',
-  Producto = 'producto',
-  Encuesta = 'encuesta',
-  Supervisor = 'supervisor',
-  duenio = 'dueño'
-};
 declare type Constraint = { campo: string | FieldPath, operacion: WhereFilterOp, valor: unknown };
 @Injectable({
   providedIn: 'root'

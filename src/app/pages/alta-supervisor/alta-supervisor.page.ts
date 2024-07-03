@@ -5,7 +5,7 @@ import { AbstractControl, FormBuilder, FormControl, FormGroup, FormsModule, Reac
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonInput, IonButton, IonItem, IonRadioGroup, IonRadio, IonCardHeader, IonCard, IonCardTitle, IonCardContent, IonIcon, IonInputPasswordToggle } from '@ionic/angular/standalone';
 import { MySwal, ToastError, ToastSuccess, ToastInfo } from 'src/app/utils/alerts';
 import { AuthService } from 'src/app/services/auth.service';
-import { Colecciones, Prefijos, DatabaseService } from 'src/app/services/database.service';
+import { Colecciones, DatabaseService } from 'src/app/services/database.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { Jefe, TipoJefe } from 'src/app/utils/classes/usuarios/jefe';
 import { NgxSpinnerService } from 'ngx-spinner';

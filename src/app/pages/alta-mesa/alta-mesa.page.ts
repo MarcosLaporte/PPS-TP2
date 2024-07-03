@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonRadioGroup, IonButton, IonSelectOption, IonInput, IonCardHeader, IonCard, IonCardTitle, IonCardContent, IonIcon, IonRadio, IonSelect } from '@ionic/angular/standalone';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators, } from '@angular/forms';
-import { Colecciones, Prefijos, DatabaseService, } from 'src/app/services/database.service';
+import { Colecciones, DatabaseService, } from 'src/app/services/database.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { MySwal, ToastError, ToastSuccess, ToastInfo } from 'src/app/utils/alerts';
 import { Mesa, TipoMesa } from 'src/app/utils/classes/mesa';
@@ -67,7 +67,7 @@ export class AltaMesaPage {
 
   async uploadPicture(image: File) {
     this.spinner.show();
-    const nombreFoto: string = `${Prefijos.Mesa}-${this.frmMesa.controls['nroMesa'].value}`;
+    const nombreFoto: string = `mesa-${this.frmMesa.controls['nroMesa'].value}`;
     try {
       const url = await this.storage.subirArchivo(image,`${Colecciones.Mesas}/${nombreFoto}`);
       this.spinner.hide();
