@@ -9,7 +9,7 @@ export const Toast = Swal.mixin({
   position: 'bottom-left',
   iconColor: 'white',
   showConfirmButton: false,
-  timer: 2500,
+  timer: 5000,
   timerProgressBar: true,
 });
 

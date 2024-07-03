@@ -20,9 +20,11 @@ export class Pedido {
     this.tiempoEstimado = tiempoEstimado;
     this.estado = 'pendiente';
     this.idCliente = idCliente;
-    this.confirmaciones['mozo'] = false;
-    this.confirmaciones['cocina'] = false;
-    this.confirmaciones['barra'] = false;
+    this.confirmaciones = {
+      ['mozo']: false,
+      ['cocina']: false,
+      ['barra']: false
+    };
   }
 }
 

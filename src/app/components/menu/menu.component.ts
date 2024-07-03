@@ -39,18 +39,12 @@ export class MenuComponent {
         { rol: 'empleado', tipo: 'bartender' }
       ]
     },
-    {
-      titulo: 'Pedido', url: '/alta-pedido', icono: 'restaurant', rol_tipo: [
-        { rol: 'empleado', tipo: 'mozo' },
-        { rol: 'cliente' }
-      ]
-    },
+    { titulo: 'Pedido', url: '/alta-pedido', icono: 'restaurant', rol_tipo: [{ rol: 'empleado', tipo: 'mozo' }] },
     { titulo: 'Supervisor', url: '/alta-supervisor', icono: 'boss', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Mesa', url: '/alta-mesa', icono: 'table-picnic', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Empleado', url: '/alta-empleado', icono: 'room-service', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Encuesta', url: '/alta-encuesta-empleado', icono: 'corporate', rol_tipo: [{ rol: 'empleado' }] },
     { titulo: 'Encuesta', url: '/alta-encuestas-supervisor', icono: 'corporate', rol_tipo: [{ rol: 'jefe' }] },
-    { titulo: 'Encuesta', url: '/alta-encuesta-cliente', icono: 'feedback-review', rol_tipo: [{ rol: 'cliente' }] },
   ];
 
   pagsAltas: Pagina[] = [];
@@ -142,9 +136,9 @@ export class MenuComponent {
   async escanear() {
     if (!this.auth.UsuarioEnSesion) return;
     try {
-      // const QR: string = await this.scanner.escanear();
+      const QR: string = await this.scanner.escanear();
       // const QR = 'entrada-yourdonistas'; //FIXME: TEST
-      const QR = 'mesa-KyVbah5riER9KbhFpeF0' //FIXME: TEST
+      // const QR = 'mesa-KyVbah5riER9KbhFpeF0' //FIXME: TEST
       const qrSeparado = QR.split('-');
 
       switch (qrSeparado[0]) {
@@ -208,14 +202,17 @@ export class MenuComponent {
   async escanearQrMesa(idMesa: string) {
     let rta;
     try {
-      const cliente = this.auth.UsuarioEnSesion as Cliente;
-      
-      if (idMesa !== cliente.idMesa)
-        throw new Exception(ErrorCodes.MesaEquivocada, "Esta no es su mesa.");
-
       this.spinner.show();
-      const mesa = await this.db.traerDoc<Mesa>(Colecciones.Mesas, idMesa);
+      const cliente = this.auth.UsuarioEnSesion as Cliente;
+      if (!cliente.idMesa)
+        throw new Exception(ErrorCodes.ClienteSinMesa, "Debe entrar a la lista de espera y esperar a que le asignen una mesa.");
 
+      const mesaCliente = await this.db.traerDoc<Mesa>(Colecciones.Mesas, cliente.idMesa);
+      if (idMesa !== cliente.idMesa) {
+        throw new Exception(ErrorCodes.MesaEquivocada, `Su mesa es la Nro${mesaCliente.nroMesa}`);
+      }
+      
+      const mesa = await this.db.traerDoc<Mesa>(Colecciones.Mesas, idMesa)
       if (mesa && cliente) {
         switch (mesa.estado) {
           case EstadoMesa.Disponible:

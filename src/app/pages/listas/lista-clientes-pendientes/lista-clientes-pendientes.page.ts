@@ -71,8 +71,8 @@ export class ListaClientesPendientesPage implements OnInit {
     this.spinner.show();
     await this.db.actualizarDoc(Colecciones.Usuarios, cliente.id, { 'estadoCliente': estado });
     ToastSuccess.fire(`Cliente ${estado}!`);
-
-    this.email.mandarCorreoAutomatico(estado == 'aceptado', cliente.nombre, cliente.correo)
+    
+    this.email.mandarCorreoAutomatico(estado === 'aceptado', cliente.nombre, cliente.correo)
 
     this.spinner.hide();
   }

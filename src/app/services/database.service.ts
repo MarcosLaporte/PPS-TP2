@@ -122,7 +122,25 @@ export class DatabaseService {
 
   /**
    * Escucha los cambios en una colección en `Firestore` y guarda los datos en un Array que
-   *  recibe por parámetro y que funcionará como puntero para mantenerse actualizado.
+   *  recibe por parámetro y que funcionará como referencia para mantenerse actualizado.
+   *
+   * Los casos que verifica esta función son:
+   * - Se *agrega* un documento a la colección y filtroFunc aprueba:
+   *  Se suma al array.
+   * - Se *agrega* un documento a la colección y filtroFunc no aprueba:
+   *  No se suma al array.
+   * - Se *modifica* un documento de la colección no existente en el array y filtroFunc aprueba:
+   *  Se suma al array.
+   * - Se *modifica* un documento de la colección no existente en el array y filtroFunc no aprueba:
+   *  No se suma al array.
+   * - Se *modifica* un documento de la colección ya existente en el array y filtroFunc aprueba:
+   *  Se modifica el objeto en el array.
+   * - Se *modifica* un documento de la colección ya existente en el array y filtroFunc no aprueba:
+   *  Se borra el objeto del array.
+   * - Se *borra* un documento de la colección ya existente en el array:
+   *  Se borra el objeto del array.
+   * - Se *borra* un documento de la colección no existente en el array:
+   *  No hace nada.
    *
    * @param coleccion - El nombre de la colección en `Firestore`.
    * @param arrayRef - El Array que guardará los objetos.
@@ -146,14 +164,20 @@ export class DatabaseService {
       for (const cambio of addSnap.docChanges()) {
         const data = cambio.doc.data();
         const newData = transformar ? await transformar(data as T) : data as T;
+        const pasaFiltro = (!filtroFunc || filtroFunc(newData));
+
         if (cambio.type === 'added') {
-          if (!filtroFunc || filtroFunc(newData)) arrayRef.push(newData);
+          if (pasaFiltro) arrayRef.push(newData);
         } else {
           const index = arrayRef.findIndex(t => t.id === newData.id);
-          if (cambio.type === 'modified' && (!filtroFunc || filtroFunc(newData)))
-            arrayRef[index] = newData;
-          else
-            arrayRef.splice(index, 1);
+          if (index === -1) {
+            if (pasaFiltro) arrayRef.push(newData);
+          } else {
+            if (cambio.type === 'modified' && pasaFiltro) {
+              arrayRef[index] = newData;
+            } else
+              arrayRef.splice(index, 1);
+          }
         }
       }
 
