@@ -15,6 +15,8 @@ import { PedidoComponent } from 'src/app/components/pedido/pedido.component';
 import { PedidoProd } from 'src/app/utils/classes/pedido';
 import { Producto } from 'src/app/utils/classes/producto';
 import { ToastSuccess } from 'src/app/utils/alerts';
+import { AuthService } from 'src/app/services/auth.service';
+import { Empleado } from 'src/app/utils/classes/usuarios/empleado';
 
 @Component({
   selector: 'app-lista-pedidos-pendiente',
@@ -29,46 +31,71 @@ export class ListaPedidosPendientePage implements OnInit {
   protected pedidos: Pedido[] = [];
   protected mesas: Mesa[] = [];
   protected clientes: Cliente[] = [];
+  protected empleado!: Empleado;
+  protected productos : Producto[]= [];
 
   constructor(private db: DatabaseService, private spinner: NgxSpinnerService, 
-    private modalCtrl: ModalController) {
+    private modalCtrl: ModalController, private auth: AuthService) {
+    this.empleado = <Empleado>this.auth.UsuarioEnSesion;
     addIcons({checkmarkCircleOutline, removeCircleOutline, receiptOutline});
   }
 
   async ngOnInit() {
+    let prodctosFiltrados: Producto[] = [];
     this.spinner.show();
 
-    this.db.traerColeccion<Mesa>(Colecciones.Mesas).then( (mesas)=> {
-      this.mesas = mesas;
-    });
-    this.db.traerColeccion<Cliente>(Colecciones.Usuarios).then( (clientes)=> {
-      this.clientes = clientes;
-    });
+    this.productos = await this.db.traerColeccion<Producto>(Colecciones.Productos);
+    this.mesas = await this.db.traerColeccion<Mesa>(Colecciones.Mesas);
+    this.clientes = await this.db.traerColeccion<Cliente>(Colecciones.Usuarios);
     this.db.escucharColeccion<Pedido>(Colecciones.Pedidos, this.pedidos, (item => {
-      return item.estado == 'pendiente';
+      if(this.auth.UsuarioEnSesion?.rol == 'empleado') {
+        if(this.empleado.tipo == 'mozo')
+          return item.estado == 'pendiente';
+        else {
+          return item.estado == 'en proceso';
+        }
+      }
+      return false;
     }));
-
-    await delay(2500);
+    // this.pedidos = (await this.db.traerColeccion<Pedido>(Colecciones.Pedidos)).filter(pedido => { return pedido.estado == 'pendiente'; })
+    // this.pedidos.forEach( async (pedido, index) => {
+    //   if(pedido.idCliente){
+    //     let cliente = await this.db.traerDoc<Cliente>(Colecciones.Usuarios, pedido.idCliente);
+    //     this.clientes.push(cliente);
+    //   }
+    //   if(index +1 == this.pedidos.length){
+    //     this.clientes.forEach( async cliente => {
+    //       if(cliente.idMesa){
+    //         console.log(cliente.idMesa);
+    //         let mesa = await this.db.traerDoc<Mesa>(Colecciones.Usuarios, cliente.idMesa);
+    //         console.log(mesa);
+    //         this.mesas.push(mesa);
+    //       }
+    //     })
+    //   }
+    // })
     this.spinner.hide();
   }
 
-  aceptarPedido(id: string){
+  estadoPedido(id: string){
     this.spinner.show();
-    this.db.actualizarDoc(Colecciones.Pedidos, id, {estado: 'en proceso'}).then( () => {
-      this.spinner.hide();
-      ToastSuccess.fire('Se aceptó el pedido');
+    this.db.actualizarDoc(Colecciones.Pedidos, id, 
+      {estado: this.empleado.tipo == 'mozo'?'en proceso':'entregado'}).then( () => {
+        this.spinner.hide();
+        ToastSuccess.fire('Se aceptó el pedido');
     })
   }
   
   async mostrarPedido(pedido: Pedido){
-
     let productosCant: PedidoProd[] = [];
-    let productos : Producto[]= [];
-    productos = await this.db.traerColeccion<Producto>(Colecciones.Productos);
     
     pedido.pedidoProd.forEach(pedidoProd => {
-      productos.forEach( prod => {
+      this.productos.forEach( prod => {
         if(prod.nombre == pedidoProd.nombre){
+          if(this.empleado.tipo == 'bartender' && prod.sector != 'barra')
+            return 
+          else if(this.empleado.tipo == 'cocinero' && prod.sector != 'cocina')
+            return
           let prodPed = {
             producto: prod,
             cantidad: pedidoProd.cantidad 

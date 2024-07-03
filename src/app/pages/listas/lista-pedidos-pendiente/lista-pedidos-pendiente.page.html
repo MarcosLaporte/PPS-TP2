@@ -1,7 +1,13 @@
 <div class="container background-pri">
   <ion-card style="width: 95%">
     <ion-card-header>
-      <ion-card-title>Pedidos pendientes</ion-card-title>
+      <ion-card-title>Pedidos 
+        @if(this.empleado.tipo == 'mozo'){
+          pendientes
+        }@else {
+          en proceso
+        }
+      </ion-card-title>
     </ion-card-header>
 
     <ion-card-content>
@@ -28,7 +34,7 @@
                         <!-- <ion-button size="large" color="danger" expand="fill" (click)="manejarPedido(pedido.id, false)">
                           <ion-icon slot="icon-only" aria-label="hidden" name="remove-circle-outline" color="light"></ion-icon>
                         </ion-button> -->
-                        <ion-button size="large" color="success" expand="fill" (click)="aceptarPedido(pedido.id)">
+                        <ion-button size="large" color="success" expand="fill" (click)="estadoPedido(pedido.id)">
                           <ion-icon slot="icon-only" aria-label="hidden" name="checkmark-circle-outline" color="light"></ion-icon>
                         </ion-button>
                       </div>

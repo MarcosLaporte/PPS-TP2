@@ -183,14 +183,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/listas/lista-pedidos-pendiente/lista-pedidos-pendiente.page').then( m => m.ListaPedidosPendientePage),
     canActivate: [sesionIniciadaGuard, rolTipoGuard],
     data: {
-      roles_tipos: [
-        { rol: 'empleado', tipo: 'mozo'},
-      ]
+      rol_tipo: [
+        { rol: 'empleado', tipo: 'mozo' },
+        { rol: 'empleado', tipo: 'bartender' },
+        { rol: 'empleado', tipo: 'cocinero' }]
     }
-  },
-  {
-    path: 'lista-pedidos-sin-hacer',
-    loadComponent: () => import('./pages/listas/lista-pedidos-sin-hacer/lista-pedidos-sin-hacer.page').then( m => m.ListaPedidosSinHacerPage)
   },
 
 

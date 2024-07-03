@@ -41,11 +41,12 @@ export class PedidoComponent implements OnInit {
         nombre: pedido.producto.nombre,
         cantidad: pedido.cantidad,
         tiempoEstimado: pedido.producto.tiempoElab,
+        sector: pedido.producto.sector
       };
       pedidoArmado.push(pedidoArmadoItem);
     });
 
-    const pedidoHecho = new Pedido(pedidoArmado, this.valorTotal, this.tiempoEst, null);
+    const pedidoHecho = new Pedido(pedidoArmado, this.valorTotal, this.tiempoEst);
     this.modalCtrl.dismiss(pedidoHecho, 'confirm');
   }
 }

@@ -60,7 +60,10 @@ export class MenuComponent {
     { titulo: 'Clientes pendientes', url: '/lista-clientes-pendientes', icono: 'selection', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Encuestas empleados', url: '/lista-encuestas-empleados', icono: 'corporate', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Lista de espera', url: '/lista-espera', icono: 'skill', rol_tipo: [{ rol: 'empleado', tipo: 'metre' }] },
-    { titulo: 'Lista de pedidos pendientes', url: '/lista-pedidos-pendiente', icono: 'dinner', rol_tipo: [{ rol: 'empleado', tipo: 'mozo' }] },
+    { titulo: 'Lista de pedidos pendientes', url: '/lista-pedidos-pendiente', icono: 'dinner', rol_tipo: [
+      { rol: 'empleado', tipo: 'mozo' },
+      { rol: 'empleado', tipo: 'bartender' },
+      { rol: 'empleado', tipo: 'cocinero' }] },
   ];
   funciones: Funcion[] = [];
 
@@ -139,9 +142,9 @@ export class MenuComponent {
   async escanear() {
     if (!this.auth.UsuarioEnSesion) return;
     try {
-      const QR: string = await this.scanner.escanear();
+      // const QR: string = await this.scanner.escanear();
       // const QR = 'entrada-yourdonistas'; //FIXME: TEST
-      // const QR = 'mesa-KyVbah5riER9KbhFpeF0' //FIXME: TEST
+      const QR = 'mesa-KyVbah5riER9KbhFpeF0' //FIXME: TEST
       const qrSeparado = QR.split('-');
 
       switch (qrSeparado[0]) {
@@ -290,9 +293,6 @@ export class MenuComponent {
     await modal.present();
     const modalDismiss = await modal.onDidDismiss();
     
-    if (modalDismiss.role === 'confirm') {
-      console.log("A");
-    }
     return modalDismiss.data;
   }
 }

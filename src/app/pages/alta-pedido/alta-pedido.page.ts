@@ -262,7 +262,7 @@ export class AltaPedidoPage {
     if (modalDismiss.role === 'confirm') {
       const pedidoHecho: Pedido = modalDismiss.data;
       pedidoHecho.idCliente = this.auth.UsuarioEnSesion!.id;
-      
+      console.log(pedidoHecho);
       this.spinner.show();
       this.db.subirDoc(Colecciones.Pedidos, pedidoHecho, true).then(() => {
         this.spinner.hide();
