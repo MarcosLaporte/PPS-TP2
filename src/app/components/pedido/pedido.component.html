@@ -28,9 +28,11 @@
       </tr>
     </tfoot>
   </table>
-  <ion-button size="light" color="tertiary" expand="block" (click)="hacerPedido()">
-    Confirmar pedido
-  </ion-button>
+  @if (auth.UsuarioEnSesion?.rol == 'cliente') {
+    <ion-button size="light" color="tertiary" expand="block" (click)="hacerPedido()">
+      Confirmar pedido
+    </ion-button>
+  }
   }@else {
   <h2>Todavia no cargó ningun producto a su pedido</h2>
   }

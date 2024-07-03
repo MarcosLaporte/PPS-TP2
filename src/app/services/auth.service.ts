@@ -37,7 +37,6 @@ export class AuthService {
 
       this.sesionEventEmitter.emit({ sesionAbierta: false });
     }
-
     this._usuarioEnSesionSub.next(value);
   }
 

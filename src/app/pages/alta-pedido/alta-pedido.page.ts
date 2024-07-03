@@ -13,6 +13,7 @@ import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
 import { Mesa } from 'src/app/utils/classes/mesa';
 import { Pedido } from 'src/app/utils/classes/pedido';
 import { ToastSuccess } from 'src/app/utils/alerts';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-alta-pedido',
@@ -204,7 +205,8 @@ export class AltaPedidoPage {
     private db: DatabaseService,
     private spinner: NgxSpinnerService,
     private modalCtrl: ModalController,
-    protected navCtrl: NavController
+    protected navCtrl: NavController,
+    private auth: AuthService
   ) {
     this.spinner.show();
 
@@ -259,6 +261,8 @@ export class AltaPedidoPage {
     const modalDismiss = await modal.onDidDismiss();
     if (modalDismiss.role === 'confirm') {
       const pedidoHecho: Pedido = modalDismiss.data;
+      pedidoHecho.idCliente = this.auth.UsuarioEnSesion!.id;
+      console.log(pedidoHecho);
       this.spinner.show();
       this.db.subirDoc(Colecciones.Pedidos, pedidoHecho, true).then(() => {
         this.spinner.hide();
