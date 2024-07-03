@@ -6,7 +6,7 @@ import { menuOutline, chevronDownCircle, logInOutline, logOutOutline, scan, care
 import { AuthService } from 'src/app/services/auth.service';
 import { ScannerService } from 'src/app/services/scanner.service';
 import { MySwal, ToastError, ToastInfo, ToastSuccess } from 'src/app/utils/alerts';
-import { AlertController, NavController } from '@ionic/angular/standalone';
+import { AlertController, NavController, ModalController } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { Colecciones, DatabaseService } from 'src/app/services/database.service';
@@ -16,6 +16,8 @@ import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
 import { ClienteEnEspera, Roles_Tipos } from 'src/app/utils/interfaces/interfaces';
 import { CheckRolTipo } from 'src/app/utils/check_rol_tipo';
 import { Empleado } from 'src/app/utils/classes/usuarios/empleado';
+import { Pedido } from 'src/app/utils/classes/pedido';
+import { MenuMesaComponent } from '../menu-mesa/menu-mesa.component';
 
 declare interface Pagina { titulo: string, url: string, icono: string, rol_tipo?: Roles_Tipos[], permitirAnon?: boolean };
 declare interface Funcion { titulo: string, icono: string, accion: () => Promise<any> };
@@ -25,6 +27,7 @@ declare interface Funcion { titulo: string, icono: string, accion: () => Promise
   styleUrls: ['./menu.component.scss'],
   standalone: true,
   imports: [IonTabButton, IonLabel, IonAccordion, IonAccordionGroup, IonModal, IonFabList, IonIcon, IonFab, IonFabButton, IonContent, IonButton, IonTitle, IonItem, IonToolbar, IonHeader, IonApp, IonRouterOutlet, CommonModule, NgxSpinnerModule],
+  providers: [ModalController]
 })
 export class MenuComponent {
   readonly CheckRolTipo = CheckRolTipo;
@@ -57,6 +60,7 @@ export class MenuComponent {
     { titulo: 'Clientes pendientes', url: '/lista-clientes-pendientes', icono: 'selection', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Encuestas empleados', url: '/lista-encuestas-empleados', icono: 'corporate', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Lista de espera', url: '/lista-espera', icono: 'skill', rol_tipo: [{ rol: 'empleado', tipo: 'metre' }] },
+    { titulo: 'Lista de pedidos pendientes', url: '/lista-pedidos-pendiente', icono: 'dinner', rol_tipo: [{ rol: 'empleado', tipo: 'mozo' }] },
   ];
   funciones: Funcion[] = [];
 
@@ -68,11 +72,12 @@ export class MenuComponent {
     private scanner: ScannerService,
     private db: DatabaseService,
     private spinner: NgxSpinnerService,
+    protected modalCtrl: ModalController
   ) {
     addIcons({ menuOutline, caretDownCircle, chevronDownCircle, logInOutline, logOutOutline, scan, restaurant, chatbubblesOutline });
 
     const funcEscanear =
-      { titulo: 'Escanear', icono: 'scan', accion: this.escanear };
+      { titulo: 'Escanear', icono: 'scan', accion: () => this.escanear() };
     const funcIniciarSesion =
       { titulo: 'Iniciar sesión', icono: 'log-in-outline', accion: () => navCtrl.navigateRoot('login') };
     const funcCerrarSesion =
@@ -136,6 +141,7 @@ export class MenuComponent {
     try {
       const QR: string = await this.scanner.escanear();
       // const QR = 'entrada-yourdonistas'; //FIXME: TEST
+      // const QR = 'mesa-KyVbah5riER9KbhFpeF0' //FIXME: TEST
       const qrSeparado = QR.split('-');
 
       switch (qrSeparado[0]) {
@@ -197,8 +203,10 @@ export class MenuComponent {
   }
 
   async escanearQrMesa(idMesa: string) {
+    let rta;
     try {
       const cliente = this.auth.UsuarioEnSesion as Cliente;
+      
       if (idMesa !== cliente.idMesa)
         throw new Exception(ErrorCodes.MesaEquivocada, "Esta no es su mesa.");
 
@@ -206,64 +214,48 @@ export class MenuComponent {
       const mesa = await this.db.traerDoc<Mesa>(Colecciones.Mesas, idMesa);
 
       if (mesa && cliente) {
-
         switch (mesa.estado) {
           case EstadoMesa.Disponible:
             ToastInfo.fire('Para acceder a esta mesa, se le debe ser asignada por el metre.');
             break;
           case EstadoMesa.Asignada:
             this.spinner.hide();
-            await MySwal.fire({
-              title: `Bienvenido, ${cliente.nombre}`,
-              text: '¿Ya desea realizar su pedido?',
-              allowOutsideClick: false,
-              allowEscapeKey: false,
-              showConfirmButton: true,
-              confirmButtonText: 'Sí',
-              confirmButtonColor: '#a5dc86',
-              showDenyButton: true,
-              denyButtonText: 'No',
-              denyButtonColor: '#f27474',
-            }).then(async (res) => {
-              this.spinner.show();
-              if (res.isConfirmed) {
-                mesa.estado = EstadoMesa.PidiendoComida;
-                this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.PidiendoComida });
-                this.navCtrl.navigateRoot('alta-pedido');
-              } else {
-                mesa.estado = EstadoMesa.SinPedido;
-                this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.SinPedido });
-              }
-            });
+
+            rta = await this.mostrarMenu(mesa);
+            if (rta == 'pedir-comida') {
+              mesa.estado = EstadoMesa.PidiendoComida;
+              this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.PidiendoComida });
+              this.navCtrl.navigateRoot('alta-pedido');
+            } else {
+              mesa.estado = EstadoMesa.SinPedido;
+              this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.SinPedido });
+            }
             break;
           case EstadoMesa.SinPedido:
             this.spinner.hide();
-            await MySwal.fire({
-              title: `Bienvenido ${cliente.nombre}`,
-              text: '¿Qué desea hacer?',
-              allowOutsideClick: false,
-              allowEscapeKey: false,
-              showConfirmButton: true,
-              confirmButtonText: 'Pedir comida',
-              showDenyButton: true,
-              denyButtonText: 'Consultar',
-              showCancelButton: true,
-              cancelButtonText: 'nada',
-              cancelButtonColor: '#f27474',
-            }).then(async (res) => {
-              if (res.isConfirmed) {
-                this.navCtrl.navigateRoot('alta-pedido');
-              } else if (res.isDenied) {
-                //ir a consultas
-              }
-            });
+
+            rta = await this.mostrarMenu(mesa);
+            if (rta == 'pedir-comida') {
+              this.navCtrl.navigateRoot('alta-pedido');
+            } else if(rta == 'consultar'){
+              this.navCtrl.navigateRoot('consulta-mozo');  
+            }
             break;
           /*
           case EstadoMesa.PidiendoComida:
           break;
           */
           case EstadoMesa.EsperandoComida:
-
+            const pedido = await this.traerPedido();
+            this.spinner.hide();
+            
+            rta = await this.mostrarMenu(mesa, pedido);
+            if(rta == 'jugar'){
+              //TODO: juegos
+            }else if(rta == 'encuesta'){
+              this.navCtrl.navigateRoot('alta-encuesta-cliente');  
+            }
+            
             break;
           case EstadoMesa.Comiendo:
 
@@ -279,5 +271,28 @@ export class MenuComponent {
       ToastError.fire('Ups...', error.message);
     }
 
+  }
+
+  async traerPedido(){
+    const pedidos = await this.db.traerColeccion<Pedido>(Colecciones.Pedidos);
+    return pedidos.filter( pedido => {
+      return this.auth.UsuarioEnSesion!.id == pedido.idCliente;
+    })[0];
+  }
+
+  async mostrarMenu(mesa: Mesa, pedido?:Pedido) {
+    const modal = await this.modalCtrl.create({
+      component: MenuMesaComponent,
+      id: 'menu-mesa-modal',
+      componentProps: { mesa: mesa, cliente: <Cliente>this.auth.UsuarioEnSesion, pedido: pedido},
+    });
+    
+    await modal.present();
+    const modalDismiss = await modal.onDidDismiss();
+    
+    if (modalDismiss.role === 'confirm') {
+      console.log("A");
+    }
+    return modalDismiss.data;
   }
 }

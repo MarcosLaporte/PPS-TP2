@@ -85,8 +85,8 @@ export const routes: Routes = [
   {
     path: 'alta-pedido',
     loadComponent: () => import('./pages/alta-pedido/alta-pedido.page').then(m => m.AltaPedidoPage),
-    // canActivate: [sesionIniciadaGuard, rolTipoGuard, clienteAceptadoGuard],
-    canActivate: [sesionIniciadaGuard, rolTipoGuard], //El mozo puede hacer pedido también
+    canActivate: [sesionIniciadaGuard, rolTipoGuard, clienteAceptadoGuard],
+    // canActivate: [sesionIniciadaGuard, rolTipoGuard], //El mozo puede hacer pedido también
     data: {
       roles_tipos: [
         { rol: 'empleado', tipo: 'mozo' },
@@ -110,7 +110,7 @@ export const routes: Routes = [
   },
   {
     path: 'lista-clientes-pendientes',
-    loadComponent: () => import('./pages/lista-clientes-pendientes/lista-clientes-pendientes.page').then(m => m.ListaClientesPendientesPage),
+    loadComponent: () => import('./pages/listas/lista-clientes-pendientes/lista-clientes-pendientes.page').then(m => m.ListaClientesPendientesPage),
     canActivate: [sesionIniciadaGuard, rolTipoGuard],
     data: {
       roles_tipos: [
@@ -155,7 +155,7 @@ export const routes: Routes = [
   },
   {
     path: 'lista-espera',
-    loadComponent: () => import('./pages/lista-espera/lista-espera.page').then(m => m.ListaEsperaPage),
+    loadComponent: () => import('./pages/listas/lista-espera/lista-espera.page').then(m => m.ListaEsperaPage),
     canActivate: [sesionIniciadaGuard, rolTipoGuard],
     data: {
       roles_tipos: [
@@ -180,7 +180,7 @@ export const routes: Routes = [
   },
   {
     path: 'lista-pedidos-pendiente',
-    loadComponent: () => import('./pages/lista-pedidos-pendiente/lista-pedidos-pendiente.page').then( m => m.ListaPedidosPendientePage),
+    loadComponent: () => import('./pages/listas/lista-pedidos-pendiente/lista-pedidos-pendiente.page').then( m => m.ListaPedidosPendientePage),
     canActivate: [sesionIniciadaGuard, rolTipoGuard],
     data: {
       roles_tipos: [
@@ -188,6 +188,11 @@ export const routes: Routes = [
       ]
     }
   },
+  {
+    path: 'lista-pedidos-sin-hacer',
+    loadComponent: () => import('./pages/listas/lista-pedidos-sin-hacer/lista-pedidos-sin-hacer.page').then( m => m.ListaPedidosSinHacerPage)
+  },
+
 
 
 

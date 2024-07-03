@@ -23,7 +23,7 @@ export class PedidoComponent implements OnInit {
   protected valorTotal: number = 0;
   protected tiempoEst: number = 0;
 
-  constructor(protected modalCtrl: ModalController) { }
+  constructor(protected modalCtrl: ModalController, protected auth: AuthService) { }
 
   ngOnInit() {
     this.pedido.forEach(item => {
@@ -45,7 +45,7 @@ export class PedidoComponent implements OnInit {
       pedidoArmado.push(pedidoArmadoItem);
     });
 
-    const pedidoHecho = new Pedido(pedidoArmado, this.valorTotal, this.tiempoEst);
+    const pedidoHecho = new Pedido(pedidoArmado, this.valorTotal, this.tiempoEst, null);
     this.modalCtrl.dismiss(pedidoHecho, 'confirm');
   }
 }

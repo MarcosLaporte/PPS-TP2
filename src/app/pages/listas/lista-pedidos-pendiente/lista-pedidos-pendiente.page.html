@@ -1,0 +1,45 @@
+<div class="container background-pri">
+  <ion-card style="width: 95%">
+    <ion-card-header>
+      <ion-card-title>Pedidos pendientes</ion-card-title>
+    </ion-card-header>
+
+    <ion-card-content>
+        <ion-list id="lista">
+        @for (pedido of pedidos; track $index) {
+          @for (cliente of clientes; track $index) {
+
+            @if (pedido.idCliente == cliente.id) {
+            
+              @for (mesa of mesas; track $index) {
+
+                @if (mesa.id == cliente.idMesa) {
+                  
+                  <ion-item id="item">
+                    
+                    <ion-button fill="clear" size="large" (click)="mostrarPedido(pedido)">
+                      <ion-icon slot="icon-only" name="receipt-outline" color="medium"></ion-icon>
+                    </ion-button>
+
+                    <ion-label>Mesa número {{mesa.nroMesa}}</ion-label>  
+                    
+                    <div part="content" class="content" >
+                      <div class="cont-prod">
+                        <!-- <ion-button size="large" color="danger" expand="fill" (click)="manejarPedido(pedido.id, false)">
+                          <ion-icon slot="icon-only" aria-label="hidden" name="remove-circle-outline" color="light"></ion-icon>
+                        </ion-button> -->
+                        <ion-button size="large" color="success" expand="fill" (click)="aceptarPedido(pedido.id)">
+                          <ion-icon slot="icon-only" aria-label="hidden" name="checkmark-circle-outline" color="light"></ion-icon>
+                        </ion-button>
+                      </div>
+                    </div>
+                  </ion-item>
+                }
+              }
+            }
+          }
+        }
+      </ion-list>
+  </ion-card-content>
+  </ion-card>
+</div>

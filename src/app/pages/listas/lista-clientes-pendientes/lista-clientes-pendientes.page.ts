@@ -67,15 +67,12 @@ export class ListaClientesPendientesPage implements OnInit {
     this.spinner.hide();
   }
 
-  async manejarCliente(idCliente: string, estado: 'aceptado' | 'rechazado') {
-    let cliente = this.clientes.filter( cliente => {
-      return cliente.id = idCliente;
-    })
+  async manejarCliente(cliente: Cliente, estado: 'aceptado' | 'rechazado') {
     this.spinner.show();
-    await this.db.actualizarDoc(Colecciones.Usuarios, idCliente, { 'estadoCliente': estado });
+    await this.db.actualizarDoc(Colecciones.Usuarios, cliente.id, { 'estadoCliente': estado });
     ToastSuccess.fire(`Cliente ${estado}!`);
 
-    this.email.mandarCorreoAutomatico((estado == 'aceptado')?true:false, cliente[0].nombre, cliente[0].correo)
+    this.email.mandarCorreoAutomatico(estado == 'aceptado', cliente.nombre, cliente.correo)
 
     this.spinner.hide();
   }

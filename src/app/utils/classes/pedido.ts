@@ -6,13 +6,15 @@ export class Pedido {
   precio: number;
   tiempoEstimado: number;
   estado: EstadoPedido;
+  idCliente: string | null;
 
-  constructor(pedidoProd: PedidoArmado[], precio: number, tiempoEstimado: number) {
+  constructor(pedidoProd: PedidoArmado[], precio: number, tiempoEstimado: number, idCliente: string | null) {
     this.id = '';
     this.pedidoProd = pedidoProd;
     this.precio = precio;
     this.tiempoEstimado = tiempoEstimado;
     this.estado = 'pendiente';
+    this.idCliente = idCliente;
   }
 }
 

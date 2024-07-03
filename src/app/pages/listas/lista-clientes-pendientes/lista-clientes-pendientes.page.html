@@ -15,10 +15,10 @@
 
           <div part="content" class="content">
             <div class="cont-prod">
-              <ion-button size="large" color="danger" expand="fill" (click)="manejarCliente(cliente.id, 'rechazado')">
+              <ion-button size="large" color="danger" expand="fill" (click)="manejarCliente(cliente, 'rechazado')">
                 <ion-icon slot="icon-only" aria-label="hidden" name="remove-circle-outline" color="light"></ion-icon>
               </ion-button>
-              <ion-button size="large" color="success" expand="fill" (click)="manejarCliente(cliente.id, 'aceptado')">
+              <ion-button size="large" color="success" expand="fill" (click)="manejarCliente(cliente, 'aceptado')">
                 <ion-icon slot="icon-only" aria-label="hidden" name="checkmark-circle-outline" color="light"></ion-icon>
               </ion-button>
             </div>
