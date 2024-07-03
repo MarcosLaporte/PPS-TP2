@@ -6,7 +6,7 @@ import { menuOutline, chevronDownCircle, logInOutline, logOutOutline, scan, care
 import { AuthService } from 'src/app/services/auth.service';
 import { ScannerService } from 'src/app/services/scanner.service';
 import { MySwal, ToastError, ToastInfo, ToastSuccess } from 'src/app/utils/alerts';
-import { AlertController, NavController } from '@ionic/angular/standalone';
+import { AlertController, NavController, ModalController } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { Colecciones, DatabaseService } from 'src/app/services/database.service';
@@ -17,6 +17,7 @@ import { ClienteEnEspera, Roles_Tipos } from 'src/app/utils/interfaces/interface
 import { CheckRolTipo } from 'src/app/utils/check_rol_tipo';
 import { Empleado } from 'src/app/utils/classes/usuarios/empleado';
 import { Pedido } from 'src/app/utils/classes/pedido';
+import { MenuMesaComponent } from '../menu-mesa/menu-mesa.component';
 
 declare interface Pagina { titulo: string, url: string, icono: string, rol_tipo?: Roles_Tipos[], permitirAnon?: boolean };
 declare interface Funcion { titulo: string, icono: string, accion: () => Promise<any> };
@@ -26,6 +27,7 @@ declare interface Funcion { titulo: string, icono: string, accion: () => Promise
   styleUrls: ['./menu.component.scss'],
   standalone: true,
   imports: [IonTabButton, IonLabel, IonAccordion, IonAccordionGroup, IonModal, IonFabList, IonIcon, IonFab, IonFabButton, IonContent, IonButton, IonTitle, IonItem, IonToolbar, IonHeader, IonApp, IonRouterOutlet, CommonModule, NgxSpinnerModule],
+  providers: [ModalController]
 })
 export class MenuComponent {
   readonly CheckRolTipo = CheckRolTipo;
@@ -52,6 +54,12 @@ export class MenuComponent {
     { titulo: 'Clientes pendientes', url: '/lista-clientes-pendientes', icono: 'selection', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Encuestas empleados', url: '/lista-encuestas-empleados', icono: 'corporate', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Lista de espera', url: '/lista-espera', icono: 'skill', rol_tipo: [{ rol: 'empleado', tipo: 'metre' }] },
+    {
+      titulo: 'Lista de pedidos pendientes', url: '/lista-pedidos-pendiente', icono: 'dinner', rol_tipo: [
+        { rol: 'empleado', tipo: 'mozo' },
+        { rol: 'empleado', tipo: 'bartender' },
+        { rol: 'empleado', tipo: 'cocinero' }]
+    },
   ];
   funciones: Funcion[] = [];
 
@@ -63,6 +71,7 @@ export class MenuComponent {
     private scanner: ScannerService,
     private db: DatabaseService,
     private spinner: NgxSpinnerService,
+    protected modalCtrl: ModalController
   ) {
     addIcons({ menuOutline, caretDownCircle, chevronDownCircle, logInOutline, logOutOutline, scan, restaurant, chatbubblesOutline });
 
@@ -130,6 +139,8 @@ export class MenuComponent {
     if (!this.auth.UsuarioEnSesion) return;
     try {
       const QR: string = await this.scanner.escanear();
+      // const QR = 'entrada-yourdonistas'; //FIXME: TEST
+      // const QR = 'mesa-KyVbah5riER9KbhFpeF0' //FIXME: TEST
       const qrSeparado = QR.split('-');
 
       switch (qrSeparado[0]) {
@@ -194,6 +205,8 @@ export class MenuComponent {
     try {
       this.spinner.show();
       const cliente = this.auth.UsuarioEnSesion as Cliente;
+      if (!cliente) return;
+
       if (!cliente.idMesa)
         throw new Exception(ErrorCodes.ClienteSinMesa, "Debe entrar a la lista de espera y esperar a que le asignen una mesa.");
 
@@ -201,81 +214,89 @@ export class MenuComponent {
       if (idMesa !== cliente.idMesa) {
         throw new Exception(ErrorCodes.MesaEquivocada, `Su mesa es la Nro${mesaCliente.nroMesa}`);
       }
-      
+
       const mesa = await this.db.traerDoc<Mesa>(Colecciones.Mesas, idMesa);
-      if (mesa && cliente) {
-        switch (mesa.estado) {
-          case EstadoMesa.Disponible:
-            ToastInfo.fire('Para acceder a esta mesa, se le debe ser asignada por el metre.');
-            break;
-          case EstadoMesa.Asignada:
+      if (!mesa) throw new Exception(ErrorCodes.MesaInexistente, 'Este QR no pertenece a una de nuestras mesas.');
+
+      switch (mesa.estado) {
+        case EstadoMesa.Disponible:
+          ToastInfo.fire('Para acceder a esta mesa, se le debe ser asignada por el metre.');
+          break;
+        case EstadoMesa.Asignada:
+          this.spinner.hide();
+
+          this.mostrarMenu(mesa).then((rta) => {
+            this.spinner.show();
+            if (rta === 'pedir-comida') {
+              mesa.estado = EstadoMesa.PidiendoComida;
+              this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.PidiendoComida });
+              this.navCtrl.navigateRoot('alta-pedido');
+            } else {
+              mesa.estado = EstadoMesa.SinPedido;
+              this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.SinPedido });
+            }
             this.spinner.hide();
-            await MySwal.fire({
-              title: `Bienvenido, ${cliente.nombre}`,
-              text: '¿Ya desea realizar su pedido?',
-              allowOutsideClick: false,
-              allowEscapeKey: false,
-              showConfirmButton: true,
-              confirmButtonText: 'Sí',
-              confirmButtonColor: '#a5dc86',
-              showDenyButton: true,
-              denyButtonText: 'No',
-              denyButtonColor: '#f27474',
-            }).then(async (res) => {
-              this.spinner.show();
-              if (res.isConfirmed) {
-                mesa.estado = EstadoMesa.PidiendoComida;
-                this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.PidiendoComida });
-                this.navCtrl.navigateRoot('alta-pedido');
-              } else {
-                mesa.estado = EstadoMesa.SinPedido;
-                this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.SinPedido });
-              }
-            });
-            break;
-          case EstadoMesa.SinPedido:
+          });
+          break;
+        case EstadoMesa.SinPedido:
+          this.spinner.hide();
+
+          this.mostrarMenu(mesa).then((rta) => {
+            this.spinner.show();
+
+            if (rta === 'pedir-comida')
+              this.navCtrl.navigateRoot('alta-pedido');
+            else if (rta === 'consultar')
+              this.navCtrl.navigateForward('consulta-mozo');
+
             this.spinner.hide();
-            await MySwal.fire({
-              title: `Bienvenido ${cliente.nombre}`,
-              text: '¿Qué desea hacer?',
-              allowOutsideClick: false,
-              allowEscapeKey: false,
-              showConfirmButton: true,
-              confirmButtonText: 'Pedir comida',
-              showDenyButton: true,
-              denyButtonText: 'Consultar',
-              showCancelButton: true,
-              cancelButtonText: 'nada',
-              cancelButtonColor: '#f27474',
-            }).then(async (res) => {
-              if (res.isConfirmed)
-                this.navCtrl.navigateRoot('alta-pedido');
-              else if (res.isDenied)
-                this.navCtrl.navigateForward('consulta-mozo');
-            });
-            break;
-          case EstadoMesa.EsperandoComida:
-            const pedido = (await this.db.traerCoincidencias<Pedido>(Colecciones.Pedidos, {
-              campo: 'idCliente', operacion: '==', valor: cliente.id
-            }))[0];
-            
+          });
+          break;
+        case EstadoMesa.EsperandoComida:
+          const pedido = (await this.db.traerCoincidencias<Pedido>(Colecciones.Pedidos, {
+            campo: 'idCliente', operacion: '==', valor: cliente.id
+          }))[0];
+          this.spinner.hide();
+
+          ToastInfo.fire(`Su pedido se encuentra ${pedido.estado}.`);
+          this.mostrarMenu(mesa, pedido).then((rta) => {
+            this.spinner.show();
+
+            if (rta === 'jugar')
+              ToastInfo.fire('Modalidad en proceso.'); //TODO:
+            else if (rta === 'encuesta')
+              this.navCtrl.navigateRoot('alta-encuesta-cliente');
+
             this.spinner.hide();
-            ToastInfo.fire(`Su pedido se encuentra ${pedido.estado}.`);
-            break;
-          case EstadoMesa.Comiendo:
-            //TODO:
-            break;
-          case EstadoMesa.Pagando:
-            //TODO:
-            break;
-        }
+          });
+          break;
+        case EstadoMesa.Comiendo:
+          //TODO:
+          break;
+        case EstadoMesa.Pagando:
+          //TODO:
+          break;
       }
 
       this.spinner.hide();
     } catch (error: any) {
       this.spinner.hide();
+      console.error(error);
       ToastError.fire('Ups...', error.message);
     }
 
+  }
+
+  private async mostrarMenu(mesa: Mesa, pedido?: Pedido) {
+    const modal = await this.modalCtrl.create({
+      component: MenuMesaComponent,
+      id: 'menu-mesa-modal',
+      componentProps: { mesa: mesa, cliente: <Cliente>this.auth.UsuarioEnSesion, pedido: pedido },
+    });
+
+    await modal.present();
+    const modalDismiss = await modal.onDidDismiss();
+
+    return modalDismiss.data;
   }
 }
