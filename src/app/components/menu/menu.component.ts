@@ -138,9 +138,9 @@ export class MenuComponent {
   async escanear() {
     if (!this.auth.UsuarioEnSesion) return;
     try {
-      // const QR: string = await this.scanner.escanear();
+      const QR: string = await this.scanner.escanear();
       // const QR = 'entrada-yourdonistas'; //FIXME: TEST
-      const QR = 'mesa-DLDy65F46o10UeAQVcyG'; //Mesa 1 //FIXME: TEST
+      // const QR = 'mesa-DLDy65F46o10UeAQVcyG'; //Mesa 1 //FIXME: TEST
       // const QR = 'mesa-KyVbah5riER9KbhFpeF0'; //Mesa 2 //FIXME: TEST
       const qrSeparado = QR.split('-');
 
@@ -186,6 +186,7 @@ export class MenuComponent {
         const clienteEnEspera: ClienteEnEspera = { id: '', fecha: new Date(), cliente: this.auth.UsuarioEnSesion as Cliente };
         this.db.subirDoc(Colecciones.ListaDeEspera, clienteEnEspera, true);
         url = 'clientes-espera';
+        //TODO: PUSH NOTIFICATION A METRES
       }
 
       this.navCtrl.navigateRoot(url);
@@ -263,7 +264,7 @@ export class MenuComponent {
             this.spinner.show();
 
             if (rta === 'jugar')
-              ToastInfo.fire('Modalidad en proceso.'); //TODO:
+              ToastInfo.fire('Modalidad en proceso.'); //TODO: Pendiente
             else if (rta === 'encuesta')
               this.navCtrl.navigateRoot('alta-encuesta-cliente');
 
@@ -271,10 +272,10 @@ export class MenuComponent {
           });
           break;
         case EstadoMesa.Comiendo:
-          //TODO:
+          //TODO: Pendiente
           break;
         case EstadoMesa.Pagando:
-          //TODO:
+          //TODO: Pendiente
           break;
       }
 
