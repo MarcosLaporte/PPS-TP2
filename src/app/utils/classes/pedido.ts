@@ -8,9 +8,8 @@ export class Pedido {
   estado: EstadoPedido;
   idCliente: string;
   confirmaciones: {
-    ['mozo']: boolean,
-    ['cocina']: boolean,
-    ['barra']: boolean
+    cocina: boolean,
+    barra: boolean
   };
   
   constructor(pedidoProd: PedidoArmado[], precio: number, tiempoEstimado: number, idCliente: string = '') {
@@ -21,14 +20,13 @@ export class Pedido {
     this.estado = 'pendiente';
     this.idCliente = idCliente;
     this.confirmaciones = {
-      ['mozo']: false,
-      ['cocina']: false,
-      ['barra']: false
+      cocina: false,
+      barra: false
     };
   }
 }
 
-export type EstadoPedido = 'pendiente' | 'en proceso' | 'entregado';
+export type EstadoPedido = 'pendiente' | 'en proceso' | 'listo' | 'entregado';
 export interface PedidoProd {
   producto: Producto,
   cantidad: number,

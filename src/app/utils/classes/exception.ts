@@ -26,4 +26,5 @@ export enum ErrorCodes {
   ClienteYaTieneMesa,
   ClienteEnEspera,
   ClienteSinMesa,
+  MesaInexistente,
 }

@@ -54,10 +54,12 @@ export class MenuComponent {
     { titulo: 'Clientes pendientes', url: '/lista-clientes-pendientes', icono: 'selection', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Encuestas empleados', url: '/lista-encuestas-empleados', icono: 'corporate', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Lista de espera', url: '/lista-espera', icono: 'skill', rol_tipo: [{ rol: 'empleado', tipo: 'metre' }] },
-    { titulo: 'Lista de pedidos pendientes', url: '/lista-pedidos-pendiente', icono: 'dinner', rol_tipo: [
-      { rol: 'empleado', tipo: 'mozo' },
-      { rol: 'empleado', tipo: 'bartender' },
-      { rol: 'empleado', tipo: 'cocinero' }] },
+    {
+      titulo: 'Lista de pedidos pendientes', url: '/lista-pedidos-pendiente', icono: 'dinner', rol_tipo: [
+        { rol: 'empleado', tipo: 'mozo' },
+        { rol: 'empleado', tipo: 'bartender' },
+        { rol: 'empleado', tipo: 'cocinero' }]
+    },
   ];
   funciones: Funcion[] = [];
 
@@ -138,7 +140,8 @@ export class MenuComponent {
     try {
       const QR: string = await this.scanner.escanear();
       // const QR = 'entrada-yourdonistas'; //FIXME: TEST
-      // const QR = 'mesa-KyVbah5riER9KbhFpeF0' //FIXME: TEST
+      // const QR = 'mesa-DLDy65F46o10UeAQVcyG'; //Mesa 1 //FIXME: TEST
+      // const QR = 'mesa-KyVbah5riER9KbhFpeF0'; //Mesa 2 //FIXME: TEST
       const qrSeparado = QR.split('-');
 
       switch (qrSeparado[0]) {
@@ -183,6 +186,7 @@ export class MenuComponent {
         const clienteEnEspera: ClienteEnEspera = { id: '', fecha: new Date(), cliente: this.auth.UsuarioEnSesion as Cliente };
         this.db.subirDoc(Colecciones.ListaDeEspera, clienteEnEspera, true);
         url = 'clientes-espera';
+        //TODO: PUSH NOTIFICATION A METRES
       }
 
       this.navCtrl.navigateRoot(url);
@@ -200,10 +204,11 @@ export class MenuComponent {
   }
 
   async escanearQrMesa(idMesa: string) {
-    let rta;
     try {
       this.spinner.show();
       const cliente = this.auth.UsuarioEnSesion as Cliente;
+      if (!cliente) return;
+
       if (!cliente.idMesa)
         throw new Exception(ErrorCodes.ClienteSinMesa, "Debe entrar a la lista de espera y esperar a que le asignen una mesa.");
 
@@ -211,85 +216,94 @@ export class MenuComponent {
       if (idMesa !== cliente.idMesa) {
         throw new Exception(ErrorCodes.MesaEquivocada, `Su mesa es la Nro${mesaCliente.nroMesa}`);
       }
-      
-      const mesa = await this.db.traerDoc<Mesa>(Colecciones.Mesas, idMesa)
-      if (mesa && cliente) {
-        switch (mesa.estado) {
-          case EstadoMesa.Disponible:
-            ToastInfo.fire('Para acceder a esta mesa, se le debe ser asignada por el metre.');
-            break;
-          case EstadoMesa.Asignada:
-            this.spinner.hide();
 
-            rta = await this.mostrarMenu(mesa);
-            if (rta == 'pedir-comida') {
-              mesa.estado = EstadoMesa.PidiendoComida;
-              this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.PidiendoComida });
+      const mesaEscan = await this.db.traerDoc<Mesa>(Colecciones.Mesas, idMesa);
+      if (!mesaEscan) throw new Exception(ErrorCodes.MesaInexistente, 'Este QR no pertenece a una de nuestras mesas.');
+
+      switch (mesaEscan.estado) {
+        case EstadoMesa.Disponible:
+          ToastInfo.fire('Para acceder a esta mesa, se le debe ser asignada por el metre.');
+          break;
+        case EstadoMesa.Asignada:
+          this.spinner.hide();
+
+          this.mostrarMenu(mesaEscan).then((rta) => {
+            this.spinner.show();
+            if (rta === 'pedir-comida') {
+              mesaEscan.estado = EstadoMesa.PidiendoComida;
+              this.db.actualizarDoc(Colecciones.Mesas, mesaEscan.id, { estado: EstadoMesa.PidiendoComida });
               this.navCtrl.navigateRoot('alta-pedido');
             } else {
-              mesa.estado = EstadoMesa.SinPedido;
-              this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.SinPedido });
+              mesaEscan.estado = EstadoMesa.SinPedido;
+              this.db.actualizarDoc(Colecciones.Mesas, mesaEscan.id, { estado: EstadoMesa.SinPedido });
             }
-            break;
-          case EstadoMesa.SinPedido:
             this.spinner.hide();
-
-            rta = await this.mostrarMenu(mesa);
-            if (rta == 'pedir-comida') {
-              this.navCtrl.navigateRoot('alta-pedido');
-            } else if(rta == 'consultar'){
-              this.navCtrl.navigateRoot('consulta-mozo');  
-            }
-            break;
-          /*
-          case EstadoMesa.PidiendoComida:
+          });
           break;
-          */
-          case EstadoMesa.EsperandoComida:
-            const pedido = await this.traerPedido();
-            this.spinner.hide();
-            
-            rta = await this.mostrarMenu(mesa, pedido);
-            if(rta == 'jugar'){
-              //TODO: juegos
-            }else if(rta == 'encuesta'){
-              this.navCtrl.navigateRoot('alta-encuesta-cliente');  
-            }
-            
-            break;
-          case EstadoMesa.Comiendo:
+        case EstadoMesa.SinPedido:
+          this.spinner.hide();
 
-            break;
-          case EstadoMesa.Pagando:
-            break;
-        }
+          this.mostrarMenu(mesaEscan).then((rta) => {
+            this.spinner.show();
+
+            if (rta === 'pedir-comida')
+              this.navCtrl.navigateRoot('alta-pedido');
+            else if (rta === 'consultar')
+              this.navCtrl.navigateForward('consulta-mozo');
+
+            this.spinner.hide();
+          });
+          break;
+        case EstadoMesa.EsperandoComida:
+          const ped = (await this.db.traerCoincidencias<Pedido>(Colecciones.Pedidos, {
+            campo: 'idCliente', operacion: '==', valor: cliente.id
+          }))[0];
+          this.spinner.hide();
+
+          this.mostrarMenu(mesaEscan, ped);
+          break;
+        case EstadoMesa.Comiendo:
+          const pedido = (await this.db.traerCoincidencias<Pedido>(Colecciones.Pedidos, {
+            campo: 'idCliente', operacion: '==', valor: cliente.id
+          }))[0];
+          this.spinner.hide();
+
+          this.mostrarMenu(mesaEscan, pedido).then((rta) => {
+            this.spinner.show();
+
+            if (rta === 'jugar')
+              ToastInfo.fire('Modalidad en proceso.'); //TODO: Pendiente
+            else if (rta === 'encuesta')
+              this.navCtrl.navigateRoot('alta-encuesta-cliente', { state: { idPedido: ped.id } });
+
+            this.spinner.hide();
+          });
+          //TODO: Pendiente pedir tacuen
+          break;
+        case EstadoMesa.Pagando:
+          //TODO: Pendiente
+          break;
       }
 
       this.spinner.hide();
     } catch (error: any) {
       this.spinner.hide();
+      console.error(error);
       ToastError.fire('Ups...', error.message);
     }
 
   }
 
-  async traerPedido(){
-    const pedidos = await this.db.traerColeccion<Pedido>(Colecciones.Pedidos);
-    return pedidos.filter( pedido => {
-      return this.auth.UsuarioEnSesion!.id == pedido.idCliente;
-    })[0];
-  }
-
-  async mostrarMenu(mesa: Mesa, pedido?:Pedido) {
+  private async mostrarMenu(mesa: Mesa, pedido?: Pedido) {
     const modal = await this.modalCtrl.create({
       component: MenuMesaComponent,
       id: 'menu-mesa-modal',
-      componentProps: { mesa: mesa, cliente: <Cliente>this.auth.UsuarioEnSesion, pedido: pedido},
+      componentProps: { mesa: mesa, cliente: <Cliente>this.auth.UsuarioEnSesion, pedido: pedido },
     });
-    
+
     await modal.present();
     const modalDismiss = await modal.onDidDismiss();
-    
+
     return modalDismiss.data;
   }
 }

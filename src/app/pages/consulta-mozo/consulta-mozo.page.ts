@@ -223,18 +223,19 @@ export class ConsultaMozoPage implements OnInit {
     this.nuevoMensaje = '';
 
     this.db.subirDoc(Colecciones.Mensajes, msg, true);
+    //TODO: if (usuario.rol === 'cliente') PUSH NOTIFICATION A MOZOS
 
-    setTimeout(() => {
+    /* setTimeout(() => {
       this.scrollToLastElementByClass();
-    }, 10);
+    }, 10); */
   }
 
-  scrollToLastElementByClass() {
+  /* scrollToLastElementByClass() {
     if (this.mensajes.length > 0) {
       let elements = document.getElementsByClassName('msg');
       let lastElement: any = elements[elements.length - 1];
       let topPos = lastElement.offsetTop;
       document.getElementById('mensajes')!.scrollTop = topPos;
     }
-  }
+  } */ //FIXME: No funciona
 }

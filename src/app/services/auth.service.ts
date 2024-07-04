@@ -43,7 +43,7 @@ export class AuthService {
   readonly sesionEventEmitter = new EventEmitter<{ sesionAbierta: boolean }>();
   //#endregion
 
-  constructor(private auth: Auth, private db: DatabaseService) { }
+  constructor(public auth: Auth, private db: DatabaseService) { }
 
   /**
    * Registra un usuario con correo y contraseña en `Firebase Authentication`
@@ -77,6 +77,7 @@ export class AuthService {
         this.UsuarioEnSesion = usuario;
 
       this.sesionEventEmitter.emit({ sesionAbierta: true });
+      //TODO: PUSH NOTIFICATION A JEFES
       return docId;
     } catch (error: any) {
       throw new Error(this.parsearError(error));

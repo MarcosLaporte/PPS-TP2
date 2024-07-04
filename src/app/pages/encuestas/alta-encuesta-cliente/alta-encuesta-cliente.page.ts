@@ -13,6 +13,7 @@ import { RangeEstrellasComponent } from 'src/app/components/range-estrellas/rang
 import { ErrorCodes, Exception } from 'src/app/utils/classes/exception';
 import { NavController } from '@ionic/angular/standalone'
 import { FotosService } from 'src/app/services/fotos.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-alta-encuesta-cliente',
@@ -25,6 +26,7 @@ import { FotosService } from 'src/app/services/fotos.service';
 export class AltaEncuestaClientePage {
   frmEncuesta: FormGroup;
   fotos: { archivo: File | null, url: string | null }[] = [];
+  idPedido: string;
 
   constructor(
     private auth: AuthService,
@@ -42,6 +44,10 @@ export class AltaEncuestaClientePage {
       recomendacion: [false, [Validators.required]],
       comentarios: ['', [Validators.required]],
     });
+
+    const navigation = inject(Router).getCurrentNavigation();
+    this.idPedido = navigation?.extras?.state?.['idPedido'];
+    if (!this.idPedido) throw new Error('Falta idPedido.');
   }
 
   onComidaChange(event: any) {
@@ -111,6 +117,7 @@ export class AltaEncuestaClientePage {
       const cliente = this.auth.UsuarioEnSesion as Cliente;
       const nuevaEncuesta = new EncuestaCliente(
         cliente,
+        this.idPedido,
         this.frmEncuesta.value.puntuacionGeneral,
         this.frmEncuesta.value.comida,
         this.frmEncuesta.value.atencion,
