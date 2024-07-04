@@ -138,9 +138,10 @@ export class MenuComponent {
   async escanear() {
     if (!this.auth.UsuarioEnSesion) return;
     try {
-      const QR: string = await this.scanner.escanear();
+      // const QR: string = await this.scanner.escanear();
       // const QR = 'entrada-yourdonistas'; //FIXME: TEST
-      // const QR = 'mesa-KyVbah5riER9KbhFpeF0' //FIXME: TEST
+      const QR = 'mesa-DLDy65F46o10UeAQVcyG'; //Mesa 1 //FIXME: TEST
+      // const QR = 'mesa-KyVbah5riER9KbhFpeF0'; //Mesa 2 //FIXME: TEST
       const qrSeparado = QR.split('-');
 
       switch (qrSeparado[0]) {
@@ -215,25 +216,25 @@ export class MenuComponent {
         throw new Exception(ErrorCodes.MesaEquivocada, `Su mesa es la Nro${mesaCliente.nroMesa}`);
       }
 
-      const mesa = await this.db.traerDoc<Mesa>(Colecciones.Mesas, idMesa);
-      if (!mesa) throw new Exception(ErrorCodes.MesaInexistente, 'Este QR no pertenece a una de nuestras mesas.');
+      const mesaEscan = await this.db.traerDoc<Mesa>(Colecciones.Mesas, idMesa);
+      if (!mesaEscan) throw new Exception(ErrorCodes.MesaInexistente, 'Este QR no pertenece a una de nuestras mesas.');
 
-      switch (mesa.estado) {
+      switch (mesaEscan.estado) {
         case EstadoMesa.Disponible:
           ToastInfo.fire('Para acceder a esta mesa, se le debe ser asignada por el metre.');
           break;
         case EstadoMesa.Asignada:
           this.spinner.hide();
 
-          this.mostrarMenu(mesa).then((rta) => {
+          this.mostrarMenu(mesaEscan).then((rta) => {
             this.spinner.show();
             if (rta === 'pedir-comida') {
-              mesa.estado = EstadoMesa.PidiendoComida;
-              this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.PidiendoComida });
+              mesaEscan.estado = EstadoMesa.PidiendoComida;
+              this.db.actualizarDoc(Colecciones.Mesas, mesaEscan.id, { estado: EstadoMesa.PidiendoComida });
               this.navCtrl.navigateRoot('alta-pedido');
             } else {
-              mesa.estado = EstadoMesa.SinPedido;
-              this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.SinPedido });
+              mesaEscan.estado = EstadoMesa.SinPedido;
+              this.db.actualizarDoc(Colecciones.Mesas, mesaEscan.id, { estado: EstadoMesa.SinPedido });
             }
             this.spinner.hide();
           });
@@ -241,7 +242,7 @@ export class MenuComponent {
         case EstadoMesa.SinPedido:
           this.spinner.hide();
 
-          this.mostrarMenu(mesa).then((rta) => {
+          this.mostrarMenu(mesaEscan).then((rta) => {
             this.spinner.show();
 
             if (rta === 'pedir-comida')
@@ -258,8 +259,7 @@ export class MenuComponent {
           }))[0];
           this.spinner.hide();
 
-          ToastInfo.fire(`Su pedido se encuentra ${pedido.estado}.`);
-          this.mostrarMenu(mesa, pedido).then((rta) => {
+          this.mostrarMenu(mesaEscan, pedido).then((rta) => {
             this.spinner.show();
 
             if (rta === 'jugar')
