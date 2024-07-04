@@ -2,6 +2,7 @@ import { Encuesta } from "./encuesta";
 import { Cliente } from "../usuarios/cliente";
 
 export class EncuestaCliente extends Encuesta {
+  idPedido: string;
   puntuacionGeneral: number;
   atencion: TipoAtencion;
   comida: number;
@@ -9,8 +10,9 @@ export class EncuestaCliente extends Encuesta {
   fotoUrls: string[];
   comentarios: string;
 
-  constructor(autor: Cliente, puntuacionGeneral: number, comida: number, atencion: TipoAtencion, recomendacion: boolean, fotoUrls: string[], comentarios: string) {
+  constructor(autor: Cliente, idPedido: string, puntuacionGeneral: number, comida: number, atencion: TipoAtencion, recomendacion: boolean, fotoUrls: string[], comentarios: string) {
     super(autor);
+    this.idPedido = idPedido;
     this.puntuacionGeneral = puntuacionGeneral;
     this.comida = comida;
     this.atencion = atencion;

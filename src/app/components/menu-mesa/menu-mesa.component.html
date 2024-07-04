@@ -29,9 +29,9 @@
   
         <h2>Estado de su pedido:<br><b>{{pedido.estado}}</b></h2>
         <div>
-          @if( pedido.estado != 'pendiente'){
+          @if( pedido.estado !== 'pendiente'){
             <!-- <ion-button (click)="accionar('jugar')">Jugar</ion-button> -->
-            <ion-button (click)="accionar('encuesta')">Encuesta</ion-button>
+            <ion-button [disabled]="hizoEncuesta()" (click)="accionar('encuesta')">Encuesta</ion-button>
           }
         </div>
   

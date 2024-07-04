@@ -266,7 +266,7 @@ export class MenuComponent {
             if (rta === 'jugar')
               ToastInfo.fire('Modalidad en proceso.'); //TODO: Pendiente
             else if (rta === 'encuesta')
-              this.navCtrl.navigateRoot('alta-encuesta-cliente');
+              this.navCtrl.navigateRoot('alta-encuesta-cliente', { state: { idPedido: pedido.id } });
 
             this.spinner.hide();
           });
