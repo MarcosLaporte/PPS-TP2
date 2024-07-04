@@ -44,7 +44,7 @@ export class AuthService {
   readonly sesionEventEmitter = new EventEmitter<{ sesionAbierta: boolean }>();
   //#endregion
 
-  constructor(private auth: Auth, private db: DatabaseService) { }
+  constructor(public auth: Auth, private db: DatabaseService) { }
 
   /**
    * Registra un usuario con correo y contraseña en `Firebase Authentication`
