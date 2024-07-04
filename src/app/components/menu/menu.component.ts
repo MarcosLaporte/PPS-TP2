@@ -278,7 +278,7 @@ export class MenuComponent {
 
             this.spinner.hide();
           });
-          //TODO: Pendiente pedir tacuen
+          //TODO: Pendiente pedir cuenta
           break;
         case EstadoMesa.Pagando:
           //TODO: Pendiente

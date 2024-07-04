@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonLabel, IonItem, IonRadio, IonButton, IonIcon } from '@ionic/angular/standalone';
+import { NavController,IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonLabel, IonItem, IonRadio, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { Colecciones, DatabaseService } from 'src/app/services/database.service';
 import { EncuestaCliente } from 'src/app/utils/classes/encuestas/encuesta-cliente';
 import { Chart  } from 'chart.js/auto';
@@ -34,7 +34,7 @@ export class GraficoClientesPage implements AfterViewInit {
   mostrarGraficoLineas:boolean = false;
   mostrarGraficoTorta:boolean = false;
 
-  constructor(private db: DatabaseService, private spinner: NgxSpinnerService) {
+  constructor(private db: DatabaseService, private spinner: NgxSpinnerService,protected navCtrl: NavController) {
 
     addIcons({analytics,barChartOutline,pieChartOutline});
     this.mostrarGraficoBarras = true;

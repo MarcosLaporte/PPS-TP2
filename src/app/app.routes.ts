@@ -141,13 +141,13 @@ export const routes: Routes = [
   {
     path: 'grafico-clientes',
     loadComponent: () => import('./pages/grafico-clientes/grafico-clientes.page').then(m => m.GraficoClientesPage),
-    canActivate: [sesionIniciadaGuard, rolTipoGuard],
-    data: {
-      roles_tipos: [
-        { rol: 'cliente' },
-        { rol: 'jefe' }
-      ]
-    }
+    // canActivate: [sesionIniciadaGuard, rolTipoGuard],
+    // data: {
+    //   roles_tipos: [
+    //     { rol: 'cliente' },
+    //     { rol: 'jefe' }
+    //   ]
+    // }
   },
   {
     path: 'alta-cliente-anon',
@@ -190,14 +190,17 @@ export const routes: Routes = [
       ]
     }
   },
-
-
-
-
-
-
-
-
+  {
+    path: 'lista-encuestas-cliente',
+    loadComponent: () => import('./pages/encuestas/lista-encuestas-cliente/lista-encuestas-cliente.page').then( m => m.ListaEncuestasClientePage),
+    // canActivate: [sesionIniciadaGuard, rolTipoGuard],
+    // data: {
+    //   roles_tipos: [
+    //     { rol: 'cliente' },
+    //     { rol: 'jefe' }
+    //   ]
+    // }
+  },
 
 
 ];
