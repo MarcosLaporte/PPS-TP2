@@ -25,7 +25,8 @@ export enum EstadoMesa {
   PidiendoComida,
   EsperandoComida,
   Comiendo,
-  Pagando
+  Pagando,
+  Pago
 };
 
 export const parseEstadoMesa = (estado: EstadoMesa): string => {
@@ -36,7 +37,8 @@ export const parseEstadoMesa = (estado: EstadoMesa): string => {
     'Cliente pidiendo comida',
     'Cliente esperando comida',
     'Cliente comiendo',
-    'Cliente pagando'
+    'Cliente pagando',
+    'Cliente ya pagó',
   ];
 
   return estados[estado];

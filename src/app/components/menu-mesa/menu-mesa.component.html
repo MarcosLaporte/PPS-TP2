@@ -12,8 +12,8 @@
           ¿Ya desea realizar su pedido?
         </h2>
         <div>
-          <ion-button (click)="accionar('pedir-comida')" color="success">Sí</ion-button>
-          <ion-button (click)="accionar('salir')" color="danger">No</ion-button>
+          <ion-button (click)="modalCtrl.dismiss('pedir-comida')" color="success">Sí</ion-button>
+          <ion-button (click)="modalCtrl.dismiss('salir')" color="danger">No</ion-button>
         </div>
       }
       @case (estados[2]) {
@@ -21,8 +21,8 @@
           ¿Qué desea hacer?
         </h2>
         <div>
-          <ion-button (click)="accionar('pedir-comida')" color="tertiary">Pedir comida</ion-button>
-          <ion-button (click)="accionar('consultar')" color="tertiary">Consultar</ion-button>
+          <ion-button (click)="modalCtrl.dismiss('pedir-comida')" color="tertiary">Pedir comida</ion-button>
+          <ion-button (click)="modalCtrl.dismiss('consultar')" color="tertiary">Consultar</ion-button>
         </div>
       }
       @case (estados[4]) {
@@ -31,14 +31,15 @@
       @case (estados[5]) {
         <div>
           @if( pedido.estado !== 'pendiente'){
-          <!-- <ion-button (click)="accionar('jugar')">Jugar</ion-button> -->
-          <ion-button [disabled]="hizoEncuesta()" (click)="accionar('encuesta')">Encuesta</ion-button>
+          <!-- <ion-button (click)="modalCtrl.dismiss('jugar')">Jugar</ion-button> -->
+          <ion-button [disabled]="hizoEncuesta()" (click)="modalCtrl.dismiss('encuesta')">Encuesta</ion-button>
+          <ion-button (click)="modalCtrl.dismiss('cuenta')">Pedir cuenta</ion-button>
           }
         </div>
       }
     }
   </ion-card>
   <ion-footer>
-    <ion-button (click)="accionar('salir')" color="tertiary">Volver</ion-button>
+    <ion-button (click)="modalCtrl.dismiss('salir')" color="tertiary">Volver</ion-button>
   </ion-footer>
 </div>

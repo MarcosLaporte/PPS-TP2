@@ -38,28 +38,23 @@ export class ListaClientesPagandoPage implements OnInit {
 
   async ngOnInit() {
     this.spinner.show();
-    
+
     [this.productos, this.clientes] = await Promise.all([
       this.db.traerColeccion<Producto>(Colecciones.Productos),
       this.db.traerCoincidencias<Cliente>(Colecciones.Usuarios, { campo: 'rol', operacion: '==', valor: 'cliente' })
     ]);
     this.db.escucharColeccion<Pedido>(Colecciones.Pedidos, this.pedidos, (pedido) => pedido.estado == 'entregado');
-    this.db.escucharColeccion<Mesa>( Colecciones.Mesas, this.mesas,
-      (mesa) => mesa.estado === EstadoMesa.Pagando
-    );
+    this.db.escucharColeccion<Mesa>(Colecciones.Mesas, this.mesas, (mesa) => mesa.estado === EstadoMesa.Pago);
     this.spinner.hide();
   }
-  
+
   async manejarEstadoMesa(pedido: Pedido) {
     this.spinner.show();
 
-    const cliente = this.clientes.filter( cliente => cliente.id == pedido.idCliente)[0];
-    const mesa = this.mesas.filter( mesa => mesa.id == cliente.idMesa)[0];
-    
-    this.db.actualizarDoc(Colecciones.Mesas, 
-      mesa.id,
-      {estado: EstadoMesa.Disponible}
-    );
+    const cliente = this.clientes.filter(cliente => cliente.id == pedido.idCliente)[0];
+    const mesa = this.mesas.filter(mesa => mesa.id == cliente.idMesa)[0];
+
+    this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.Disponible });
 
     delay(1500);
     this.spinner.hide();
