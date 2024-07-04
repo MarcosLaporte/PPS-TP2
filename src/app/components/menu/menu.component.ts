@@ -255,6 +255,14 @@ export class MenuComponent {
           });
           break;
         case EstadoMesa.EsperandoComida:
+          const ped = (await this.db.traerCoincidencias<Pedido>(Colecciones.Pedidos, {
+            campo: 'idCliente', operacion: '==', valor: cliente.id
+          }))[0];
+          this.spinner.hide();
+
+          this.mostrarMenu(mesaEscan, ped);
+          break;
+        case EstadoMesa.Comiendo:
           const pedido = (await this.db.traerCoincidencias<Pedido>(Colecciones.Pedidos, {
             campo: 'idCliente', operacion: '==', valor: cliente.id
           }))[0];
@@ -266,13 +274,11 @@ export class MenuComponent {
             if (rta === 'jugar')
               ToastInfo.fire('Modalidad en proceso.'); //TODO: Pendiente
             else if (rta === 'encuesta')
-              this.navCtrl.navigateRoot('alta-encuesta-cliente');
+              this.navCtrl.navigateRoot('alta-encuesta-cliente', { state: { idPedido: ped.id } });
 
             this.spinner.hide();
           });
-          break;
-        case EstadoMesa.Comiendo:
-          //TODO: Pendiente
+          //TODO: Pendiente pedir tacuen
           break;
         case EstadoMesa.Pagando:
           //TODO: Pendiente

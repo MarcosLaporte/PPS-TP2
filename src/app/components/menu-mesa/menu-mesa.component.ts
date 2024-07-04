@@ -5,6 +5,8 @@ import { EstadoMesa, Mesa } from 'src/app/utils/classes/mesa';
 import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
 import { ModalController } from '@ionic/angular/standalone';
 import { Pedido } from 'src/app/utils/classes/pedido';
+import { Colecciones, DatabaseService } from 'src/app/services/database.service';
+import { EncuestaCliente } from 'src/app/utils/classes/encuestas/encuesta-cliente';
 
 @Component({
   selector: 'app-menu-mesa',
@@ -20,11 +22,16 @@ export class MenuMesaComponent  implements OnInit {
   protected pedido!: Pedido;
 
   estados: EstadoMesa[] = [0, 1, 2, 3, 4, 5, 6]
-  constructor(protected modalCtrl: ModalController) {
+  constructor(protected modalCtrl: ModalController, private db: DatabaseService) {
     
   }
 
   ngOnInit() {}
+
+  hizoEncuesta = async () => {
+    return (await this.db.traerCoincidencias<EncuestaCliente>(Colecciones.EncuestasCliente, 
+      { campo: 'idPedido', operacion: '==', valor: this.pedido.id })).length > 0;
+  }
 
   accionar(accion: string){
     this.modalCtrl.dismiss(accion);  
