@@ -288,6 +288,7 @@ export class MenuComponent {
             else if (rta === 'encuesta')
               this.navCtrl.navigateRoot('alta-encuesta-cliente', { state: { idPedido: ped.id } });
             else if (rta === 'cuenta') {
+              this.push.sendNotificationToType('Pedido de cuenta',`La mesa número ${mesaEscan.nroMesa} pidió la cuenta`,'mozo');
               this.spinner.show();
               mesaEscan.estado = EstadoMesa.Pagando;
               this.db.actualizarDoc(Colecciones.Mesas, mesaEscan.id, { estado: EstadoMesa.Pagando });

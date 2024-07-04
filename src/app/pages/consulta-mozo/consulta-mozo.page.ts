@@ -227,7 +227,6 @@ export class ConsultaMozoPage implements OnInit {
       this.push.sendNotificationToType('Nueva consulta', `La mesa ${msg.nroMesa} dijo: ${msg.mensaje}`, 'mozo');
     }
     this.db.subirDoc(Colecciones.Mensajes, msg, true);
-    //TODO: if (usuario.rol === 'cliente') PUSH NOTIFICATION A MOZOS
 
     /* setTimeout(() => {
       this.scrollToLastElementByClass();

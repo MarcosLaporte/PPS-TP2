@@ -448,7 +448,6 @@ export class ListaPedidosPendientePage implements OnInit {
     if (this.empleado.tipo === 'mozo') {
       [nuevoEstado, msj] = pedido.estado === 'pendiente' ?
         ['en proceso', 'Pedido en preparación.'] : ['entregado', 'Pedido listo!'];
-      //TODO: PUSH NOTIFICATION A COCINA Y BARRA
       this.push.sendNotificationToType('Nuevo pedido','se ha confirmado un pedido, a la cocina!!','cocinero');
       this.push.sendNotificationToType('Nuevo pedido','se ha confirmado un pedido, a la barra!!','bartender');
     } else {
@@ -456,7 +455,6 @@ export class ListaPedidosPendientePage implements OnInit {
       nuevaConfirm[sector] = true;
       nuevoEstado = 'en proceso';
       msj = `Pedido en ${sector} listo!`;
-      //TODO: PUSH NOTIFICATION A MOZOS
       this.push.sendNotificationToType('Pedido hecho','pase a retirarlo por las distintas zonas','mozo');
       if (pedido.confirmaciones.cocina && pedido.confirmaciones.barra) {
         nuevoEstado = 'listo';
