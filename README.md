@@ -60,15 +60,15 @@ Una aplicación móvil que permite gestionar y administrar tanto los pedidos as�
 
 ### Alta Usuario
 
-| Cliente                                        | Empleado                                       | Supervisor                                          |
-| ---------------------------------------------- | ---------------------------------------------- | --------------------------------------------------- |
-| ![1720102974316](image/README/1720102974316.png) | ![1720103029631](image/README/1720103029631.png) | ![alta-supervisor](images/README/alta-supervisor.png) |
+| Cliente                                                             | Empleado                                        | Supervisor                                          |
+| ------------------------------------------------------------------- | ----------------------------------------------- | --------------------------------------------------- |
+| ![alta-cliente-registrado](images/README/alta-cliente-registrado.png) | ![alta-empleado](images/README/alta-empleado.png) | ![alta-supervisor](images/README/alta-supervisor.png) |
 
 ### Varios
 
 | Mesa                                    | Producto                                       | Pedido                                      |
 | :-------------------------------------- | ---------------------------------------------- | ------------------------------------------- |
-| ![alta-mesa](images/README/alta-mesa.png) | ![1720104097182](image/README/1720104097182.png) | ![alta-pedido](images/README/alta-pedido.gif) |
+| ![alta-mesa](images/README/alta-mesa.png) | ![1720133387748](image/README/1720133387748.png) | ![alta-pedido](images/README/alta-pedido.gif) |
 
 ### Encuesta cliente
 
