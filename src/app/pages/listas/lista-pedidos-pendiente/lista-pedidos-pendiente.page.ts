@@ -18,6 +18,7 @@ import { ToastSuccess } from 'src/app/utils/alerts';
 import { AuthService } from 'src/app/services/auth.service';
 import { Empleado } from 'src/app/utils/classes/usuarios/empleado';
 import { ErrorCodes, Exception } from 'src/app/utils/classes/exception';
+import { PushService } from 'src/app/services/push.service';
 
 @Component({
   selector: 'app-lista-pedidos-pendiente',
@@ -405,7 +406,7 @@ export class ListaPedidosPendientePage implements OnInit {
   protected empleado!: Empleado;
 
   constructor(private db: DatabaseService, private spinner: NgxSpinnerService,
-    private modalCtrl: ModalController, private auth: AuthService) {
+    private modalCtrl: ModalController, private auth: AuthService, private push : PushService) {
     this.empleado = <Empleado>this.auth.UsuarioEnSesion;
     addIcons({ checkmarkCircleOutline, removeCircleOutline, receiptOutline });
   }
@@ -447,13 +448,14 @@ export class ListaPedidosPendientePage implements OnInit {
     if (this.empleado.tipo === 'mozo') {
       [nuevoEstado, msj] = pedido.estado === 'pendiente' ?
         ['en proceso', 'Pedido en preparación.'] : ['entregado', 'Pedido listo!'];
-      //TODO: PUSH NOTIFICATION A COCINA Y BARRA
+      this.push.sendNotificationToType('Nuevo pedido','se ha confirmado un pedido, a la cocina!!','cocinero');
+      this.push.sendNotificationToType('Nuevo pedido','se ha confirmado un pedido, a la barra!!','bartender');
     } else {
       const sector = this.empleado.tipo === 'cocinero' ? 'cocina' : 'barra';
       nuevaConfirm[sector] = true;
       nuevoEstado = 'en proceso';
       msj = `Pedido en ${sector} listo!`;
-      //TODO: PUSH NOTIFICATION A MOZOS
+      this.push.sendNotificationToType('Pedido hecho','pase a retirarlo por las distintas zonas','mozo');
       if (pedido.confirmaciones.cocina && pedido.confirmaciones.barra) {
         nuevoEstado = 'listo';
         msj = 'Pedido listo para entrega!';

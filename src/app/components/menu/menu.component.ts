@@ -19,6 +19,7 @@ import { Empleado } from 'src/app/utils/classes/usuarios/empleado';
 import { Pedido, PorcPropina } from 'src/app/utils/classes/pedido';
 import { MenuMesaComponent } from '../menu-mesa/menu-mesa.component';
 import { CuentaComponent } from '../cuenta/cuenta.component';
+import { PushService } from 'src/app/services/push.service';
 
 declare interface Pagina { titulo: string, url: string, icono: string, rol_tipo?: Roles_Tipos[], permitirAnon?: boolean };
 declare interface Funcion { titulo: string, icono: string, accion: () => Promise<any> };
@@ -73,7 +74,8 @@ export class MenuComponent {
     private scanner: ScannerService,
     private db: DatabaseService,
     private spinner: NgxSpinnerService,
-    protected modalCtrl: ModalController
+    protected modalCtrl: ModalController,
+    private push : PushService
   ) {
     addIcons({ menuOutline, caretDownCircle, chevronDownCircle, logInOutline, logOutOutline, scan, restaurant, chatbubblesOutline });
 
@@ -189,7 +191,8 @@ export class MenuComponent {
         const clienteEnEspera: ClienteEnEspera = { id: '', fecha: new Date(), cliente: this.auth.UsuarioEnSesion as Cliente };
         this.db.subirDoc(Colecciones.ListaDeEspera, clienteEnEspera, true);
         url = 'clientes-espera';
-        //TODO: PUSH NOTIFICATION A METRES
+        this.push.sendNotificationToType('Nuevo cliente',
+          `${clienteEnEspera.cliente.nombre} ${clienteEnEspera.cliente.apellido} se sumó a la lista de espera`,'metre');
       }
 
       this.navCtrl.navigateRoot(url);
@@ -285,6 +288,7 @@ export class MenuComponent {
             else if (rta === 'encuesta')
               this.navCtrl.navigateRoot('alta-encuesta-cliente', { state: { idPedido: ped.id } });
             else if (rta === 'cuenta') {
+              this.push.sendNotificationToType('Pedido de cuenta',`La mesa número ${mesaEscan.nroMesa} pidió la cuenta`,'mozo');
               this.spinner.show();
               mesaEscan.estado = EstadoMesa.Pagando;
               this.db.actualizarDoc(Colecciones.Mesas, mesaEscan.id, { estado: EstadoMesa.Pagando });
