@@ -5,7 +5,7 @@ import { IonApp, IonRouterOutlet, IonHeader, IonToolbar, IonItem, IonTitle, IonB
 import { menuOutline, chevronDownCircle, logInOutline, logOutOutline, scan, caretDownCircle, restaurant, chatbubblesOutline } from 'ionicons/icons';
 import { AuthService } from 'src/app/services/auth.service';
 import { ScannerService } from 'src/app/services/scanner.service';
-import { MySwal, ToastError, ToastInfo, ToastSuccess } from 'src/app/utils/alerts';
+import { MySwal, Toast, ToastError, ToastInfo, ToastSuccess } from 'src/app/utils/alerts';
 import { AlertController, NavController, ModalController } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
@@ -60,6 +60,7 @@ export class MenuComponent {
         { rol: 'empleado', tipo: 'bartender' },
         { rol: 'empleado', tipo: 'cocinero' }]
     },
+    { titulo: 'Lista de clientes pagando', url: '/lista-clientes-pagando', icono: 'dinner', rol_tipo: [{ rol: 'empleado', tipo: 'mozo' }]},
   ];
   funciones: Funcion[] = [];
 
@@ -138,10 +139,11 @@ export class MenuComponent {
   async escanear() {
     if (!this.auth.UsuarioEnSesion) return;
     try {
-      const QR: string = await this.scanner.escanear();
+      // const QR: string = await this.scanner.escanear();
       // const QR = 'entrada-yourdonistas'; //FIXME: TEST
       // const QR = 'mesa-DLDy65F46o10UeAQVcyG'; //Mesa 1 //FIXME: TEST
       // const QR = 'mesa-KyVbah5riER9KbhFpeF0'; //Mesa 2 //FIXME: TEST
+      const QR = 'mesa-6JSkAmkz3oFcA1UYh045'; //Mesa 3 //FIXME: TEST
       const qrSeparado = QR.split('-');
 
       switch (qrSeparado[0]) {
@@ -259,8 +261,16 @@ export class MenuComponent {
             campo: 'idCliente', operacion: '==', valor: cliente.id
           }))[0];
           this.spinner.hide();
-
-          this.mostrarMenu(mesaEscan, ped);
+          if(ped.estado == 'entregado'){
+            await this.db.actualizarDoc(
+              Colecciones.Mesas, 
+              mesaEscan.id, 
+              { estado: EstadoMesa.Comiendo }
+            );
+            ToastSuccess.fire('Pedido recibido.');
+          }else{
+            this.mostrarMenu(mesaEscan, ped);
+          }
           break;
         case EstadoMesa.Comiendo:
           const pedido = (await this.db.traerCoincidencias<Pedido>(Colecciones.Pedidos, {
@@ -282,6 +292,7 @@ export class MenuComponent {
           break;
         case EstadoMesa.Pagando:
           //TODO: Pendiente
+          Toast.fire('PAGA LA PRATA !!!!!!!!!!!!!')
           break;
       }
 

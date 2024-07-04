@@ -80,7 +80,6 @@ export class AltaSupervisorPage {
 
   async subirSupervisor() {
     const fotoUrl = await this.uploadPicture(this.picture);
-    console.log(fotoUrl);
     if (fotoUrl) {
       const nombre = this.frmSupervisor.controls['nombre'].value;
       const apellido = this.frmSupervisor.controls['apellido'].value;
@@ -205,7 +204,6 @@ export class AltaSupervisorPage {
   }
 
   filtrarInputDoc($ev: any) {
-    console.log($ev);
     
     const patron = /^[0-9 .\-\ ]*$/gm;
     const inputChar = String.fromCharCode($ev.charCode);

@@ -10,7 +10,7 @@ import { checkmarkCircleOutline, removeCircleOutline } from 'ionicons/icons';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { delay } from 'src/main';
 import { ToastSuccess } from 'src/app/utils/alerts';
-import { EmailService } from 'src/app/services/email.service';
+import { PushService } from 'src/app/services/push.service';
 
 @Component({
   selector: 'app-lista-clientes-pendientes',
@@ -51,7 +51,7 @@ export class ListaClientesPendientesPage implements OnInit {
     }
   ];
  */
-  constructor(protected db: DatabaseService, private spinner: NgxSpinnerService, private email: EmailService, protected navCtrl: NavController) {
+  constructor(protected db: DatabaseService, private spinner: NgxSpinnerService, private push: PushService, protected navCtrl: NavController) {
     addIcons({ checkmarkCircleOutline, removeCircleOutline });
   }
 
@@ -72,7 +72,7 @@ export class ListaClientesPendientesPage implements OnInit {
     await this.db.actualizarDoc(Colecciones.Usuarios, cliente.id, { 'estadoCliente': estado });
     ToastSuccess.fire(`Cliente ${estado}!`);
     
-    this.email.mandarCorreoAutomatico(estado === 'aceptado', cliente.nombre, cliente.correo)
+    this.push.sendMail(estado === 'aceptado', cliente.nombre, cliente.correo)
 
     this.spinner.hide();
   }

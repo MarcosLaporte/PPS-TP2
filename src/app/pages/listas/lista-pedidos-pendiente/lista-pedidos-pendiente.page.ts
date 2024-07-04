@@ -407,8 +407,6 @@ export class ListaPedidosPendientePage implements OnInit {
   constructor(private db: DatabaseService, private spinner: NgxSpinnerService,
     private modalCtrl: ModalController, private auth: AuthService) {
     this.empleado = <Empleado>this.auth.UsuarioEnSesion;
-    console.log(this.empleado);
-
     addIcons({ checkmarkCircleOutline, removeCircleOutline, receiptOutline });
   }
 
