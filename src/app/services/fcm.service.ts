@@ -19,20 +19,20 @@ export class FcmService {
     private databaseService: DatabaseService // Inyecta tu servicio DatabaseService aquí
   ) { }
 
-  initPush(uid: string) {
-    console.log('*** initPush called with uid:', uid);
+  initPush(id: string) {
+    console.log('*** initPush called with id:', id);
     if (Capacitor.getPlatform() !== 'web') {
 
       console.log("entro init push")
-      this.registerPush(uid);
+      this.registerPush(id);
       this.getDeliveredNotifications();
     }
   }
 
-  private async registerPush(uid: string) {
-    console.log('*** registerPush called with uid:', uid);
+  private async registerPush(id: string) {
+    console.log('*** registerPush called with id:', id);
     try {
-      await this.addListeners(uid);
+      await this.addListeners(id);
       let permStatus = await PushNotifications.checkPermissions();
 
       if (permStatus.receive === 'prompt') {
@@ -54,8 +54,8 @@ export class FcmService {
     console.log('*** delivered notifications:', notificationList);
   }
 
-  addListeners(uid: string) {
-    console.log('*** addListeners called with uid:', uid);
+  addListeners(id: string) {
+    console.log('*** addListeners called with id:', id);
     PushNotifications.addListener(
       'registration',
       async (token: Token) => {
@@ -66,7 +66,7 @@ export class FcmService {
 
         try {
           // Obtener el token guardado en Firestore
-          const user = await this.databaseService.traerDoc<any>('users', uid);
+          const user = await this.databaseService.traerDoc<any>('users', id);
           saved_token = user?.token;
           console.log('*** saved_token from Firestore:', saved_token);
 
@@ -84,10 +84,10 @@ export class FcmService {
         // Según el estado, guardar o actualizar el token en Firestore
         if (go === 1) {
           console.log('*** go === 1, calling saveTokenToFirestore');
-          await this.saveTokenToFirestore(fcm_token, uid);
+          await this.saveTokenToFirestore(fcm_token, id);
         } else if (go === 2) {
           console.log('*** go === 2, calling updateTokenInFirestore');
-          await this.updateTokenInFirestore(fcm_token, uid);
+          await this.updateTokenInFirestore(fcm_token, id);
         }
       }
     );
@@ -117,22 +117,22 @@ export class FcmService {
     );
   }
 
-  async saveTokenToFirestore(token: string, uid: string) {
+  async saveTokenToFirestore(token: string, id: string) {
     try {
-      console.log('*** saveTokenToFirestore called with token:', token, 'and uid:', uid);
+      console.log('*** saveTokenToFirestore called with token:', token, 'and id:', id);
       // Guardar el token en Firestore
-      await this.databaseService.actualizarDoc('users', uid, { token: token });
+      await this.databaseService.actualizarDoc('users', id, { token: token });
       console.log('*** Token saved to Firestore');
     } catch (error) {
       console.error('*** Error saving token to Firestore:', error);
     }
   }
 
-  async updateTokenInFirestore(newToken: string, uid: string) {
+  async updateTokenInFirestore(newToken: string, id: string) {
     try {
-      console.log('*** updateTokenInFirestore called with newToken:', newToken, 'and uid:', uid);
+      console.log('*** updateTokenInFirestore called with newToken:', newToken, 'and id:', id);
       // Actualizar el token en Firestore
-      await this.databaseService.actualizarDoc('users', uid, { token: newToken });
+      await this.databaseService.actualizarDoc('users', id, { token: newToken });
       console.log('*** Token updated in Firestore');
     } catch (error) {
       console.error('*** Error updating token in Firestore:', error);

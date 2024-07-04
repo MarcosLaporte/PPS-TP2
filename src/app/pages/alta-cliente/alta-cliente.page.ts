@@ -115,10 +115,11 @@ export class AltaClientePage {
        // Enviar notificación a los usuarios con rol "jefe"
        const title = "Nuevo Cliente Registrado";
        const body = `El cliente ${nombre} ${apellido} se ha registrado.`;
-       this.notification.sendNotificationToRole(title, body, 'jefe').subscribe(
-           response => console.log('Notificación enviada', response),
-           error => console.error('Error al enviar la notificación', error)
-       );
+       this.notification.sendNotificationToRole(title, body, 'jefe').subscribe({
+        next: response => console.log('Notificación enviada', response),
+        error: error => console.error('Error al enviar la notificación', error),
+        complete: () => console.log('Notificación procesada completamente')
+    });
 
 
       this.resetForm();

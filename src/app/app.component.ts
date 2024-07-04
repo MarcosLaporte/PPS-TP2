@@ -52,7 +52,6 @@ export class AppComponent implements OnDestroy {
               console.log("nombre usuario",this.auth.UsuarioEnSesion!.nombre)
               console.log("idusuario",this.auth.UsuarioEnSesion!.id)
 
-
               this.fcm.initPush(this.auth.UsuarioEnSesion!.id);
             }).catch(e => {
               console.log('*** Error in platform.ready:', e);
