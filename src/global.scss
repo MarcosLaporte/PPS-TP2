@@ -35,7 +35,7 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
-@import "./theme/variables.scss";
+@import '/src/theme/variables.scss';
 @import "@flaticon/flaticon-uicons/css/all/all.css";
 
 .container {
@@ -81,7 +81,8 @@
 ion-modal {
   &#encuesta-modal,
   &#mesas-modal,
-  &#pedido-modal {
+  &#pedido-modal,
+  &#menu-mesa-modal {
     --height: auto;
     --width: 90%;
   }

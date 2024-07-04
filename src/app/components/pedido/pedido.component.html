@@ -19,18 +19,20 @@
       </tr>
       }
     </tbody>
-    <!-- <tfoot>
+    <tfoot>
       <tr>
-        <td colspan="2" class="total-label">Total</td>
+        <!-- <td colspan="2" class="total-label">Tiempo estimado</td> -->
+        <td class="total-label">Tiempo</td>
         <td class="total-tiempo">{{ tiempoEst }}'</td>
-        <td class="total-precio">{{ valorTotal | currency }}</td>
+        <!-- <td class="total-precio">{{ valorTotal | currency }}</td> -->
       </tr>
-    </tfoot> -->
+    </tfoot>
   </table>
-
-  <ion-button size="light" color="tertiary" expand="block" (click)="hacerPedido()">
-    Confirmar pedido
-  </ion-button>
+  @if (auth.UsuarioEnSesion?.rol == 'cliente') {
+    <ion-button size="light" color="tertiary" expand="block" (click)="hacerPedido()">
+      Confirmar pedido
+    </ion-button>
+  }
   }@else {
   <h2>Todavia no cargó ningun producto a su pedido</h2>
   }

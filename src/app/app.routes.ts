@@ -15,7 +15,7 @@ export const routes: Routes = [
   },
   {
     path: 'alta-cliente',
-    loadComponent: () => import('./pages/alta-cliente/alta-cliente.page').then(m => m.AltaClientePage),
+    loadComponent: () => import('./pages/altas/alta-cliente/alta-cliente.page').then(m => m.AltaClientePage),
     canActivate: [rolTipoGuard],
     data: {
       permitirAnon: true,
@@ -26,7 +26,7 @@ export const routes: Routes = [
   },
   {
     path: 'alta-producto',
-    loadComponent: () => import('./pages/alta-producto/alta-producto.page').then(m => m.AltaProductoPage),
+    loadComponent: () => import('./pages/altas/alta-producto/alta-producto.page').then(m => m.AltaProductoPage),
     canActivate: [sesionIniciadaGuard, rolTipoGuard],
     data: {
       roles_tipos: [
@@ -37,7 +37,7 @@ export const routes: Routes = [
   },
   {
     path: 'alta-supervisor',
-    loadComponent: () => import('./pages/alta-supervisor/alta-supervisor.page').then(m => m.AltaSupervisorPage),
+    loadComponent: () => import('./pages/altas/alta-supervisor/alta-supervisor.page').then(m => m.AltaSupervisorPage),
     canActivate: [sesionIniciadaGuard, rolTipoGuard],
     data: {
       roles_tipos: [
@@ -47,7 +47,7 @@ export const routes: Routes = [
   },
   {
     path: 'alta-mesa',
-    loadComponent: () => import('./pages/alta-mesa/alta-mesa.page').then(m => m.AltaMesaPage),
+    loadComponent: () => import('./pages/altas/alta-mesa/alta-mesa.page').then(m => m.AltaMesaPage),
     canActivate: [sesionIniciadaGuard, rolTipoGuard],
     data: {
       roles_tipos: [
@@ -57,7 +57,7 @@ export const routes: Routes = [
   },
   {
     path: 'alta-empleado',
-    loadComponent: () => import('./pages/alta-empleado/alta-empleado.page').then(m => m.AltaEmpleadoPage),
+    loadComponent: () => import('./pages/altas/alta-empleado/alta-empleado.page').then(m => m.AltaEmpleadoPage),
     canActivate: [sesionIniciadaGuard, rolTipoGuard],
     data: {
       roles_tipos: [
@@ -84,9 +84,9 @@ export const routes: Routes = [
   },
   {
     path: 'alta-pedido',
-    loadComponent: () => import('./pages/alta-pedido/alta-pedido.page').then(m => m.AltaPedidoPage),
-    // canActivate: [sesionIniciadaGuard, rolTipoGuard, clienteAceptadoGuard],
-    canActivate: [sesionIniciadaGuard, rolTipoGuard], //El mozo puede hacer pedido también
+    loadComponent: () => import('./pages/altas/alta-pedido/alta-pedido.page').then(m => m.AltaPedidoPage),
+    canActivate: [sesionIniciadaGuard, rolTipoGuard, clienteAceptadoGuard],
+    // canActivate: [sesionIniciadaGuard, rolTipoGuard], //El mozo puede hacer pedido también
     data: {
       roles_tipos: [
         { rol: 'empleado', tipo: 'mozo' },
@@ -110,7 +110,7 @@ export const routes: Routes = [
   },
   {
     path: 'lista-clientes-pendientes',
-    loadComponent: () => import('./pages/lista-clientes-pendientes/lista-clientes-pendientes.page').then(m => m.ListaClientesPendientesPage),
+    loadComponent: () => import('./pages/listas/lista-clientes-pendientes/lista-clientes-pendientes.page').then(m => m.ListaClientesPendientesPage),
     canActivate: [sesionIniciadaGuard, rolTipoGuard],
     data: {
       roles_tipos: [
@@ -151,11 +151,11 @@ export const routes: Routes = [
   },
   {
     path: 'alta-cliente-anon',
-    loadComponent: () => import('./pages/alta-cliente-anon/alta-cliente-anon.page').then(m => m.AltaClienteAnonPage),
+    loadComponent: () => import('./pages/altas/alta-cliente-anon/alta-cliente-anon.page').then(m => m.AltaClienteAnonPage),
   },
   {
     path: 'lista-espera',
-    loadComponent: () => import('./pages/lista-espera/lista-espera.page').then(m => m.ListaEsperaPage),
+    loadComponent: () => import('./pages/listas/lista-espera/lista-espera.page').then(m => m.ListaEsperaPage),
     canActivate: [sesionIniciadaGuard, rolTipoGuard],
     data: {
       roles_tipos: [
@@ -175,6 +175,29 @@ export const routes: Routes = [
   },
   {
     path: 'consulta-mozo',
-    loadComponent: () => import('./pages/consulta-mozo/consulta-mozo.page').then(m => m.ConsultaMozoPage)
+    loadComponent: () => import('./pages/consulta-mozo/consulta-mozo.page').then( m => m.ConsultaMozoPage),
+    canActivate: [sesionIniciadaGuard],
   },
+  {
+    path: 'lista-pedidos-pendiente',
+    loadComponent: () => import('./pages/listas/lista-pedidos-pendiente/lista-pedidos-pendiente.page').then( m => m.ListaPedidosPendientePage),
+    canActivate: [sesionIniciadaGuard, rolTipoGuard],
+    data: {
+      roles_tipos: [
+        { rol: 'empleado', tipo: 'mozo' },
+        { rol: 'empleado', tipo: 'bartender' },
+        { rol: 'empleado', tipo: 'cocinero' }
+      ]
+    }
+  },
+
+
+
+
+
+
+
+
+
+
 ];

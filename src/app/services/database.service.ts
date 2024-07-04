@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, doc, getDocs, setDoc, deleteDoc, updateDoc, onSnapshot, query, QuerySnapshot, orderBy, Query, limit, DocumentSnapshot, getDoc, FieldPath } from '@angular/fire/firestore';
+import { Firestore, collection, doc, getDocs, setDoc, deleteDoc, updateDoc, onSnapshot, query, QuerySnapshot, orderBy, Query, limit, DocumentSnapshot, getDoc, FieldPath, where, WhereFilterOp } from '@angular/fire/firestore';
 import { Persona } from '../utils/classes/usuarios/persona';
 import { ErrorCodes, Exception } from '../utils/classes/exception';
 import { Observable } from 'rxjs';
@@ -12,20 +12,11 @@ export enum Colecciones {
   EncuestasEmpleado = 'encuestas-empleado',
   EncuestasSupervisor = 'encuestas-supervisor',
   ListaDeEspera = 'lista-de-espera',
-  PedidosPendientes = 'lista-pedidos-pendientes',
-  PedidosListos = 'lista-pedidos-listos',
   Pedidos = "pedidos",
   Mensajes = "mensajes",
 }
 
-export enum Prefijos {
-  Usuario = 'usuario',
-  Mesa = 'mesa',
-  Producto = 'producto',
-  Encuesta = 'encuesta',
-  Supervisor = 'supervisor',
-  duenio = 'dueño'
-}
+declare type Constraint = { campo: string | FieldPath, operacion: WhereFilterOp, valor: unknown };
 @Injectable({
   providedIn: 'root'
 })
@@ -79,6 +70,29 @@ export class DatabaseService {
   }
 
   /**
+   * Trae un Array de objetos que cumplan con la condición `constraint` guardados en
+   *  la colección especificada de `Firestore`.
+   *
+   * @async
+   * @param coleccion - El nombre de la colección en `Firestore`.
+   * @param constraint - Objeto que contiene los tre parámetros de búsqueda.
+   * @returns Una promesa con los datos pedidos.
+   */
+  async traerCoincidencias<T>(coleccion: string, constraint: Constraint): Promise<Array<T>> {
+    const col = collection(this.firestore, coleccion);
+    const q = query(col, where(constraint.campo, constraint.operacion, constraint.valor));
+
+    const querySnapshot = (await getDocs(q));
+    const arrAux: Array<T> = [];
+
+    querySnapshot.forEach((doc) => {
+      arrAux.push(doc.data() as T);
+    });
+
+    return arrAux;
+  }
+
+  /**
    * Sube un objeto a la colección de `Firestore` y asigna el ID del documento al campo ID del objeto (si se indica).
    *
    * @async
@@ -122,7 +136,25 @@ export class DatabaseService {
 
   /**
    * Escucha los cambios en una colección en `Firestore` y guarda los datos en un Array que
-   *  recibe por parámetro y que funcionará como puntero para mantenerse actualizado.
+   *  recibe por parámetro y que funcionará como referencia para mantenerse actualizado.
+   *
+   * Los casos que verifica esta función son:
+   * - Se *agrega* un documento a la colección y filtroFunc aprueba:
+   *  Se suma al array.
+   * - Se *agrega* un documento a la colección y filtroFunc no aprueba:
+   *  No se suma al array.
+   * - Se *modifica* un documento de la colección no existente en el array y filtroFunc aprueba:
+   *  Se suma al array.
+   * - Se *modifica* un documento de la colección no existente en el array y filtroFunc no aprueba:
+   *  No se suma al array.
+   * - Se *modifica* un documento de la colección ya existente en el array y filtroFunc aprueba:
+   *  Se modifica el objeto en el array.
+   * - Se *modifica* un documento de la colección ya existente en el array y filtroFunc no aprueba:
+   *  Se borra el objeto del array.
+   * - Se *borra* un documento de la colección ya existente en el array:
+   *  Se borra el objeto del array.
+   * - Se *borra* un documento de la colección no existente en el array:
+   *  No hace nada.
    *
    * @param coleccion - El nombre de la colección en `Firestore`.
    * @param arrayRef - El Array que guardará los objetos.
@@ -146,14 +178,18 @@ export class DatabaseService {
       for (const cambio of addSnap.docChanges()) {
         const data = cambio.doc.data();
         const newData = transformar ? await transformar(data as T) : data as T;
-        if (!filtroFunc || filtroFunc(newData)) {
-          if (cambio.type === 'added') {
-            arrayRef.push(newData);
+        const pasaFiltro = (!filtroFunc || filtroFunc(newData));
+
+        if (cambio.type === 'added') {
+          if (pasaFiltro) arrayRef.push(newData);
+        } else {
+          const index = arrayRef.findIndex(t => t.id === newData.id);
+          if (index === -1) {
+            if (pasaFiltro) arrayRef.push(newData);
           } else {
-            const index = arrayRef.findIndex(t => t.id === newData.id);
-            if (cambio.type === 'modified')
+            if (cambio.type === 'modified' && pasaFiltro) {
               arrayRef[index] = newData;
-            else
+            } else
               arrayRef.splice(index, 1);
           }
         }
@@ -190,10 +226,10 @@ export class DatabaseService {
   }
 
   borrarDoc(coleccion: string, docId: string) {
-		const docRef = doc(this.firestore, coleccion, docId);
+    const docRef = doc(this.firestore, coleccion, docId);
 
-		return deleteDoc(docRef);
-	}
+    return deleteDoc(docRef);
+  }
 
   /**
    * Busca el usuario que tenga registrado su correo con el parámetro de búsqueda.

@@ -37,7 +37,6 @@ export class AuthService {
 
       this.sesionEventEmitter.emit({ sesionAbierta: false });
     }
-
     this._usuarioEnSesionSub.next(value);
   }
 
@@ -78,6 +77,7 @@ export class AuthService {
         this.UsuarioEnSesion = usuario;
 
       this.sesionEventEmitter.emit({ sesionAbierta: true });
+      //TODO: PUSH NOTIFICATION A JEFES
       return docId;
     } catch (error: any) {
       throw new Error(this.parsearError(error));

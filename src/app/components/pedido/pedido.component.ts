@@ -5,6 +5,9 @@ import { Colecciones, DatabaseService } from 'src/app/services/database.service'
 import { ToastSuccess } from 'src/app/utils/alerts';
 import { Pedido, PedidoArmado, PedidoProd } from 'src/app/utils/classes/pedido';
 import { Producto } from 'src/app/utils/classes/producto';
+import { NavController } from '@ionic/angular';
+import { AuthService } from 'src/app/services/auth.service';
+import { Mesa } from 'src/app/utils/classes/mesa';
 import { ModalController } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 
@@ -20,7 +23,7 @@ export class PedidoComponent implements OnInit {
   protected valorTotal: number = 0;
   protected tiempoEst: number = 0;
 
-  constructor(protected modalCtrl: ModalController) { }
+  constructor(protected modalCtrl: ModalController, protected auth: AuthService) { }
 
   ngOnInit() {
     this.pedido.forEach(item => {
@@ -38,6 +41,7 @@ export class PedidoComponent implements OnInit {
         nombre: pedido.producto.nombre,
         cantidad: pedido.cantidad,
         tiempoEstimado: pedido.producto.tiempoElab,
+        sector: pedido.producto.sector
       };
       pedidoArmado.push(pedidoArmadoItem);
     });

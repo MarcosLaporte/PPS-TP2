@@ -26,37 +26,22 @@ export class AppComponent implements OnDestroy {
     private db: DatabaseService,private fcm: FcmService,private platform: Platform,
   ) {
     const ssUser = sessionStorage.getItem('usuario');
-    console.log('*** ssUser:', ssUser);
-
-    console.log('*** idUser:',this.auth.auth.currentUser?.uid);
-
     this.auth.UsuarioEnSesion = ssUser ? JSON.parse(ssUser) : null;
-    console.log('*** UsuarioEnSesion:', this.auth.UsuarioEnSesion);
 
     auth.sesionEventEmitter.subscribe((ev) => {
       const sesion = ev.sesionAbierta;
       if (sesion) {
-
-
         this.usuarioDocSub = this.db.escucharDocumento<Persona>(Colecciones.Usuarios, this.auth.UsuarioEnSesion!.id)
           .subscribe((user) => {
             this.auth.UsuarioEnSesion = user;
           });
 
-
           if(this.auth.UsuarioEnSesion){
-
             this.platform.ready().then(() => {
-              console.log('*** Platform is ready, calling initPush');
-              console.log("correo usuario",this.auth.UsuarioEnSesion!.correo)
-              console.log("nombre usuario",this.auth.UsuarioEnSesion!.nombre)
-              console.log("idusuario",this.auth.UsuarioEnSesion!.id)
-
               this.fcm.initPush(this.auth.UsuarioEnSesion!.id);
             }).catch(e => {
-              console.log('*** Error in platform.ready:', e);
+              console.log('*** Error en platform.ready:', e);
             });
-
           }
       } else {
         navCtrl.navigateRoot('login');
@@ -65,13 +50,10 @@ export class AppComponent implements OnDestroy {
     });
 
     if (ssUser) auth.sesionEventEmitter.emit({ sesionAbierta: true });
-    navCtrl.navigateRoot('home') //TODO: Splash
+    navCtrl.navigateRoot('home'); //TODO: Splash
   }
 
   ngOnDestroy(): void {
     this.usuarioDocSub?.unsubscribe();
   }
-
-
 }
-

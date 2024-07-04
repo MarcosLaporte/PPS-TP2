@@ -34,9 +34,9 @@
       //   width: 47.5%;
       // }
 
-      // th#tiempo {
-      //   width: 10%;
-      // }
+      th#tiempo {
+        width: 10%;
+      }
 
       // th#precio {
       //   width: 35%;
@@ -67,9 +67,9 @@
         font-weight: bold;
       }
 
-      // td.prod-tiempo {
-      //   color: #007bff;
-      // }
+      td.prod-tiempo {
+        color: #007bff;
+      }
 
       // td.prod-precio {
       //   padding-right: 0;
@@ -77,7 +77,7 @@
       // }
     }
 
-    /* tfoot {
+    tfoot {
       position: sticky;
       bottom: 0;
       background-color: #f1f1f1;
@@ -99,7 +99,7 @@
         padding-right: 0;
         color: #dc3545;
       }
-    } */
+    } 
   }
 
   ion-button {

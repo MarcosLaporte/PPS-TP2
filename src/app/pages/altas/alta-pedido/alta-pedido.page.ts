@@ -9,8 +9,11 @@ import { addCircleOutline, caretDownOutline, chatboxEllipsesOutline, receiptOutl
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ModalController, NavController } from '@ionic/angular/standalone';
 import { PedidoComponent } from 'src/app/components/pedido/pedido.component';
+import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
+import { Mesa } from 'src/app/utils/classes/mesa';
 import { Pedido } from 'src/app/utils/classes/pedido';
 import { ToastSuccess } from 'src/app/utils/alerts';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-alta-pedido',
@@ -202,7 +205,8 @@ export class AltaPedidoPage {
     private db: DatabaseService,
     private spinner: NgxSpinnerService,
     private modalCtrl: ModalController,
-    protected navCtrl: NavController
+    protected navCtrl: NavController,
+    private auth: AuthService
   ) {
     this.spinner.show();
 
@@ -223,6 +227,14 @@ export class AltaPedidoPage {
       else
         delete this.productosElegidos[prod.id];
     }
+  }
+  
+  manejarProdCant(prod: Producto, inputEv: CustomEvent) {
+    const cant: number = Number(inputEv.detail.value ?? '');
+    if (cant === 0)
+      delete this.productosElegidos[prod.id];
+    else
+      this.productosElegidos[prod.id] = cant;
   }
 
   sumarProd(prod: Producto) {
@@ -249,6 +261,8 @@ export class AltaPedidoPage {
     const modalDismiss = await modal.onDidDismiss();
     if (modalDismiss.role === 'confirm') {
       const pedidoHecho: Pedido = modalDismiss.data;
+      pedidoHecho.idCliente = this.auth.UsuarioEnSesion!.id;
+      console.log(pedidoHecho);
       this.spinner.show();
       this.db.subirDoc(Colecciones.Pedidos, pedidoHecho, true).then(() => {
         this.spinner.hide();

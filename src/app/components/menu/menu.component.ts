@@ -6,7 +6,7 @@ import { menuOutline, chevronDownCircle, logInOutline, logOutOutline, scan, care
 import { AuthService } from 'src/app/services/auth.service';
 import { ScannerService } from 'src/app/services/scanner.service';
 import { MySwal, ToastError, ToastInfo, ToastSuccess } from 'src/app/utils/alerts';
-import { AlertController, NavController } from '@ionic/angular/standalone';
+import { AlertController, NavController, ModalController } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { Colecciones, DatabaseService } from 'src/app/services/database.service';
@@ -16,6 +16,8 @@ import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
 import { ClienteEnEspera, Roles_Tipos } from 'src/app/utils/interfaces/interfaces';
 import { CheckRolTipo } from 'src/app/utils/check_rol_tipo';
 import { Empleado } from 'src/app/utils/classes/usuarios/empleado';
+import { Pedido } from 'src/app/utils/classes/pedido';
+import { MenuMesaComponent } from '../menu-mesa/menu-mesa.component';
 
 declare interface Pagina { titulo: string, url: string, icono: string, rol_tipo?: Roles_Tipos[], permitirAnon?: boolean };
 declare interface Funcion { titulo: string, icono: string, accion: () => Promise<any> };
@@ -25,6 +27,7 @@ declare interface Funcion { titulo: string, icono: string, accion: () => Promise
   styleUrls: ['./menu.component.scss'],
   standalone: true,
   imports: [IonTabButton, IonLabel, IonAccordion, IonAccordionGroup, IonModal, IonFabList, IonIcon, IonFab, IonFabButton, IonContent, IonButton, IonTitle, IonItem, IonToolbar, IonHeader, IonApp, IonRouterOutlet, CommonModule, NgxSpinnerModule],
+  providers: [ModalController]
 })
 export class MenuComponent {
   readonly CheckRolTipo = CheckRolTipo;
@@ -36,27 +39,27 @@ export class MenuComponent {
         { rol: 'empleado', tipo: 'bartender' }
       ]
     },
-    {
-      titulo: 'Pedido', url: '/alta-pedido', icono: 'restaurant', rol_tipo: [
-        { rol: 'empleado', tipo: 'mozo' },
-        { rol: 'cliente' }
-      ]
-    },
+    { titulo: 'Pedido', url: '/alta-pedido', icono: 'restaurant', rol_tipo: [{ rol: 'empleado', tipo: 'mozo' }] },
     { titulo: 'Supervisor', url: '/alta-supervisor', icono: 'boss', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Mesa', url: '/alta-mesa', icono: 'table-picnic', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Empleado', url: '/alta-empleado', icono: 'room-service', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Encuesta', url: '/alta-encuesta-empleado', icono: 'corporate', rol_tipo: [{ rol: 'empleado' }] },
     { titulo: 'Encuesta', url: '/alta-encuestas-supervisor', icono: 'corporate', rol_tipo: [{ rol: 'jefe' }] },
-    { titulo: 'Encuesta', url: '/alta-encuesta-cliente', icono: 'feedback-review', rol_tipo: [{ rol: 'cliente' }] },
   ];
 
   pagsAltas: Pagina[] = [];
   paginasGenerales: Pagina[] = [
     { titulo: 'Perfil', url: '/perfil', icono: 'circle-user' },
     { titulo: 'Inicio', url: '/home', icono: 'house-chimney', permitirAnon: true },
-    { titulo: 'Clientes pendientes', url: '/lista-clientes-pendientes', icono: 'selection' },
+    { titulo: 'Clientes pendientes', url: '/lista-clientes-pendientes', icono: 'selection', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Encuestas empleados', url: '/lista-encuestas-empleados', icono: 'corporate', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Lista de espera', url: '/lista-espera', icono: 'skill', rol_tipo: [{ rol: 'empleado', tipo: 'metre' }] },
+    {
+      titulo: 'Lista de pedidos pendientes', url: '/lista-pedidos-pendiente', icono: 'dinner', rol_tipo: [
+        { rol: 'empleado', tipo: 'mozo' },
+        { rol: 'empleado', tipo: 'bartender' },
+        { rol: 'empleado', tipo: 'cocinero' }]
+    },
   ];
   funciones: Funcion[] = [];
 
@@ -68,11 +71,12 @@ export class MenuComponent {
     private scanner: ScannerService,
     private db: DatabaseService,
     private spinner: NgxSpinnerService,
+    protected modalCtrl: ModalController
   ) {
     addIcons({ menuOutline, caretDownCircle, chevronDownCircle, logInOutline, logOutOutline, scan, restaurant, chatbubblesOutline });
 
     const funcEscanear =
-      { titulo: 'Escanear', icono: 'scan', accion: this.escanear };
+      { titulo: 'Escanear', icono: 'scan', accion: () => this.escanear() };
     const funcIniciarSesion =
       { titulo: 'Iniciar sesión', icono: 'log-in-outline', accion: () => navCtrl.navigateRoot('login') };
     const funcCerrarSesion =
@@ -136,6 +140,8 @@ export class MenuComponent {
     try {
       const QR: string = await this.scanner.escanear();
       // const QR = 'entrada-yourdonistas'; //FIXME: TEST
+      // const QR = 'mesa-DLDy65F46o10UeAQVcyG'; //Mesa 1 //FIXME: TEST
+      // const QR = 'mesa-KyVbah5riER9KbhFpeF0'; //Mesa 2 //FIXME: TEST
       const qrSeparado = QR.split('-');
 
       switch (qrSeparado[0]) {
@@ -180,6 +186,7 @@ export class MenuComponent {
         const clienteEnEspera: ClienteEnEspera = { id: '', fecha: new Date(), cliente: this.auth.UsuarioEnSesion as Cliente };
         this.db.subirDoc(Colecciones.ListaDeEspera, clienteEnEspera, true);
         url = 'clientes-espera';
+        //TODO: PUSH NOTIFICATION A METRES
       }
 
       this.navCtrl.navigateRoot(url);
@@ -198,86 +205,99 @@ export class MenuComponent {
 
   async escanearQrMesa(idMesa: string) {
     try {
-      const cliente = this.auth.UsuarioEnSesion as Cliente;
-      if (idMesa !== cliente.idMesa)
-        throw new Exception(ErrorCodes.MesaEquivocada, "Esta no es su mesa.");
-
       this.spinner.show();
-      const mesa = await this.db.traerDoc<Mesa>(Colecciones.Mesas, idMesa);
+      const cliente = this.auth.UsuarioEnSesion as Cliente;
+      if (!cliente) return;
 
-      if (mesa && cliente) {
+      if (!cliente.idMesa)
+        throw new Exception(ErrorCodes.ClienteSinMesa, "Debe entrar a la lista de espera y esperar a que le asignen una mesa.");
 
-        switch (mesa.estado) {
-          case EstadoMesa.Disponible:
-            ToastInfo.fire('Para acceder a esta mesa, se le debe ser asignada por el metre.');
-            break;
-          case EstadoMesa.Asignada:
-            this.spinner.hide();
-            await MySwal.fire({
-              title: `Bienvenido, ${cliente.nombre}`,
-              text: '¿Ya desea realizar su pedido?',
-              allowOutsideClick: false,
-              allowEscapeKey: false,
-              showConfirmButton: true,
-              confirmButtonText: 'Sí',
-              confirmButtonColor: '#a5dc86',
-              showDenyButton: true,
-              denyButtonText: 'No',
-              denyButtonColor: '#f27474',
-            }).then(async (res) => {
-              this.spinner.show();
-              if (res.isConfirmed) {
-                mesa.estado = EstadoMesa.PidiendoComida;
-                this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.PidiendoComida });
-                this.navCtrl.navigateRoot('alta-pedido');
-              } else {
-                mesa.estado = EstadoMesa.SinPedido;
-                this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.SinPedido });
-              }
-            });
-            break;
-          case EstadoMesa.SinPedido:
-            this.spinner.hide();
-            await MySwal.fire({
-              title: `Bienvenido ${cliente.nombre}`,
-              text: '¿Qué desea hacer?',
-              allowOutsideClick: false,
-              allowEscapeKey: false,
-              showConfirmButton: true,
-              confirmButtonText: 'Pedir comida',
-              showDenyButton: true,
-              denyButtonText: 'Consultar',
-              showCancelButton: true,
-              cancelButtonText: 'nada',
-              cancelButtonColor: '#f27474',
-            }).then(async (res) => {
-              if (res.isConfirmed) {
-                this.navCtrl.navigateRoot('alta-pedido');
-              } else if (res.isDenied) {
-                //ir a consultas
-              }
-            });
-            break;
-          /*
-          case EstadoMesa.PidiendoComida:
+      const mesaCliente = await this.db.traerDoc<Mesa>(Colecciones.Mesas, cliente.idMesa);
+      if (idMesa !== cliente.idMesa) {
+        throw new Exception(ErrorCodes.MesaEquivocada, `Su mesa es la Nro${mesaCliente.nroMesa}`);
+      }
+
+      const mesaEscan = await this.db.traerDoc<Mesa>(Colecciones.Mesas, idMesa);
+      if (!mesaEscan) throw new Exception(ErrorCodes.MesaInexistente, 'Este QR no pertenece a una de nuestras mesas.');
+
+      switch (mesaEscan.estado) {
+        case EstadoMesa.Disponible:
+          ToastInfo.fire('Para acceder a esta mesa, se le debe ser asignada por el metre.');
           break;
-          */
-          case EstadoMesa.EsperandoComida:
+        case EstadoMesa.Asignada:
+          this.spinner.hide();
 
-            break;
-          case EstadoMesa.Comiendo:
+          this.mostrarMenu(mesaEscan).then((rta) => {
+            this.spinner.show();
+            if (rta === 'pedir-comida') {
+              mesaEscan.estado = EstadoMesa.PidiendoComida;
+              this.db.actualizarDoc(Colecciones.Mesas, mesaEscan.id, { estado: EstadoMesa.PidiendoComida });
+              this.navCtrl.navigateRoot('alta-pedido');
+            } else {
+              mesaEscan.estado = EstadoMesa.SinPedido;
+              this.db.actualizarDoc(Colecciones.Mesas, mesaEscan.id, { estado: EstadoMesa.SinPedido });
+            }
+            this.spinner.hide();
+          });
+          break;
+        case EstadoMesa.SinPedido:
+          this.spinner.hide();
 
-            break;
-          case EstadoMesa.Pagando:
-            break;
-        }
+          this.mostrarMenu(mesaEscan).then((rta) => {
+            this.spinner.show();
+
+            if (rta === 'pedir-comida')
+              this.navCtrl.navigateRoot('alta-pedido');
+            else if (rta === 'consultar')
+              this.navCtrl.navigateForward('consulta-mozo');
+
+            this.spinner.hide();
+          });
+          break;
+        case EstadoMesa.EsperandoComida:
+          const pedido = (await this.db.traerCoincidencias<Pedido>(Colecciones.Pedidos, {
+            campo: 'idCliente', operacion: '==', valor: cliente.id
+          }))[0];
+          this.spinner.hide();
+
+          this.mostrarMenu(mesaEscan, pedido).then((rta) => {
+            this.spinner.show();
+
+            if (rta === 'jugar')
+              ToastInfo.fire('Modalidad en proceso.'); //TODO: Pendiente
+            else if (rta === 'encuesta')
+              this.navCtrl.navigateRoot('alta-encuesta-cliente');
+
+            this.spinner.hide();
+          });
+          break;
+        case EstadoMesa.Comiendo:
+          //TODO: Pendiente
+          break;
+        case EstadoMesa.Pagando:
+          //TODO: Pendiente
+          break;
       }
 
       this.spinner.hide();
     } catch (error: any) {
       this.spinner.hide();
+      console.error(error);
       ToastError.fire('Ups...', error.message);
     }
 
+  }
+
+  private async mostrarMenu(mesa: Mesa, pedido?: Pedido) {
+    const modal = await this.modalCtrl.create({
+      component: MenuMesaComponent,
+      id: 'menu-mesa-modal',
+      componentProps: { mesa: mesa, cliente: <Cliente>this.auth.UsuarioEnSesion, pedido: pedido },
+    });
+
+    await modal.present();
+    const modalDismiss = await modal.onDidDismiss();
+
+    return modalDismiss.data;
   }
 }

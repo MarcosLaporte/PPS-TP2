@@ -7,50 +7,47 @@ import { PushNotifications } from '@capacitor/push-notifications';
   templateUrl: './push.component.html',
   styleUrls: ['./push.component.scss'],
 })
-export class PushComponent  implements OnInit {
+export class PushComponent implements OnInit {
 
   constructor(private plt: Platform) { }
 
   ngOnInit() {
 
-    if(this.plt.is('android')){
-
+    if (this.plt.is('android')) {
       this.addListeners();
       this.registerNotifications();
     }
 
     console.log('Hola')
   }
-  async registerNotifications(){
 
-
-    let permStatus=await PushNotifications.checkPermissions();
-    if( permStatus.receive === 'prompt')
-      permStatus=await PushNotifications.requestPermissions();
-    if(permStatus.receive !== 'granted')
+  async registerNotifications() {
+    let permStatus = await PushNotifications.checkPermissions();
+    if (permStatus.receive === 'prompt')
+      permStatus = await PushNotifications.requestPermissions();
+    if (permStatus.receive !== 'granted')
       console.log('User denied permissions!')
 
     await PushNotifications.register();
   }
 
-  async addListeners(){
+  async addListeners() {
+    await PushNotifications.addListener('registration', (token) => {
 
-    await PushNotifications.addListener('registration',(token)=>{
-
-      console.log("Registration token: ",token.value);
+      console.log("Registration token: ", token.value);
     });
 
-    await PushNotifications.addListener('registrationError',(err)=>{
+    await PushNotifications.addListener('registrationError', (err) => {
       console.error("Registration error: ", err.error);
     });
 
-    await PushNotifications.addListener('pushNotificationReceived', (notification)=>{
+    await PushNotifications.addListener('pushNotificationReceived', (notification) => {
       console.log("Push notification received: ", notification);
     });
 
-    await PushNotifications.addListener('pushNotificationActionPerformed',(notification)=>{
+    await PushNotifications.addListener('pushNotificationActionPerformed', (notification) => {
 
-      console.log("Push notification action performed ", notification.actionId,notification.inputValue);
+      console.log("Push notification action performed ", notification.actionId, notification.inputValue);
     });
   }
 }
