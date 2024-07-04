@@ -14,6 +14,7 @@ import { Mesa } from 'src/app/utils/classes/mesa';
 import { delay } from 'src/main';
 import { Persona } from 'src/app/utils/classes/usuarios/persona';
 import { Timestamp } from '@angular/fire/firestore';
+import { PushService } from 'src/app/services/push.service';
 
 declare interface chatMsg {
   id: string,
@@ -179,7 +180,7 @@ export class ConsultaMozoPage implements OnInit {
   protected nuevoMensaje: string = '';
   protected usuario!: Empleado | Cliente;
 
-  constructor(private db: DatabaseService, private auth: AuthService, private spinner: NgxSpinnerService, protected navCtrl: NavController) {
+  constructor(private db: DatabaseService, private auth: AuthService, private spinner: NgxSpinnerService, protected navCtrl: NavController, private push: PushService) {
     addIcons({ chevronBackCircleOutline, sendOutline });
   }
 
@@ -222,6 +223,9 @@ export class ConsultaMozoPage implements OnInit {
     };
     this.nuevoMensaje = '';
 
+    if(this.auth.UsuarioEnSesion?.rol == 'cliente'){
+      this.push.sendNotificationToType('Nueva consulta', `La mesa ${msg.nroMesa} dijo: ${msg.mensaje}`, 'mozo');
+    }
     this.db.subirDoc(Colecciones.Mensajes, msg, true);
     //TODO: if (usuario.rol === 'cliente') PUSH NOTIFICATION A MOZOS
 

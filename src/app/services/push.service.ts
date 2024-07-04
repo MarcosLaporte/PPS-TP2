@@ -22,8 +22,21 @@ export class PushService {
     return this.http.post(`${this.apiUrl}/notify-role`, payload, { responseType: 'text' });
   }
 
+  sendNotificationToType(title: string, body: string, tipo: string): Observable<any> {
+    const payload = { title, body, tipo };
+    return this.http.post(`${this.apiUrl}/notify-type`, payload, { responseType: 'text' });
+  }
+
   sendMail(aceptacion: boolean, nombreUsuario: string, mail: string): Observable<any> {
     const payload = { aceptacion, nombreUsuario, mail };
     return this.http.post(`${this.apiUrl}/send-mail`, payload);
+  }
+
+  sendNotificationToRolMsg(title: string, body: string, rol: string): void{
+    this.sendNotificationToRole(title, body, rol).subscribe({
+      next: response => console.log('Notificación enviada', response),
+      error: error => console.error('Error al enviar la notificación', error),
+      complete: () => console.log('Notificación procesada completamente')
+    });
   }
 }
