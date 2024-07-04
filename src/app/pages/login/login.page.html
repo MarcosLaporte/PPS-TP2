@@ -1,40 +1,73 @@
-<div class="container background-pri">
-  <ion-card class="ion-padding background-sec">
+<div class="container bg-img">
+  <ion-card class="ion-padding">
     <ion-card-content class="ion-no-padding">
-      <form [formGroup]="form" (ngSubmit)="ingresar()">
-        <div class="img" style="display: flex; justify-content: center;">
-          <img src="../../../assets/login.png" width="60%">
+      <div expand="block" class="acceso-rapido ion-text-center">
+        <div class="acceso">
+          <!-- Metre -->
+          <ion-button (click)="accesoRapido('metre@empleado.com')">
+            <i class="fi fi-bs-concierge-bell"></i>
+          </ion-button>
         </div>
+        <div class="acceso">
+          <!-- Chef -->
+          <ion-button (click)="accesoRapido('chef@empleado.com')">
+            <i class="fi fi-bs-user-chef"></i>
+          </ion-button>
+        </div>
+        <div class="acceso">
+          <!-- Mozo -->
+          <ion-button (click)="accesoRapido('mozo@empleado.com')">
+            <i class="fi fi-bs-room-service"></i>
+          </ion-button>
+        </div>
+        <div class="acceso">
+          <!-- Bar -->
+          <ion-button (click)="accesoRapido('bartender@empleado.com')">
+            <i class="fi fi-bs-martini-glass-citrus"></i>
+          </ion-button>
+        </div>
+        <div class="acceso">
+          <!-- Dueño -->
+          <ion-button (click)="accesoRapido('duenio@jefe.com')">
+            <i class="fi fi-bs-boss"></i>
+          </ion-button>
+        </div>
+        <div class="acceso">
+          <!-- Cliente -->
+          <ion-button (click)="accesoRapido('registrado@cliente.com')">
+            <i class="fi fi-bs-review"></i>
+          </ion-button>
+        </div>
+      </div>
+
+      <form [formGroup]="loginFrm" (ngSubmit)="ingresar()">
         <div class="inputs">
           <div class="correo">
-            <ion-input label="Correo electrónico" [clearInput]="true" label-placement="stacked"
-              placeholder="tucorreo@ejemplo.com" type="email" errorText="Correo inválido" formControlName="correo"
-              name="email" required ngDefaultControl></ion-input>
-            <div class="errores" *ngIf="form.controls['correo'].dirty && form.controls['correo'].errors">
-              <small *ngIf="form.controls['correo'].errors['required']">Debe rellenar este campo.</small>
-              <small *ngIf="form.controls['correo'].errors['pattern']">No es un correo electrónico.</small>
+            <ion-input type="email" label="Correo electrónico" [clearInput]="true" label-placement="stacked"
+              placeholder="tucorreo@ejemplo.com" formControlName="correo" name="email" required
+              ngDefaultControl></ion-input>
+            <div class="errores" *ngIf="loginFrm.controls['correo'].dirty && loginFrm.controls['correo'].errors">
+              <small *ngIf="loginFrm.controls['correo'].errors['required']">Debe rellenar este campo.</small>
+              <small *ngIf="loginFrm.controls['correo'].errors['pattern']">No es un correo electrónico.</small>
             </div>
           </div>
           <div class="contra">
             <ion-input label="Contraseña" [clearOnEdit]="false" label-placement="stacked" placeholder="Los-Yourdonistas"
-              helperText="Entre 6 y 20 caracteres." type="password" formControlName="contra" name="password" required
-              ngDefaultControl>
+              type="password" formControlName="contra" name="password" required ngDefaultControl>
               <ion-input-password-toggle slot="end"></ion-input-password-toggle>
             </ion-input>
-            <div class="errores" *ngIf="form.controls['contra'].dirty && form.controls['contra'].errors">
-              <small *ngIf="form.controls['contra'].errors['required']">Debe rellenar este campo.</small>
+            <div class="errores" *ngIf="loginFrm.controls['contra'].dirty && loginFrm.controls['contra'].errors">
+              <small *ngIf="loginFrm.controls['contra'].errors['required']">Debe rellenar este campo.</small>
             </div>
           </div>
         </div>
 
-        <ion-button expand="block" [disabled]="form.invalid" color="primary" (click)="ingresar()">
-          Ingresar
-        </ion-button>
+        <ion-button type="submit" expand="block" color="primary">Ingresar</ion-button>
       </form>
 
       <div class="ion-margin-top">
-        <ion-text>No está registrado? 
-          <a (click)="navCtrl.navigateRoot('registro')">Crear cuenta</a>
+        <ion-text>Soy un nuevo cliente y
+          <a (click)="navCtrl.navigateRoot('alta-cliente')">quiero registrarme</a>.
         </ion-text>
       </div>
     </ion-card-content>

@@ -29,19 +29,19 @@ Una aplicación móvil que permite gestionar y administrar tanto los pedidos as�
 | -  | Registro                          | Marcos      | Pendiente |
 | A  | Alta dueño/supervisor             | Jaco        | Terminado |
 | B  | Alta empleados                    | Marcos      | Terminado |
-| C  | Alta cliente                      | Yober       | Pendiente |
-| D  | Alta mesa                         | Jaco        | Pendiente |
-| E  | Alta producto                     | Yober       | Pendiente |
-| F  | Qr ingreso al local               | Marcos      | Pendiente |
-| G  | Qr de la mesa                     | Jaco        | Pendiente |
+| C  | Alta cliente                      | Yober       | Terminado |
+| D  | Alta mesa                         | Jaco        | Terminado |
+| E  | Alta producto                     | Yober       | Terminado |
+| F  | Qr ingreso al local               | Marcos      | Terminado |
+| G  | Qr de la mesa                     | Jaco        | Terminado |
 | H  | Qr de propina                     | Yober       | Pendiente |
-| I  | Encuesta Cliente                  | Yober       | Pendiente |
-| J  | Encuesta Empleado                 | Marcos      | Pendiente |
+| I  | Encuesta Cliente                  | Yober       | Terminado |
+| J  | Encuesta Empleado                 | Marcos      | Terminado |
 | K  | Encuesta Supervisor               | Jaco        | Pendiente |
-| L  | Agregar cliente registrado        | Yober       | Pendiente |
-| M  | Ingresar al local                 | Marcos      | Pendiente |
-| N  | Pedir platos y bebidas            | Jaco        | Pendiente |
-| O  | Confirmar pedido                  | Jaco        | Pendiente |
+| L  | Agregar cliente registrado        | Yober       | Terminado |
+| M  | Ingresar al local                 | Marcos      | Terminado |
+| N  | Pedir platos y bebidas            | Jaco        | Terminado |
+| O  | Confirmar pedido                  | Marcos      | Terminado |
 | P  | Hacer reservas agendadas          | Yober       | Pendiente |
 | Q  | PushN - Cliente nuevo             | Yober       | Pendiente |
 | R  | PushN - Ingreso al local          | Yober       | Pendiente |

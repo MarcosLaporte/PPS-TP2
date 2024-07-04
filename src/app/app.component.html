@@ -1,14 +1,10 @@
 <ion-app>
-  <ion-header [translucent]="true" *ngIf="router.url !== '/splash'">
-    <ion-toolbar>
-      <ion-item lines="none">
-        <ion-title>La Comanda - Yourdonistas</ion-title>
-      </ion-item>
-    </ion-toolbar>
-  </ion-header>
-
-  <ion-router-outlet></ion-router-outlet>
-  <ngx-spinner [fullScreen]="true" template="
-    <img src='../assets/spinner.gif' style='width: 125vw; max-width: 125vh;'>
-  "></ngx-spinner>
+  <ion-content>
+    <app-menu></app-menu>
+    <ion-router-outlet></ion-router-outlet>
+  </ion-content> 
+  
+  <ngx-spinner [fullScreen]="true"
+    template="<img src='../assets/spinner.gif' style='width: 125vw; max-width: 125vh;'>">
+  </ngx-spinner>
 </ion-app>
