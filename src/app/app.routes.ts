@@ -190,6 +190,17 @@ export const routes: Routes = [
       ]
     }
   },
+  {
+    path: 'lista-clientes-pagando',
+    loadComponent: () => import('./pages/listas/lista-clientes-pagando/lista-clientes-pagando.page').then( m => m.ListaClientesPagandoPage),
+    canActivate: [sesionIniciadaGuard, rolTipoGuard],
+    data: {
+      roles_tipos: [
+        { rol: 'empleado', tipo: 'mozo' }
+      ]
+    }
+  },
+
 
 
 

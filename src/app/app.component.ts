@@ -50,7 +50,7 @@ export class AppComponent implements OnDestroy {
     });
 
     if (ssUser) auth.sesionEventEmitter.emit({ sesionAbierta: true });
-    navCtrl.navigateRoot('home'); //TODO: Splash
+    // navCtrl.navigateRoot('home'); //TODO: Splash
   }
 
   ngOnDestroy(): void {

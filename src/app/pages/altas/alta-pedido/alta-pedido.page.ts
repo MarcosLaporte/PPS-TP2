@@ -10,7 +10,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { ModalController, NavController } from '@ionic/angular/standalone';
 import { PedidoComponent } from 'src/app/components/pedido/pedido.component';
 import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
-import { Mesa } from 'src/app/utils/classes/mesa';
+import { EstadoMesa, Mesa } from 'src/app/utils/classes/mesa';
 import { Pedido } from 'src/app/utils/classes/pedido';
 import { ToastSuccess } from 'src/app/utils/alerts';
 import { AuthService } from 'src/app/services/auth.service';
@@ -262,9 +262,9 @@ export class AltaPedidoPage {
     if (modalDismiss.role === 'confirm') {
       const pedidoHecho: Pedido = modalDismiss.data;
       pedidoHecho.idCliente = this.auth.UsuarioEnSesion!.id;
-      console.log(pedidoHecho);
       this.spinner.show();
       this.db.subirDoc(Colecciones.Pedidos, pedidoHecho, true).then(() => {
+        this.db.actualizarDoc(Colecciones.Mesas, (<Cliente>this.auth.UsuarioEnSesion).idMesa!, { estado : EstadoMesa.EsperandoComida});
         this.spinner.hide();
         ToastSuccess.fire('En instantes un mozo le confirmará su pedido');
         this.navCtrl.navigateRoot('home');

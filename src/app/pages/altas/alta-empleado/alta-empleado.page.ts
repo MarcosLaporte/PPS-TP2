@@ -109,8 +109,6 @@ export class AltaEmpleadoPage {
   }
 
   filtrarInputDoc($ev: any) {
-    console.log($ev);
-    
     const patron = /^[0-9 .\-\ ]*$/gm;
     const inputChar = String.fromCharCode($ev.charCode);
     if (!patron.test(inputChar)) {

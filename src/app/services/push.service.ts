@@ -26,5 +26,4 @@ export class PushService {
     const payload = { aceptacion, nombreUsuario, mail };
     return this.http.post(`${this.apiUrl}/send-mail`, payload);
   }
-
 }
