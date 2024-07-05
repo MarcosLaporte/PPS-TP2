@@ -22,10 +22,10 @@
     display: flex;
     flex-direction: column;
     height: 75vh;
-    overflow-y: scroll;
 
     #mensajes {
-      height: 100%;
+      overflow-y: auto;
+      margin-bottom: 2.5rem;
 
       .msg {
         display: flex;

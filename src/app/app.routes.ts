@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { sesionIniciadaGuard } from './guards/sesion-iniciada.guard';
 import { rolTipoGuard } from './guards/rol-tipo.guard';
 import { clienteAceptadoGuard } from './guards/cliente-aceptado.guard';
+import { accesoChatGuard } from './guards/acceso-chat.guard';
 
 export const routes: Routes = [
   {
@@ -130,12 +131,7 @@ export const routes: Routes = [
   {
     path: 'alta-encuesta-cliente',
     loadComponent: () => import('./pages/encuestas/alta-encuesta-cliente/alta-encuesta-cliente.page').then(m => m.AltaEncuestaClientePage),
-    canActivate: [sesionIniciadaGuard, rolTipoGuard, clienteAceptadoGuard],
-    data: {
-      roles_tipos: [
-        { rol: 'cliente' },
-      ]
-    }
+    canActivate: [sesionIniciadaGuard, clienteAceptadoGuard],
   },
   {
     path: 'grafico-clientes',
@@ -175,7 +171,7 @@ export const routes: Routes = [
   {
     path: 'consulta-mozo',
     loadComponent: () => import('./pages/consulta-mozo/consulta-mozo.page').then(m => m.ConsultaMozoPage),
-    canActivate: [sesionIniciadaGuard],
+    canActivate: [sesionIniciadaGuard, accesoChatGuard],
   },
   {
     path: 'lista-pedidos-pendiente',

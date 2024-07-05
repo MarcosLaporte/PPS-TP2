@@ -7,24 +7,25 @@
       </ion-button>
     </ion-card-header>
     <ion-card-content>
-      <div id="mensajes">
-        @for (msg of mensajes; track $index) {
-        <div class="msg" [ngClass]="usuario.id === msg.autor.id ? 'enviado' : 'recibido'">
-          <div *ngIf="usuario.id !== msg.autor.id" class="alias">
-            <ion-text>{{ msg.autor.rol === 'cliente' ? 'Mesa '+msg.nroMesa : 'Mozo '+msg.autor.nombre }}</ion-text>
-          </div>
-          <ion-text class="texto">{{msg.mensaje}}</ion-text>
-          <ion-text class="fecha">{{msg.fecha | date:'dd/MM | HH:mm'}}</ion-text>
-        </div>
-        }
+      <div id="mensajes" #mensajesDiv>
+        <ng-container *ngIf="mensajes.length > 0">
+          <ng-container *ngFor="let msg of mensajes; trackBy: trackByFn">
+            <div [id]="msg.id" class="msg" [ngClass]="usuario.id === msg.autor.id ? 'enviado' : 'recibido'">
+              <div *ngIf="usuario.id !== msg.autor.id" class="alias">
+                <ion-text>{{ msg.autor.rol === 'cliente' ? 'Mesa '+msg.nroMesa : 'Mozo '+msg.autor.nombre }}</ion-text>
+              </div>
+              <ion-text class="texto">{{msg.mensaje}}</ion-text>
+              <ion-text class="fecha">{{msg.fecha | date:'dd/MM | HH:mm'}}</ion-text>
+            </div>
+          </ng-container>
+        </ng-container>
       </div>
 
       <form class="card-footer text-muted">
         <div class="input">
           <ion-item ngClass='input'>
             <ion-input type="text" placeholder="Escriba su mensaje" class="form-control" name="mensaje"
-              [(ngModel)]="nuevoMensaje" ngDefaultControl
-              (keyup.enter)="enviarMensaje()"></ion-input>
+              [(ngModel)]="nuevoMensaje" ngDefaultControl (keyup.enter)="enviarMensaje()"></ion-input>
             <span>
               <ion-button fill="clear" [color]="nuevoMensaje.trim() === '' ? 'medium' : 'success'"
                 [disabled]="nuevoMensaje.trim() === ''" (click)="enviarMensaje()">
