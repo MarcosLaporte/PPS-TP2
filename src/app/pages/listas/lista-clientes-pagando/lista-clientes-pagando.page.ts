@@ -54,9 +54,11 @@ export class ListaClientesPagandoPage implements OnInit {
     const cliente = this.clientes.filter(cliente => cliente.id == pedido.idCliente)[0];
     const mesa = this.mesas.filter(mesa => mesa.id == cliente.idMesa)[0];
 
-    this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.Disponible });
+    await Promise.all([
+      this.db.actualizarDoc(Colecciones.Mesas, mesa.id, { estado: EstadoMesa.Disponible }),
+      this.db.actualizarDoc(Colecciones.Usuarios, cliente.id, { idMesa: null })
+    ]);
 
-    delay(1500);
     this.spinner.hide();
     ToastSuccess.fire('La mesa ya está disponible');
   }
