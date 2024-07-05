@@ -24,16 +24,14 @@ export class CuentaComponent implements OnInit {
   async ngOnInit() {
     if (!this.pedido) throw new Error('Campo `pedido` no existe.');
     this.db.traerColeccion<Producto>(Colecciones.Productos).then((prods) => {
-      // this.prods.map(prod => {
       prods.map(prod => {
         const pedido = this.pedido.pedidoProd.find(p => p.nombre === prod.nombre);
         if (pedido) this.pedidoProds.push({ producto: prod, cantidad: pedido.cantidad });
       });
     });
 
-    const valorNeto = this.pedidoProds.reduce((total, item) => total + item.producto.precio * item.cantidad, 0);
-    this.propinaTotal = valorNeto * this.pedido.porcPropina / 100;
-    this.valorTotal = valorNeto + this.propinaTotal;
+    this.propinaTotal = this.pedido.precio * this.pedido.porcPropina / 100;
+    this.valorTotal = this.pedido.precio + this.propinaTotal;
   }
 
   fechaHoy = () => new Date();
