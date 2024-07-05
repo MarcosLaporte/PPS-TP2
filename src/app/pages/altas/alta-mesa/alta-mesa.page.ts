@@ -10,8 +10,9 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { addIcons } from 'ionicons';
 import { search } from 'ionicons/icons';
 import { QrCodeModule } from 'ng-qrcode';
-import { Router } from '@angular/router';
 import { FotosService } from 'src/app/services/fotos.service';
+import { NavController } from '@ionic/angular/standalone';
+import { ErrorCodes, Exception } from 'src/app/utils/classes/exception';
 
 /*
 QR de la mesa
@@ -34,9 +35,8 @@ QR de la mesa
 export class AltaMesaPage {
 
   frmMesa: FormGroup;
-  picture!: File;
+  picture: File | null = null;
   QRs: string[] = [];
-  selectedData = 'foto';
   mesaCreada: boolean = false;
   mesaImg:string = "";
   constructor(
@@ -45,7 +45,7 @@ export class AltaMesaPage {
     private fotosServ: FotosService,
     private formBuilder: FormBuilder,
     private spinner: NgxSpinnerService,
-    private router: Router,
+    protected navCtrl: NavController,
   ) {
     this.frmMesa = this.formBuilder.group({
       nroMesa: new FormControl('', [Validators.required, Validators.min(1)]),
@@ -62,6 +62,7 @@ export class AltaMesaPage {
     if (foto) {
       this.picture = foto;
       this.frmMesa.controls['foto'].setValue('valid');
+      (document.getElementById('btn-tomarFoto')! as HTMLIonButtonElement).disabled = true;
     }
   }
 
@@ -106,49 +107,37 @@ export class AltaMesaPage {
     this.spinner.hide();
   }
 
-
-  async subirMesa() { 
-    this.uploadPicture(this.picture).then(async (url) => {
-      if (url != null) {
-        this.mesaImg = url;
-        await MySwal.fire({
-          title: 'todos los datos son correctos?',
-          allowOutsideClick: false,
-          allowEscapeKey: false,
-          showConfirmButton: true,
-          confirmButtonText: 'Sí',
-          confirmButtonColor: '#a5dc86',
-          showDenyButton: true,
-          denyButtonText: 'Revisar',
-          denyButtonColor: '#f27474',
-        }).then(async (res) => {
-          if(res.isConfirmed){
-            const nroMesa = this.frmMesa.controls['nroMesa'].value;
-            const cantComensales = this.frmMesa.controls['cantComensales'].value;
-            const tipoMesaControl = this.frmMesa.controls['tipoMesaControl'].value;
+  async subirMesa() {
+    try {
+      if (!this.picture) throw new Exception(ErrorCodes.FotoFaltante, 'Debe subir una imagen de la mesa.');
+      this.uploadPicture(this.picture).then(async (url) => {
+        if (url !== null) {
+          this.mesaImg = url;
+          const nroMesa = this.frmMesa.controls['nroMesa'].value;
+          const cantComensales = this.frmMesa.controls['cantComensales'].value;
+          const tipoMesaControl = this.frmMesa.controls['tipoMesaControl'].value;
   
-            let mesa = new Mesa(
-              nroMesa,
-              cantComensales,
-              tipoMesaControl,
-              url,
-              this.QRs
-            );
-      
-            const mesaId = await this.db.subirDoc(Colecciones.Mesas, mesa, true);
-            if(mesaId){
-              this.generateQRData(mesaId);
-              this.mesaCreada = true;
-              document.getElementById('cantComensales')!.classList.add('deshabilitado');
-              document.getElementById('tipoMesa')!.classList.add('deshabilitado');
-              (document.getElementById('btn-tomarFoto')! as HTMLIonButtonElement).classList.add('deshabilitado');
-              (document.getElementById('btn-agregarMesa')! as HTMLIonButtonElement).classList.add('deshabilitado');
-            }
+          let mesa = new Mesa(
+            nroMesa,
+            cantComensales,
+            tipoMesaControl,
+            url,
+            this.QRs
+          );
+  
+          const mesaId = await this.db.subirDoc(Colecciones.Mesas, mesa, true);
+          if(mesaId){
+            this.generateQRData(mesaId);
+            this.mesaCreada = true;
           }
-          this.spinner.hide();
-        });
-      }
-    })
+  
+        }
+        this.spinner.hide();
+      });
+    } catch (error: any) {
+      console.error(error);
+      ToastError.fire('Ups...', error.message)
+    }
   }
 
   selecTipo($ev: CustomEvent) {
@@ -157,19 +146,21 @@ export class AltaMesaPage {
 
   private generateQRData(mesaId:string) {
     const QRid = `mesa-${mesaId}`;
-    // const QRMenu;
-    // const QRPropina1;
-    // const QRPropina2;
-    // const QRPropina3;
     this.QRs.push(QRid);
+    console.log(this.QRs);
+
     this.db.actualizarDoc(Colecciones.Mesas, mesaId, {'codigoQr':this.QRs})
   }
 
-  selectOption(event: CustomEvent){
-    this.selectedData = event.detail.value;
-  }
+  nuevaMesa() {
+    document.getElementById('nroMesa')!.classList.remove('deshabilitado');
+    (document.getElementById('input-nroMesa')! as HTMLIonInputElement).disabled = false;
+    document.getElementById('btn-nroMesa')!.style.display = 'block';
+    document.getElementById('cantComensales')!.classList.add('deshabilitado');
+    document.getElementById('tipoMesa')!.classList.add('deshabilitado');
+    this.picture = null;
+    this.QRs = [];
 
-  volver(){
-    this.router.navigateByUrl('home');
+    this.frmMesa.reset();
   }
 }
