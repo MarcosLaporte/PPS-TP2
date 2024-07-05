@@ -92,7 +92,7 @@ export class AltaEncuestaClientePage {
       const promesas = this.fotos.map(async (foto, indice) => {
         if (foto.archivo) {
           const cliente = this.auth.UsuarioEnSesion as Cliente;
-          const nombreFotoBase = `Encuestade-${cliente.nombre}-${indice + 1}`;
+          const nombreFotoBase = `${cliente.id}-${new Date().getTime()}-${indice+1}`;
           const url = await this.storage.subirArchivo(foto.archivo, `${Colecciones.EncuestasCliente}/${nombreFotoBase}`);
           foto.url = url;
         }
