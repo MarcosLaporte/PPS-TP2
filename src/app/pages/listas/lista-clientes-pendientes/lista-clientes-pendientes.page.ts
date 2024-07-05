@@ -22,35 +22,6 @@ import { PushService } from 'src/app/services/push.service';
 export class ListaClientesPendientesPage implements OnInit {
 
   protected clientes: Cliente[] = [];
-  //FIXME: TEST
-  /* protected clientes: Cliente[] =
-  [
-    {
-        "apellido": "Carlos",
-        "fotoUrl": "https://firebasestorage.googleapis.com/v0/b/pps-sp-comanda.appspot.com/o/users%2Fcliente-23628819?alt=media&token=1fcafef1-fc52-4d20-8d56-59672837d5d1",
-        "dni": 23628819,
-        "estadoCliente": "pendiente",
-        "correo": "robertoCarlos@gmail.com",
-        "rol": "cliente",
-        "nombre": "Roberto",
-        "idMesa": null,
-        "tipo": "registrado",
-        "id": "OKKwvWKGkDC9CsjCcIUK"
-    },
-    {
-        "fotoUrl": "https://firebasestorage.googleapis.com/v0/b/pps-sp-comanda.appspot.com/o/users%2Fcliente-32453888?alt=media&token=b8454705-af17-41ca-aacd-9510b9060a34",
-        "nombre": "Pepito",
-        "estadoCliente": "pendiente",
-        "id": "VuIUEXELrX4AZsLs6F8X",
-        "rol": "cliente",
-        "apellido": "Lopez",
-        "idMesa": null,
-        "correo": "elpepe@outlook.com",
-        "tipo": "registrado",
-        "dni": 32453888
-    }
-  ];
- */
   constructor(protected db: DatabaseService, private spinner: NgxSpinnerService, private push: PushService, protected navCtrl: NavController) {
     addIcons({ checkmarkCircleOutline, removeCircleOutline });
   }

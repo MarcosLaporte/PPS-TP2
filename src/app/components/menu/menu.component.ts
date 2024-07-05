@@ -143,10 +143,6 @@ export class MenuComponent {
     if (!this.auth.UsuarioEnSesion) return;
     try {
       const QR: string = await this.scanner.escanear();
-      // const QR = 'entrada-yourdonistas'; //FIXME: TEST
-      // const QR = 'mesa-DLDy65F46o10UeAQVcyG'; //Mesa 1 //FIXME: TEST
-      // const QR = 'mesa-KyVbah5riER9KbhFpeF0'; //Mesa 2 //FIXME: TEST
-      // const QR = 'mesa-6JSkAmkz3oFcA1UYh045'; //Mesa 3 //FIXME: TEST
       const qrSeparado = QR.split('-');
 
       switch (qrSeparado[0]) {
@@ -344,7 +340,6 @@ export class MenuComponent {
     do {
       invalido = false;
       QR = await this.scanner.escanear();
-      // QR = 'propina-10'; //Propina 5% //FIXME: TEST
 
       if (!qrValidos.includes(QR)) {
         invalido = true;
