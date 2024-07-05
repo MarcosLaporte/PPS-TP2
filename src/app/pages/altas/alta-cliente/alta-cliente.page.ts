@@ -32,7 +32,7 @@ export class AltaClientePage {
   constructor(
     protected navCtrl: NavController, protected auth: AuthService, private spinner: NgxSpinnerService,
     private db: DatabaseService, private scanner: ScannerService, private storage: StorageService, private fotosServ: FotosService,
-    private notification:PushService, private push : PushService
+    private notification: PushService, private push: PushService
   ) {
     this.frmCliente = inject(FormBuilder).group({
       nombre: ['', [
@@ -111,11 +111,12 @@ export class AltaClientePage {
       ToastSuccess.fire('Cliente creado!');
 
       this.resetForm();
-      if (this.auth.UsuarioEnSesion!.rol === 'cliente'){
-        // Enviar notificación a los usuarios con rol "jefe"
-        const title = "Nuevo Cliente Registrado";
-        const body = `El cliente ${nombre} ${apellido} se ha registrado.`;
-        this.notification.sendNotificationToType(title, body, 'jefe');
+      if (this.auth.UsuarioEnSesion!.rol === 'cliente') {
+        this.notification.sendNotificationToRole(
+          "Nuevo Cliente Registrado",
+          `El cliente ${nombre} ${apellido} se ha registrado.`,
+          'jefe'
+        );
         this.navCtrl.navigateRoot('home');
       }
 

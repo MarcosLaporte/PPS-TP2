@@ -31,12 +31,4 @@ export class PushService {
     const payload = { aceptacion, nombreUsuario, mail };
     return this.http.post(`${this.apiUrl}/send-mail`, payload);
   }
-
-  sendNotificationToRolMsg(title: string, body: string, rol: string): void{
-    this.sendNotificationToRole(title, body, rol).subscribe({
-      next: response => console.log('Notificación enviada', response),
-      error: error => console.error('Error al enviar la notificación', error),
-      complete: () => console.log('Notificación procesada completamente')
-    });
-  }
 }
