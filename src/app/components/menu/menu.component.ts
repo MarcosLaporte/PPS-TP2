@@ -179,7 +179,7 @@ export class MenuComponent {
       showDenyButton: true,
       denyButtonText: 'Ver encuestas'
     }).then(async (res) => {
-      let url = 'lista-encuestas-clientes';
+      let url = 'lista-encuestas-cliente';
       if (res.isConfirmed) {
         if (await this.clienteEstaEnEspera(this.auth.UsuarioEnSesion!.id))
           throw new Exception(ErrorCodes.ClienteEnEspera, 'Ya se encuentra en la lista de espera!');

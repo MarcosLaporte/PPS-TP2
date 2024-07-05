@@ -38,7 +38,7 @@ export class AltaEncuestaClientePage {
     private fotosServ: FotosService
   ) {
     this.frmEncuesta = this.formBuilder.group({
-      puntuacionGeneral: [5, [Validators.required, Validators.min(1), Validators.max(5)]],
+      puntuacionGeneral: [5, [Validators.required, Validators.min(0), Validators.max(5)]],
       comida: [1, [Validators.required, Validators.min(1), Validators.max(10)]],
       atencion: ['buena', [Validators.required]],
       recomendacion: [false, [Validators.required]],
