@@ -158,7 +158,7 @@ export class MenuComponent {
           break;
         case 'mesa':
           if (this.auth.UsuarioEnSesion?.rol !== 'cliente')
-            throw new Exception(ErrorCodes.TipoUsuarioIncorrecto, 'Solo los clientes pueden acceder a la lista de espera.');
+            throw new Exception(ErrorCodes.TipoUsuarioIncorrecto, 'Solo los clientes pueden acceder a las mesas.');
 
           this.escanearQrMesa(qrSeparado[1]);
           break;
