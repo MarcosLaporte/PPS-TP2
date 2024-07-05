@@ -32,7 +32,7 @@
         <div>
           @if( pedido.estado !== 'pendiente'){
           <!-- <ion-button (click)="modalCtrl.dismiss('jugar')">Jugar</ion-button> -->
-          <ion-button [disabled]="hizoEncuesta()" (click)="modalCtrl.dismiss('encuesta')">Encuesta</ion-button>
+          <ion-button [disabled]="hizoEncuesta" (click)="modalCtrl.dismiss('encuesta')">Encuesta</ion-button>
           <ion-button (click)="modalCtrl.dismiss('cuenta')">Pedir cuenta</ion-button>
           }
         </div>

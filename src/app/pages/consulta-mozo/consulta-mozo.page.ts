@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, DoCheck, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonCardContent, IonCard, IonCardHeader, IonCardTitle, IonItem, IonSpinner, IonIcon, IonInput, IonText, IonButton } from '@ionic/angular/standalone';
@@ -30,13 +30,14 @@ declare interface chatMsg {
   standalone: true,
   imports: [IonButton, IonText, IonInput, IonIcon, IonSpinner, IonItem, IonCardTitle, IonCardHeader, IonCard, IonCardContent, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, CommonModule]
 })
-export class ConsultaMozoPage implements OnInit {
+export class ConsultaMozoPage implements OnInit, DoCheck {
   nroMesa: number | null = null;
   mensajes: chatMsg[] = [];
   /* mensajes: chatMsg[] = [
     {
       "id": "Q1DqHhgnpIOrB5WAGUEL",
       "autor": {
+        "token": 'w3s4ecd5fv6bhn8jm9',
         "cuil": 30231233219,
         "correo": "mozo@empleado.com",
         "fotoUrl": "https://firebasestorage.googleapis.com/v0/b/pps-sp-comanda.appspot.com/o/users%2Fempleado-23123321?alt=media&token=b6777f25-89ab-4d7b-bdac-a06acaf06d9e",
@@ -56,6 +57,7 @@ export class ConsultaMozoPage implements OnInit {
       "nroMesa": null,
       "fecha": new Date("2024-07-02T03:58:16.526Z"),
       "autor": {
+        "token": 'w3s4ecd5fv6bhn8jm9',
         "tipo": "mozo",
         "rol": "empleado",
         "fotoUrl": "https://firebasestorage.googleapis.com/v0/b/pps-sp-comanda.appspot.com/o/users%2Fempleado-23123321?alt=media&token=b6777f25-89ab-4d7b-bdac-a06acaf06d9e",
@@ -73,6 +75,7 @@ export class ConsultaMozoPage implements OnInit {
       "mensaje": "tienen manaos¿",
       "nroMesa": 1,
       "autor": {
+        "token": 'w3s4ecd5fv6bhn8jm9',
         "id": "iFHMlgOm9QkCpJOpb651",
         "apellido": "Registrado",
         "rol": "cliente",
@@ -91,6 +94,7 @@ export class ConsultaMozoPage implements OnInit {
       "mensaje": "🙊🙊🙊🙊",
       "fecha": new Date("2024-07-02T04:19:17.523Z"),
       "autor": {
+        "token": 'w3s4ecd5fv6bhn8jm9',
         "estadoCliente": "aceptado",
         "dni": 34549760,
         "id": "iFHMlgOm9QkCpJOpb651",
@@ -109,6 +113,7 @@ export class ConsultaMozoPage implements OnInit {
       "mensaje": "🙊🙊🙊🙊",
       "fecha": new Date("2024-07-02T04:20:17.523Z"),
       "autor": {
+        "token": 'w3s4ecd5fv6bhn8jm9',
         "estadoCliente": "aceptado",
         "dni": 34549760,
         "id": "iFHMlgOm9QkCpJOpb651",
@@ -127,6 +132,7 @@ export class ConsultaMozoPage implements OnInit {
       "mensaje": "🙊🙊🙊🙊",
       "fecha": new Date("2024-07-02T04:21:17.523Z"),
       "autor": {
+        "token": 'w3s4ecd5fv6bhn8jm9',
         "estadoCliente": "aceptado",
         "dni": 34549760,
         "id": "iFHMlgOm9QkCpJOpb651",
@@ -145,6 +151,7 @@ export class ConsultaMozoPage implements OnInit {
       "mensaje": "🙊🙊🙊🙊",
       "fecha": new Date("2024-07-02T04:22:17.523Z"),
       "autor": {
+        "token": 'w3s4ecd5fv6bhn8jm9',
         "estadoCliente": "aceptado",
         "dni": 34549760,
         "id": "iFHMlgOm9QkCpJOpb651",
@@ -163,6 +170,7 @@ export class ConsultaMozoPage implements OnInit {
       "mensaje": "🙊🙊🙊🙊",
       "fecha": new Date("2024-07-02T04:23:17.523Z"),
       "autor": {
+        "token": 'w3s4ecd5fv6bhn8jm9',
         "estadoCliente": "aceptado",
         "dni": 34549760,
         "id": "iFHMlgOm9QkCpJOpb651",
@@ -176,11 +184,12 @@ export class ConsultaMozoPage implements OnInit {
       },
       "nroMesa": 1
     },
-  ]; */
+  ]; */ //FIXME: TEST
   protected nuevoMensaje: string = '';
   protected usuario!: Empleado | Cliente;
+  private cantMsjPrev: number = 0;
 
-  constructor(private db: DatabaseService, private auth: AuthService, private spinner: NgxSpinnerService, protected navCtrl: NavController, private push: PushService) {
+  constructor(private db: DatabaseService, private auth: AuthService, private spinner: NgxSpinnerService, protected navCtrl: NavController, private push: PushService, private cdr: ChangeDetectorRef) {
     addIcons({ chevronBackCircleOutline, sendOutline });
   }
 
@@ -203,12 +212,18 @@ export class ConsultaMozoPage implements OnInit {
     );
 
     await delay(3500);
+    this.cantMsjPrev = this.mensajes.length;
     this.spinner.hide();
   }
 
   private timestampParse = async (msg: chatMsg) => {
     msg.fecha = msg.fecha instanceof Timestamp ? msg.fecha.toDate() : msg.fecha;
     return msg;
+  }
+
+  @ViewChild('mensajesDiv') mensajesDiv!: ElementRef;
+  trackByFn(index: number, item: any) {
+    return item.id;
   }
 
   enviarMensaje() {
@@ -223,22 +238,28 @@ export class ConsultaMozoPage implements OnInit {
     };
     this.nuevoMensaje = '';
 
-    if(this.auth.UsuarioEnSesion?.rol == 'cliente'){
+    if (this.usuario.rol === 'cliente') {
       this.push.sendNotificationToType('Nueva consulta', `La mesa ${msg.nroMesa} dijo: ${msg.mensaje}`, 'mozo');
     }
-    this.db.subirDoc(Colecciones.Mensajes, msg, true);
 
-    /* setTimeout(() => {
-      this.scrollToLastElementByClass();
-    }, 10); */
+    this.db.subirDoc(Colecciones.Mensajes, msg, true);
   }
 
-  /* scrollToLastElementByClass() {
-    if (this.mensajes.length > 0) {
-      let elements = document.getElementsByClassName('msg');
-      let lastElement: any = elements[elements.length - 1];
-      let topPos = lastElement.offsetTop;
-      document.getElementById('mensajes')!.scrollTop = topPos;
+  ngDoCheck() {
+    if (this.mensajes.length !== this.cantMsjPrev) {
+      console.log('Array de mensajes ha cambiado');
+      this.cantMsjPrev = this.mensajes.length;
+      this.scrollUltimoMensaje();
     }
-  } */ //FIXME: No funciona
+  }
+
+  scrollUltimoMensaje() {
+    try {
+      setTimeout(() => {
+        this.mensajesDiv.nativeElement.scrollTop = this.mensajesDiv.nativeElement.scrollHeight;
+      }, 100);
+    } catch (err) {
+      console.error('Error al desplazar al fondo', err);
+    }
+  }
 }
