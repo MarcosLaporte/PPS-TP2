@@ -1,14 +1,14 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonLabel, IonItem, IonRadio, IonButton, IonIcon } from '@ionic/angular/standalone';
+import { NavController, IonContent, IonHeader, IonTitle, IonToolbar, IonCard, IonCardHeader, IonCardTitle, IonCardContent, IonLabel, IonItem, IonRadio, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { Colecciones, DatabaseService } from 'src/app/services/database.service';
 import { EncuestaCliente } from 'src/app/utils/classes/encuestas/encuesta-cliente';
-import { Chart  } from 'chart.js/auto';
+import { Chart } from 'chart.js/auto';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastError } from 'src/app/utils/alerts';
 import { addIcons } from 'ionicons';
-import {  analytics, barChartOutline, pieChartOutline } from 'ionicons/icons';
+import { analytics, barChartOutline, chevronBackCircleOutline, pieChartOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-grafico-clientes',
@@ -30,44 +30,44 @@ export class GraficoClientesPage implements AfterViewInit {
 
   encuestas!: EncuestaCliente[];
 
-  mostrarGraficoBarras:boolean = false;
-  mostrarGraficoLineas:boolean = false;
-  mostrarGraficoTorta:boolean = false;
+  mostrarGraficoBarras: boolean = false;
+  mostrarGraficoLineas: boolean = false;
+  mostrarGraficoTorta: boolean = false;
 
-  constructor(private db: DatabaseService, private spinner: NgxSpinnerService) {
+  constructor(private db: DatabaseService, private spinner: NgxSpinnerService, protected navCtrl: NavController) {
 
-    addIcons({analytics,barChartOutline,pieChartOutline});
+    addIcons({ chevronBackCircleOutline, analytics, barChartOutline, pieChartOutline });
     this.mostrarGraficoBarras = true;
 
-   }
+  }
 
   ngAfterViewInit(): void {
     this.traerEncuestas();
   }
 
-  mostrarGrafico1(){
+  mostrarGrafico1() {
 
-    this.mostrarGraficoBarras=true;
-    this.mostrarGraficoLineas=false;
-    this.mostrarGraficoTorta=false;
+    this.mostrarGraficoBarras = true;
+    this.mostrarGraficoLineas = false;
+    this.mostrarGraficoTorta = false;
     setTimeout(() => {
       this.generarGraficoBarras();
     }, 0);
   }
-  mostrarGrafico2(){
+  mostrarGrafico2() {
 
-    this.mostrarGraficoBarras=false;
-    this.mostrarGraficoLineas=true;
-    this.mostrarGraficoTorta=false;
+    this.mostrarGraficoBarras = false;
+    this.mostrarGraficoLineas = true;
+    this.mostrarGraficoTorta = false;
     setTimeout(() => {
       this.generarGraficoLineas();
     }, 0);
   }
-  mostrarGrafico3(){
+  mostrarGrafico3() {
 
-    this.mostrarGraficoBarras=false;
-    this.mostrarGraficoLineas=false;
-    this.mostrarGraficoTorta=true;
+    this.mostrarGraficoBarras = false;
+    this.mostrarGraficoLineas = false;
+    this.mostrarGraficoTorta = true;
 
     setTimeout(() => {
       this.generarGraficoDoughnutRecomendacion();
@@ -85,7 +85,7 @@ export class GraficoClientesPage implements AfterViewInit {
       this.generarGraficoDoughnutRecomendacion();
       this.spinner.hide(); // Ocultar spinner de carga después de cargar los datos
 
-    } catch (error:any) {
+    } catch (error: any) {
 
       console.log(error);
       ToastError.fire('Ups...', error.message);
@@ -125,62 +125,62 @@ export class GraficoClientesPage implements AfterViewInit {
     if (this.barChartElement && this.barChartElement.nativeElement) {
 
 
-    const ctx = this.barChartElement.nativeElement.getContext('2d');
+      const ctx = this.barChartElement.nativeElement.getContext('2d');
 
-    if (this.barChart) {
-      this.barChart.destroy();
-    }
+      if (this.barChart) {
+        this.barChart.destroy();
+      }
 
-    this.barChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: etiquetas,
-        datasets: [{
-          label: 'Frecuencia de Puntuaciones',
-          data: frecuencias,
-          backgroundColor: barColors,
-          borderColor: barColors,
-          borderWidth: 2,
-        }],
-      },
-      options: {
-        indexAxis: 'y',
-        responsive: true,
-        maintainAspectRatio: false,
-        layout: {
-          padding: 20,
+      this.barChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: etiquetas,
+          datasets: [{
+            label: 'Frecuencia de Puntuaciones',
+            data: frecuencias,
+            backgroundColor: barColors,
+            borderColor: barColors,
+            borderWidth: 2,
+          }],
         },
-        scales: {
-          x: {
-            beginAtZero: true,
-            title: {
-              display: true,
-              text: 'Cantidad',
-            },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: {
+            padding: 20,
           },
-          y: {
-            title: {
-              display: true,
-              text: 'Puntuación General',
-            },
-          },
-        },
-        plugins: {
-          tooltip: {
-            usePointStyle: true,
-            callbacks: {
-              label: function(context) {
-                return 'Cantidad: ' + context.raw;
+          scales: {
+            x: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Cantidad',
               },
             },
-            displayColors: false,
+            y: {
+              title: {
+                display: true,
+                text: 'Puntuación General',
+              },
+            },
           },
-          legend: {
-            display: false,
+          plugins: {
+            tooltip: {
+              usePointStyle: true,
+              callbacks: {
+                label: function (context) {
+                  return 'Cantidad: ' + context.raw;
+                },
+              },
+              displayColors: false,
+            },
+            legend: {
+              display: false,
+            },
           },
         },
-      },
-    });
+      });
     }
 
   }
@@ -256,7 +256,7 @@ export class GraficoClientesPage implements AfterViewInit {
             tooltip: {
               usePointStyle: true,
               callbacks: {
-                label: function(context) {
+                label: function (context) {
                   return 'Cantidad: ' + context.raw;
                 },
               },
@@ -301,7 +301,7 @@ export class GraficoClientesPage implements AfterViewInit {
           plugins: {
             tooltip: {
               callbacks: {
-                label: function(context) {
+                label: function (context) {
                   const labelIndex = context.dataIndex as number;
                   const label = context.label || '';
                   const value = context.raw!.toLocaleString();

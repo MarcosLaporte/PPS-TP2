@@ -1,0 +1,39 @@
+<div class="container background-ter">
+  <ion-text color="primary">
+    <h1 class="ion-padding">Encuesta de clientes</h1>
+  </ion-text>
+
+
+  <ion-list *ngIf="lista.length > 0; else noEncuestas" class="encuestas" [inset]="true">
+    <ion-item *ngFor="let enc of lista" lines="full">
+      <div class="encuesta">
+        <div class="autor">
+          <ion-avatar slot="start">
+            <img alt="{{enc.autor.nombre}}_{{enc.autor.apellido}}" [src]="enc.autor.fotoUrl" />
+          </ion-avatar>
+          <ion-text>
+            {{enc.autor.nombre}} {{enc.autor.apellido}}
+          </ion-text>
+        </div>
+        <div class="puntuacion">
+          <app-range-estrellas [idEstrellas]="enc.id" [readonly]="true" [valor]="enc.puntuacionGeneral"
+            [max]="maxEstrellas(enc.puntuacionGeneral)"></app-range-estrellas>
+        </div>
+      </div>
+      <div class="cover" (click)="mostrarEncuesta(enc)"></div>
+    </ion-item>
+  </ion-list>
+  <ng-template #noEncuestas>
+    <div id="noClientes">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>No hay encuestas</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-button expand="block" (click)="navCtrl.navigateRoot('grafico-clientes')"> Gráficos</ion-button>
+          <ion-button expand="block" (click)="navCtrl.navigateRoot('home')">Ir a Inicio</ion-button>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </ng-template>
+</div>
