@@ -93,7 +93,7 @@ export class AltaEncuestaClientePage {
         if (foto.archivo) {
           const cliente = this.auth.UsuarioEnSesion as Cliente;
           const nombreFotoBase = `Encuestade-${cliente.nombre}-${indice + 1}`;
-          const url = await this.storage.subirArchivo(foto.archivo, `EncuestaClientes/${nombreFotoBase}`);
+          const url = await this.storage.subirArchivo(foto.archivo, `${Colecciones.EncuestasCliente}/${nombreFotoBase}`);
           foto.url = url;
         }
       });
