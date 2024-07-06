@@ -10,7 +10,7 @@ Una aplicación móvil que permite gestionar y administrar tanto los pedidos as�
 
  Alumnos de la Tecnicatura Universitaria en programación - UTN FRA
 
-# Integrantes 🙉🙊🙈
+## Integrantes 🙉🙊🙈
 
 - Marcos Laporte [Alfa]
 - Jaco Tomás Luna Pierini [Beta]
@@ -18,7 +18,7 @@ Una aplicación móvil que permite gestionar y administrar tanto los pedidos as�
 
 # Ramas
 
-  Cada integrante tiene su propia rama para subir sus avances, y una rama Test donde subimmos las funcionalidades ya hechas, para luego subirlas a Master como un conjunto.
+Cada integrante tiene su propia rama para subir sus avances, y una rama **Test** donde subimmos las funcionalidades ya hechas, para luego subirlas a **Master** como un conjunto.
 
 # Tareas
 
@@ -44,11 +44,11 @@ Una aplicación móvil que permite gestionar y administrar tanto los pedidos as�
 | N  | Pedir platos y bebidas            | Jaco        | Terminado |
 | O  | Confirmar pedido                  | Marcos      | Terminado |
 | P  | Hacer reservas agendadas          | Yober       | Pendiente |
-| Q  | PushN - Cliente nuevo             | Yober       | Pendiente |
-| R  | PushN - Ingreso al local          | Yober       | Pendiente |
-| S  | PushN - Consultar mozo            | Jaco        | Pendiente |
-| T  | PushN - Confirmar pedido          | Jaco        | Pendiente |
-| U  | PushN - Pedido listo              | Marcos      | Pendiente |
+| Q  | PushN - Cliente nuevo             | Yober       | Terminado |
+| R  | PushN - Ingreso al local          | Yober       | Terminado |
+| S  | PushN - Consultar mozo            | Jaco        | Terminado |
+| T  | PushN - Confirmar pedido          | Jaco        | Terminado |
+| U  | PushN - Pedido listo              | Marcos      | Terminado |
 | V  | PushN - Generar reservas/Delivery | Marcos      | Pendiente |
 | W  | Delivery - Hacer pedido con GPS   | Pendiente   |           |
 | X  | Delivery - Mapa                   | Pendiente   |           |
@@ -66,9 +66,9 @@ Una aplicación móvil que permite gestionar y administrar tanto los pedidos as�
 
 ### Varios
 
-| Mesa                                    | Producto                                       | Pedido                                      |
-| :-------------------------------------- | ---------------------------------------------- | ------------------------------------------- |
-| ![alta-mesa](images/README/alta-mesa.png) | ![1720133387748](image/README/1720133387748.png) | ![alta-pedido](images/README/alta-pedido.gif) |
+| Mesa                                    | Producto                                        | Pedido                                      |
+| :-------------------------------------- | ----------------------------------------------- | ------------------------------------------- |
+| ![alta-mesa](images/README/alta-mesa.png) | ![alta-producto](images/README/alta-producto.png) | ![alta-pedido](images/README/alta-pedido.gif) |
 
 ### Encuesta cliente
 
