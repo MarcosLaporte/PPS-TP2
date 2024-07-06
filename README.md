@@ -80,4 +80,4 @@ Cada integrante tiene su propia rama para subir sus avances, y una rama **Test**
 
 | Cliente aceptado                                        | Cliente rechazado                              |
 | ------------------------------------------------------- | ---------------------------------------------- |
-| ![correo-aceptacion](images/README/correo-aceptacion.png) | ![1720245848157](image/README/1720245848157.png) |
+| ![correo-aceptacion](images/README/correo-aceptacion.png) | ![correo-rechazo](images/README/correo-rechazo.png) |
