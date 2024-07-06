@@ -75,3 +75,9 @@ Cada integrante tiene su propia rama para subir sus avances, y una rama **Test**
 | Alta                                                            | Gráficos                                                                 |
 | --------------------------------------------------------------- | ------------------------------------------------------------------------- |
 | ![alta-encuesta-cliente](images/README/alta-encuesta-cliente.png) | ![graficos-encuesta-clientes](images/README/graficos-encuesta-clientes.gif) |
+
+# Correos
+
+| Cliente aceptado                                        | Cliente rechazado                              |
+| ------------------------------------------------------- | ---------------------------------------------- |
+| ![correo-aceptacion](images/README/correo-aceptacion.png) | ![1720245848157](image/README/1720245848157.png) |
