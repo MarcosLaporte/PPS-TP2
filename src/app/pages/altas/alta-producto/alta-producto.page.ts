@@ -35,7 +35,6 @@ export class AltaProductoPage {
       nombre: ['', [Validators.required]],
       descripcion: ['', [Validators.required]],
       minutos: [0, [Validators.required, Validators.min(0)]],
-      sector: ['', [Validators.required]],
       precio: [0, [Validators.required, Validators.min(0.01)]],
     });
 
@@ -99,8 +98,8 @@ export class AltaProductoPage {
         this.frmProducto.value.nombre,
         this.frmProducto.value.descripcion,
         this.frmProducto.value.minutos,
-        this.frmProducto.value.sector,
         this.frmProducto.value.precio,
+        this.frmProducto.value.sector,
         this.fotos.filter(f => f.url !== null).map(f => f.url as string),
       );
       await this.db.subirDoc(Colecciones.Productos, producto);
