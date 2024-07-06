@@ -8,6 +8,8 @@ import { EncuestaEmpleadoComponent } from 'src/app/components/encuesta-empleado/
 import { Colecciones, DatabaseService } from 'src/app/services/database.service';
 import { Timestamp } from '@angular/fire/firestore';
 import { EncuestaClienteComponent } from 'src/app/components/encuesta-cliente/encuesta-cliente.component';
+import { addIcons } from 'ionicons';
+import { home, statsChart } from 'ionicons/icons';
 
 @Component({
   selector: 'app-lista-encuestas-cliente',
@@ -21,6 +23,7 @@ export class ListaEncuestasClientePage {
   lista: Array<EncuestaCliente> = [];
 
   constructor(private modalCtrl: ModalController,protected navCtrl: NavController) {
+    addIcons({ home, statsChart });
     inject(DatabaseService).escucharColeccion(
       Colecciones.EncuestasCliente,
       this.lista,
