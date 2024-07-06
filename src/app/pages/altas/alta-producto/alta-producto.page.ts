@@ -35,6 +35,7 @@ export class AltaProductoPage {
       nombre: ['', [Validators.required]],
       descripcion: ['', [Validators.required]],
       minutos: [0, [Validators.required, Validators.min(0)]],
+      sector: ['', [Validators.required]],
       precio: [0, [Validators.required, Validators.min(0.01)]],
     });
 
