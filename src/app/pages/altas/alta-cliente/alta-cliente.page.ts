@@ -15,6 +15,7 @@ import { ErrorCodes, Exception } from 'src/app/utils/classes/exception';
 import { addIcons } from 'ionicons';
 import { search } from 'ionicons/icons';
 import { FotosService } from 'src/app/services/fotos.service';
+import { PushService } from 'src/app/services/push.service';
 
 const datePipe = new DatePipe('en-US', '-0300');
 
@@ -30,7 +31,8 @@ export class AltaClientePage {
 
   constructor(
     protected navCtrl: NavController, protected auth: AuthService, private spinner: NgxSpinnerService,
-    private db: DatabaseService, private scanner: ScannerService, private storage: StorageService, private fotosServ: FotosService
+    private db: DatabaseService, private scanner: ScannerService, private storage: StorageService, private fotosServ: FotosService,
+    private notification: PushService
   ) {
     this.frmCliente = inject(FormBuilder).group({
       nombre: ['', [
@@ -85,8 +87,6 @@ export class AltaClientePage {
   }
 
   filtrarInputDoc($ev: any) {
-    console.log($ev);
-
     const patron = /^[0-9 .\-\ ]*$/gm;
     const inputChar = String.fromCharCode($ev.charCode);
     if (!patron.test(inputChar)) {
@@ -110,11 +110,15 @@ export class AltaClientePage {
       await this.auth.registrarUsuario(cliente, contra);
       ToastSuccess.fire('Cliente creado!');
 
+      this.notification.sendNotificationToRole(
+        "Nuevo Cliente Registrado",
+        `El cliente ${nombre} ${apellido} se ha registrado.`,
+        'jefe'
+      );
       this.resetForm();
-      if (this.auth.UsuarioEnSesion!.rol === 'cliente')
-        this.navCtrl.navigateRoot('home');
-
       this.spinner.hide();
+      this.navCtrl.navigateRoot('home');
+
     } catch (error: any) {
       this.spinner.hide();
       console.error(error);
@@ -206,4 +210,5 @@ export class AltaClientePage {
     (document.getElementById('btn-dni')! as HTMLIonButtonElement).style.display = 'none';
     document.getElementById('datos-personales')!.classList.add('deshabilitado');
   }
+
 }

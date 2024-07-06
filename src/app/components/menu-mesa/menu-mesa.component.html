@@ -12,33 +12,37 @@
           ¿Ya desea realizar su pedido?
         </h2>
         <div>
-          <ion-button (click)="accionar('pedir-comida')" color="success">Si</ion-button>
-          <ion-button (click)="accionar('salir')" color="danger">No</ion-button>
+          <ion-button (click)="modalCtrl.dismiss('pedir-comida')" color="success">Sí</ion-button>
+          <ion-button (click)="modalCtrl.dismiss('salir')" color="danger">No</ion-button>
         </div>
       }
       @case (estados[2]) {
         <h2>
-          ¿Que desea hacer?
+          ¿Qué desea hacer?
         </h2>
         <div>
-          <ion-button (click)="accionar('pedir-comida')" color="tertiary">Pedir comida</ion-button>
-          <ion-button (click)="accionar('consultar')" color="tertiary">Consultar</ion-button>
+          <ion-button (click)="modalCtrl.dismiss('pedir-comida')" color="tertiary">Pedir comida</ion-button>
+          <ion-button (click)="modalCtrl.dismiss('consultar')" color="tertiary">Consultar</ion-button>
         </div>
       }
       @case (estados[4]) {
-  
         <h2>Estado de su pedido:<br><b>{{pedido.estado}}</b></h2>
+      }
+      @case (estados[5]) {
         <div>
-          @if( pedido.estado != 'pendiente'){
-            <!-- <ion-button (click)="accionar('jugar')">Jugar</ion-button> -->
-            <ion-button (click)="accionar('encuesta')">Encuesta</ion-button>
+          @if( pedido.estado !== 'pendiente'){
+          <!-- <ion-button (click)="modalCtrl.dismiss('jugar')">Jugar</ion-button> -->
+          @if (!hizoEncuesta) {
+            <ion-button (click)="modalCtrl.dismiss('alta-encuesta')">Subir Encuesta</ion-button>
+          }
+          <ion-button (click)="modalCtrl.dismiss('lista-encuestas')">Lista de Encuestas</ion-button>
+          <ion-button (click)="modalCtrl.dismiss('cuenta')">Pedir cuenta</ion-button>
           }
         </div>
-  
-      }  
+      }
     }
   </ion-card>
   <ion-footer>
-    <ion-button (click)="accionar('salir')" color="tertiary">Volver</ion-button>
+    <ion-button (click)="modalCtrl.dismiss('salir')" color="tertiary">Volver</ion-button>
   </ion-footer>
 </div>

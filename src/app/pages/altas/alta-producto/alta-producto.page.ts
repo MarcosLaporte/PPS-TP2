@@ -99,8 +99,8 @@ export class AltaProductoPage {
         this.frmProducto.value.nombre,
         this.frmProducto.value.descripcion,
         this.frmProducto.value.minutos,
-        this.frmProducto.value.sector,
         this.frmProducto.value.precio,
+        this.frmProducto.value.sector,
         this.fotos.filter(f => f.url !== null).map(f => f.url as string),
       );
       await this.db.subirDoc(Colecciones.Productos, producto);

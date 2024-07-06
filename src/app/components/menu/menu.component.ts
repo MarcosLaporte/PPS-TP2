@@ -5,7 +5,7 @@ import { IonApp, IonRouterOutlet, IonHeader, IonToolbar, IonItem, IonTitle, IonB
 import { menuOutline, chevronDownCircle, logInOutline, logOutOutline, scan, caretDownCircle, restaurant, chatbubblesOutline } from 'ionicons/icons';
 import { AuthService } from 'src/app/services/auth.service';
 import { ScannerService } from 'src/app/services/scanner.service';
-import { MySwal, ToastError, ToastInfo, ToastSuccess } from 'src/app/utils/alerts';
+import { MySwal, Toast, ToastError, ToastInfo, ToastSuccess } from 'src/app/utils/alerts';
 import { AlertController, NavController, ModalController } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
@@ -16,8 +16,10 @@ import { Cliente } from 'src/app/utils/classes/usuarios/cliente';
 import { ClienteEnEspera, Roles_Tipos } from 'src/app/utils/interfaces/interfaces';
 import { CheckRolTipo } from 'src/app/utils/check_rol_tipo';
 import { Empleado } from 'src/app/utils/classes/usuarios/empleado';
-import { Pedido } from 'src/app/utils/classes/pedido';
+import { Pedido, PorcPropina } from 'src/app/utils/classes/pedido';
 import { MenuMesaComponent } from '../menu-mesa/menu-mesa.component';
+import { CuentaComponent } from '../cuenta/cuenta.component';
+import { PushService } from 'src/app/services/push.service';
 
 declare interface Pagina { titulo: string, url: string, icono: string, rol_tipo?: Roles_Tipos[], permitirAnon?: boolean };
 declare interface Funcion { titulo: string, icono: string, accion: () => Promise<any> };
@@ -44,7 +46,7 @@ export class MenuComponent {
     { titulo: 'Mesa', url: '/alta-mesa', icono: 'table-picnic', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Empleado', url: '/alta-empleado', icono: 'room-service', rol_tipo: [{ rol: 'jefe' }] },
     { titulo: 'Encuesta', url: '/alta-encuesta-empleado', icono: 'corporate', rol_tipo: [{ rol: 'empleado' }] },
-    { titulo: 'Encuesta', url: '/alta-encuestas-supervisor', icono: 'corporate', rol_tipo: [{ rol: 'jefe' }] },
+    // { titulo: 'Encuesta', url: '/alta-encuesta-supervisor', icono: 'corporate', rol_tipo: [{ rol: 'jefe' }] },
   ];
 
   pagsAltas: Pagina[] = [];
@@ -60,6 +62,7 @@ export class MenuComponent {
         { rol: 'empleado', tipo: 'bartender' },
         { rol: 'empleado', tipo: 'cocinero' }]
     },
+    { titulo: 'Lista de clientes pagando', url: '/lista-clientes-pagando', icono: 'dinner', rol_tipo: [{ rol: 'empleado', tipo: 'mozo' }] },
   ];
   funciones: Funcion[] = [];
 
@@ -71,7 +74,8 @@ export class MenuComponent {
     private scanner: ScannerService,
     private db: DatabaseService,
     private spinner: NgxSpinnerService,
-    protected modalCtrl: ModalController
+    protected modalCtrl: ModalController,
+    private push : PushService
   ) {
     addIcons({ menuOutline, caretDownCircle, chevronDownCircle, logInOutline, logOutOutline, scan, restaurant, chatbubblesOutline });
 
@@ -139,9 +143,6 @@ export class MenuComponent {
     if (!this.auth.UsuarioEnSesion) return;
     try {
       const QR: string = await this.scanner.escanear();
-      // const QR = 'entrada-yourdonistas'; //FIXME: TEST
-      // const QR = 'mesa-DLDy65F46o10UeAQVcyG'; //Mesa 1 //FIXME: TEST
-      // const QR = 'mesa-KyVbah5riER9KbhFpeF0'; //Mesa 2 //FIXME: TEST
       const qrSeparado = QR.split('-');
 
       switch (qrSeparado[0]) {
@@ -157,7 +158,7 @@ export class MenuComponent {
           break;
         case 'mesa':
           if (this.auth.UsuarioEnSesion?.rol !== 'cliente')
-            throw new Exception(ErrorCodes.TipoUsuarioIncorrecto, 'Solo los clientes pueden acceder a la lista de espera.');
+            throw new Exception(ErrorCodes.TipoUsuarioIncorrecto, 'Solo los clientes pueden acceder a las mesas.');
 
           this.escanearQrMesa(qrSeparado[1]);
           break;
@@ -178,7 +179,7 @@ export class MenuComponent {
       showDenyButton: true,
       denyButtonText: 'Ver encuestas'
     }).then(async (res) => {
-      let url = 'lista-encuestas-clientes';
+      let url = 'lista-encuestas-cliente';
       if (res.isConfirmed) {
         if (await this.clienteEstaEnEspera(this.auth.UsuarioEnSesion!.id))
           throw new Exception(ErrorCodes.ClienteEnEspera, 'Ya se encuentra en la lista de espera!');
@@ -186,7 +187,8 @@ export class MenuComponent {
         const clienteEnEspera: ClienteEnEspera = { id: '', fecha: new Date(), cliente: this.auth.UsuarioEnSesion as Cliente };
         this.db.subirDoc(Colecciones.ListaDeEspera, clienteEnEspera, true);
         url = 'clientes-espera';
-        //TODO: PUSH NOTIFICATION A METRES
+        this.push.sendNotificationToType('Nuevo cliente',
+          `${clienteEnEspera.cliente.nombre} ${clienteEnEspera.cliente.apellido} se sumó a la lista de espera`,'metre');
       }
 
       this.navCtrl.navigateRoot(url);
@@ -212,9 +214,9 @@ export class MenuComponent {
       if (!cliente.idMesa)
         throw new Exception(ErrorCodes.ClienteSinMesa, "Debe entrar a la lista de espera y esperar a que le asignen una mesa.");
 
-      const mesaCliente = await this.db.traerDoc<Mesa>(Colecciones.Mesas, cliente.idMesa);
+      const nroMesaCliente = (await this.db.traerDoc<Mesa>(Colecciones.Mesas, cliente.idMesa)).nroMesa;
       if (idMesa !== cliente.idMesa) {
-        throw new Exception(ErrorCodes.MesaEquivocada, `Su mesa es la Nro${mesaCliente.nroMesa}`);
+        throw new Exception(ErrorCodes.MesaEquivocada, `Su mesa es la Nro${nroMesaCliente}`);
       }
 
       const mesaEscan = await this.db.traerDoc<Mesa>(Colecciones.Mesas, idMesa);
@@ -255,27 +257,59 @@ export class MenuComponent {
           });
           break;
         case EstadoMesa.EsperandoComida:
+          const ped = (await this.db.traerCoincidencias<Pedido>(Colecciones.Pedidos, {
+            campo: 'idCliente', operacion: '==', valor: cliente.id
+          }))[0];
+          this.spinner.hide();
+          if (ped.estado == 'entregado') {
+            await this.db.actualizarDoc(
+              Colecciones.Mesas,
+              mesaEscan.id,
+              { estado: EstadoMesa.Comiendo }
+            );
+            ToastSuccess.fire('Pedido recibido.');
+          } else {
+            this.mostrarMenu(mesaEscan, ped);
+          }
+          break;
+        case EstadoMesa.Comiendo:
           const pedido = (await this.db.traerCoincidencias<Pedido>(Colecciones.Pedidos, {
             campo: 'idCliente', operacion: '==', valor: cliente.id
           }))[0];
           this.spinner.hide();
 
-          this.mostrarMenu(mesaEscan, pedido).then((rta) => {
-            this.spinner.show();
-
+          this.mostrarMenu(mesaEscan, pedido).then(async (rta) => {
             if (rta === 'jugar')
               ToastInfo.fire('Modalidad en proceso.'); //TODO: Pendiente
-            else if (rta === 'encuesta')
-              this.navCtrl.navigateRoot('alta-encuesta-cliente');
+            else if (rta === 'alta-encuesta')
+              this.navCtrl.navigateRoot('alta-encuesta-cliente', { state: { idPedido: pedido.id } });
+            else if (rta === 'lista-encuestas')
+              this.navCtrl.navigateRoot('lista-encuestas-cliente');
+            else if (rta === 'cuenta') {
+              this.push.sendNotificationToType('Pedido de cuenta',`La mesa número ${mesaEscan.nroMesa} pidió la cuenta`,'mozo');
+              this.spinner.show();
+              mesaEscan.estado = EstadoMesa.Pagando;
+              this.db.actualizarDoc(Colecciones.Mesas, mesaEscan.id, { estado: EstadoMesa.Pagando });
+              this.spinner.hide();
 
-            this.spinner.hide();
+              pedido.porcPropina = await this.escanearPropina();
+              const cuentaModal = await this.modalCtrl.create({
+                component: CuentaComponent,
+                id: 'cuenta-modal',
+                backdropDismiss: false,
+                componentProps: { pedido: pedido }
+              });
+              cuentaModal.present();
+
+              const dismiss = await cuentaModal.onDidDismiss();
+              if (dismiss.role === 'success') {
+                this.spinner.show();
+                await this.db.actualizarDoc(Colecciones.Mesas, mesaEscan.id, { estado: EstadoMesa.Pago });
+                this.spinner.hide();
+                ToastSuccess.fire('Pago registrado!', 'Espere a que el mozo confirme el pago.');
+              }
+            }
           });
-          break;
-        case EstadoMesa.Comiendo:
-          //TODO: Pendiente
-          break;
-        case EstadoMesa.Pagando:
-          //TODO: Pendiente
           break;
       }
 
@@ -285,7 +319,6 @@ export class MenuComponent {
       console.error(error);
       ToastError.fire('Ups...', error.message);
     }
-
   }
 
   private async mostrarMenu(mesa: Mesa, pedido?: Pedido) {
@@ -299,5 +332,24 @@ export class MenuComponent {
     const modalDismiss = await modal.onDidDismiss();
 
     return modalDismiss.data;
+  }
+
+  async escanearPropina() {
+    const qrValidos = ['propina-0', 'propina-5', 'propina-10', 'propina-15', 'propina-20'];
+    let QR: string;
+
+    let invalido: boolean;
+    do {
+      invalido = false;
+      QR = await this.scanner.escanear();
+
+      if (!qrValidos.includes(QR)) {
+        invalido = true;
+        await MySwal.fire('El código escaneado no pertenece a una de nuestras propinas.', 'Escanee nuevamente.', 'error');
+      }
+    } while (invalido);
+
+    const porcentaje = Number(QR.split('-')[1]);
+    return porcentaje as PorcPropina;
   }
 }

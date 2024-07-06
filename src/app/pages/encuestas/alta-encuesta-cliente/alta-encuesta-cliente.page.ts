@@ -13,6 +13,7 @@ import { RangeEstrellasComponent } from 'src/app/components/range-estrellas/rang
 import { ErrorCodes, Exception } from 'src/app/utils/classes/exception';
 import { NavController } from '@ionic/angular/standalone'
 import { FotosService } from 'src/app/services/fotos.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-alta-encuesta-cliente',
@@ -25,6 +26,7 @@ import { FotosService } from 'src/app/services/fotos.service';
 export class AltaEncuestaClientePage {
   frmEncuesta: FormGroup;
   fotos: { archivo: File | null, url: string | null }[] = [];
+  idPedido: string;
 
   constructor(
     private auth: AuthService,
@@ -36,12 +38,16 @@ export class AltaEncuestaClientePage {
     private fotosServ: FotosService
   ) {
     this.frmEncuesta = this.formBuilder.group({
-      puntuacionGeneral: [5, [Validators.required, Validators.min(1), Validators.max(5)]],
+      puntuacionGeneral: [5, [Validators.required, Validators.min(0), Validators.max(5)]],
       comida: [1, [Validators.required, Validators.min(1), Validators.max(10)]],
       atencion: ['buena', [Validators.required]],
       recomendacion: [false, [Validators.required]],
       comentarios: ['', [Validators.required]],
     });
+
+    const navigation = inject(Router).getCurrentNavigation();
+    this.idPedido = navigation?.extras?.state?.['idPedido'];
+    if (!this.idPedido) throw new Error('Falta idPedido.');
   }
 
   onComidaChange(event: any) {
@@ -86,8 +92,8 @@ export class AltaEncuestaClientePage {
       const promesas = this.fotos.map(async (foto, indice) => {
         if (foto.archivo) {
           const cliente = this.auth.UsuarioEnSesion as Cliente;
-          const nombreFotoBase = `Encuestade-${cliente.nombre}-${indice + 1}`;
-          const url = await this.storage.subirArchivo(foto.archivo, `EncuestaClientes/${nombreFotoBase}`);
+          const nombreFotoBase = `${cliente.id}-${new Date().getTime()}-${indice+1}`;
+          const url = await this.storage.subirArchivo(foto.archivo, `${Colecciones.EncuestasCliente}/${nombreFotoBase}`);
           foto.url = url;
         }
       });
@@ -111,6 +117,7 @@ export class AltaEncuestaClientePage {
       const cliente = this.auth.UsuarioEnSesion as Cliente;
       const nuevaEncuesta = new EncuestaCliente(
         cliente,
+        this.idPedido,
         this.frmEncuesta.value.puntuacionGeneral,
         this.frmEncuesta.value.comida,
         this.frmEncuesta.value.atencion,

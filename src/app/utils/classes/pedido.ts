@@ -11,6 +11,7 @@ export class Pedido {
     cocina: boolean,
     barra: boolean
   };
+  porcPropina: PorcPropina;
   
   constructor(pedidoProd: PedidoArmado[], precio: number, tiempoEstimado: number, idCliente: string = '') {
     this.id = '';
@@ -23,6 +24,7 @@ export class Pedido {
       cocina: false,
       barra: false
     };
+    this.porcPropina = 0;
   }
 }
 
@@ -37,3 +39,4 @@ export interface PedidoArmado {
   tiempoEstimado: number,
   sector: 'cocina' | 'barra';
 };
+export type PorcPropina = 0 | 5 | 10 | 15 | 20;

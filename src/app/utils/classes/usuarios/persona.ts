@@ -6,6 +6,7 @@ export abstract class Persona {
   dni: number;
   fotoUrl: string;
   correo: string;
+  token:string;
 
   constructor(rol: RolUsuario, nombre: string, apellido: string, dni: number, fotoUrl: string, correo: string) {
     this.id = '';
@@ -15,6 +16,7 @@ export abstract class Persona {
     this.dni = dni;
     this.fotoUrl = fotoUrl;
     this.correo = correo;
+    this.token = '';  // Inicialización explícita como vacío
   }
 }
 

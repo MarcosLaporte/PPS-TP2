@@ -1,4 +1,4 @@
-@import "../../../theme/variables.scss";
+@import '/src/theme/variables.scss';
 
 @media (min-width: 550px) {
   ion-card {
@@ -11,20 +11,24 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
   ion-card-content {
     .inputs {
       display: flex;
       flex-direction: column;
+
       #cantComensales {
         width: 100%;
         margin-bottom: 0.5rem;
       }
+
       .rdb-tipoMesa {
         width: 100%;
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
         margin-bottom: 15px;
+
         ion-item {
           width: 33%;
 
@@ -41,7 +45,7 @@
             transition: 0.25s;
             border-radius: 10%;
 
-            > div {
+            >div {
               display: flex;
               flex-direction: column;
               align-items: center;
@@ -74,16 +78,6 @@
         }
       }
 
-      #tempImg {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-
-        img {
-          width: 50%;
-        }
-      }
       .errores {
         display: flex;
         flex-direction: column;
@@ -97,6 +91,7 @@
   width: 40px;
   margin-left: 0.5rem;
 }
+
 #QR {
   display: flex;
   align-items: center;

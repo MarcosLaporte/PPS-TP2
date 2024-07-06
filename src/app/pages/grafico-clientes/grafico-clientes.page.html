@@ -1,7 +1,10 @@
 <div class="container background-pri">
   <ion-card style="width: 95%;">
     <ion-card-header>
-      <ion-card-title>Gráficos de Clientes</ion-card-title>
+      <ion-button fill="clear" (click)="navCtrl.navigateRoot('lista-encuestas-cliente')">
+        <ion-icon slot="start" name="chevron-back-circle-outline" size="large"></ion-icon>
+        Volver
+      </ion-button>
     </ion-card-header>
     <ion-card-content>
       <div class="button-container">

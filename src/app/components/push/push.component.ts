@@ -12,13 +12,10 @@ export class PushComponent implements OnInit {
   constructor(private plt: Platform) { }
 
   ngOnInit() {
-
     if (this.plt.is('android')) {
       this.addListeners();
       this.registerNotifications();
     }
-
-    console.log('Hola')
   }
 
   async registerNotifications() {
@@ -27,13 +24,11 @@ export class PushComponent implements OnInit {
       permStatus = await PushNotifications.requestPermissions();
     if (permStatus.receive !== 'granted')
       console.log('User denied permissions!')
-
     await PushNotifications.register();
   }
 
   async addListeners() {
     await PushNotifications.addListener('registration', (token) => {
-
       console.log("Registration token: ", token.value);
     });
 
