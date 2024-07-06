@@ -28,14 +28,14 @@ Cada integrante tiene su propia rama para subir sus avances, y una rama **Test**
 | -  | Iconos + Splash                   | Marcos      | Terminado |
 | -  | Login                             | Marcos      | Terminado |
 | -  | Registro                          | Marcos      | Pendiente |
-| A  | Alta dueño/supervisor            | Jaco        | Terminado |
+| A  | Alta dueño/supervisor             | Jaco        | Terminado |
 | B  | Alta empleados                    | Marcos      | Terminado |
 | C  | Alta cliente                      | Yober       | Terminado |
 | D  | Alta mesa                         | Jaco        | Terminado |
 | E  | Alta producto                     | Yober       | Terminado |
 | F  | Qr ingreso al local               | Marcos      | Terminado |
 | G  | Qr de la mesa                     | Jaco        | Terminado |
-| H  | Qr de propina                     | Yober       | Pendiente |
+| H  | Qr de propina                     | Marcos      | Terminado |
 | I  | Encuesta Cliente                  | Yober       | Terminado |
 | J  | Encuesta Empleado                 | Marcos      | Terminado |
 | K  | Encuesta Supervisor               | Jaco        | Pendiente |
